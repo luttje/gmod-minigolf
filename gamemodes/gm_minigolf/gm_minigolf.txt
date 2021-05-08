@@ -1,0 +1,15 @@
+"gm_minigolf"
+{
+	"base"	"base"
+	"title"	"Minigolf"
+	"maps"	"^golf_"
+	"menusystem"	"1"
+
+	"author_name"	"Lutt.online (& Co.)"
+	"author_email"	""
+	"author_url"	"https://github.com/luttje"
+
+	"icon"	""
+	"info"	""
+	"hide"	"0"
+}

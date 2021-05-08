@@ -1,0 +1,6 @@
+"vertexLitGeneric"
+{
+	"$basetexture" "models/billiards/white"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[ .2 .2 .2 ]"
+}

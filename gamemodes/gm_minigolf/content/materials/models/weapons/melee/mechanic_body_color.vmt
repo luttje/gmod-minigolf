@@ -1,0 +1,5 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "models/weapons/melee/mechanic_body_color"
+	"$alphatest" 1
+}

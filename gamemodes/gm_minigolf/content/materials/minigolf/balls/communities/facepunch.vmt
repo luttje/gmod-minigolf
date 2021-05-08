@@ -1,0 +1,10 @@
+
+"VertexLitGeneric"
+{
+	"$basetexture" "minigolf/balls/communities/facepunch"
+	"$surfaceprop" "plastic"
+	"$bumpmap" "minigolf/balls//communities/facepunch_normal"
+
+
+	"$model" 1
+}
