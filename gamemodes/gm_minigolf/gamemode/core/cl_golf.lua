@@ -4,25 +4,8 @@ local finishSounds = {
 	"physics/cardboard/cardboard_cup_impact_hard1.wav"
 }
 
--- Called to inform the player has stopped playing a hole
-net.Receive("Minigolf.PlayerHasFinished", function()
-	local player = net.ReadEntity()
-	local start = net.ReadEntity()
-	local strokes = net.ReadUInt(32)
-
-	if(not IsValid(start) or not IsValid(player))then
-		-- Ignore data about players or holes we can't see
-		-- TODO: Check if we even need to Broadcast this to everyone, or just team players.
-		return
-	end
-
+hook.Add("Minigolf.PlayerFinished", "Minigolf.PlayerFinished", function(player, start, strokes)
 	player._LimitTimeLeft = nil
-
-	if(not start._Strokes)then
-		start._Strokes = {}
-	end
-
-	start._Strokes[player] = strokes
 
 	-- If it's a teammate, then player the end sound
 	if(player:Team() == LocalPlayer():Team())then

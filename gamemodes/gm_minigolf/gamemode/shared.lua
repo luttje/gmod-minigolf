@@ -1,47 +1,19 @@
 GM.Name = "Minigolf"
 GM.Version = "Prototype"
-GM.Author = "Lutt.online & Company"
+GM.Author = "Luttje & Company"
 GM.Email = ""
 GM.IsMinigolf = true
 
--- Table that contains all Minigolf information
-Minigolf = Minigolf or {}
-
 -- Team restrictions
-TEAM_NAME_LENGTH_MAX = 50
-TEAM_NAME_LENGTH_MAX_MESSAGE = string.format("Your team name can only be %d characters long!", TEAM_NAME_LENGTH_MAX)
-TEAM_NAME_LENGTH_MIN = 2
-TEAM_NAME_LENGTH_MIN_MESSAGE = string.format("Your team name must be at least %d characters long!", TEAM_NAME_LENGTH_MIN)
-TEAM_NAME_PROFANITY_MESSAGE = "Your team name can not contain any profanities! Profanity was: %s"
+Minigolf.NO_TEAM_PLAYING = -1
+Minigolf.TEAM_NAME_LENGTH_MAX = 50
+Minigolf.TEAM_NAME_LENGTH_MAX_MESSAGE = string.format("Your team name can only be %d characters long!", Minigolf.TEAM_NAME_LENGTH_MAX)
+Minigolf.TEAM_NAME_LENGTH_MIN = 2
+Minigolf.TEAM_NAME_LENGTH_MIN_MESSAGE = string.format("Your team name must be at least %d characters long!", Minigolf.TEAM_NAME_LENGTH_MIN)
+Minigolf.TEAM_NAME_PROFANITY_MESSAGE = "Your team name can not contain any profanities! Profanity was: %s"
 
--- Hole status enumerations
-HOLE_NOT_PLAYED = -1
-HOLE_DISQUALIFIED = -2
-HOLE_SKIPPED = -3 -- When a player joins a team late, this is assigned to them for the holes that have already been played
-
--- Text effect enumerations
-TEXT_EFFECT_NORMAL = 0
-TEXT_EFFECT_ATTENTION = 1
-TEXT_EFFECT_DANGER = 2
-TEXT_EFFECT_SPARKLE = 3
-TEXT_EFFECT_CASH = 4
-
--- Sizing constants
-PADDING = 10
-HALF_PADDING = PADDING * .5
-DOUBLE_PADDING = PADDING * 2
-
--- Colour constants
-COLOR_DARK = Color(10, 10, 10)
-COLOR_LIGHT = Color(255, 255, 255)
-
-COLOR_PRIMARY = Color(91, 127, 0)
-COLOR_PRIMARY_LIGHT = Color(143, 168, 79)
-COLOR_SECONDARY = Color(143, 168, 79)
-COLOR_SECONDARY_LIGHT = Color(118, 153, 31)
-
-if(SERVER)then AddCSLuaFile("sh_util.lua") end
-include("sh_util.lua")
+-- When a player joins a team late, this stroke count is assigned to them for the holes that have already been played
+Minigolf.HOLE_SKIPPED = Minigolf.HOLE_STATUS_MINIMUM - 1
 
 -- Automatically include everything in these directories
 Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "libraries/"))

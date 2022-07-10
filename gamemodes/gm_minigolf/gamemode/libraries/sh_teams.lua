@@ -2,8 +2,21 @@ Minigolf.Teams = Minigolf.Teams or {}
 Minigolf.Teams.All = Minigolf.Teams.All or {}
 Minigolf.Teams.MenuKey = KEY_T
 
+function Minigolf.Teams.GetOtherPlayers(player)
+	local teamPlayers = team.GetPlayers(player:Team())
+	local otherPlayers = {}
+
+	for _, teamPlayer in pairs(teamPlayers) do
+		if(teamPlayer ~= player)then
+			table.insert(otherPlayers, teamPlayer)
+		end
+	end
+
+	return otherPlayers
+end
+
 function Minigolf.Teams.Update(owner, name, color, password, updateID)
-	color = color or ColorRand();
+	color = color or ColorRand()
 	password = password ~= "" and password or nil
   
   local teamID = updateID or #Minigolf.Teams.All + 1

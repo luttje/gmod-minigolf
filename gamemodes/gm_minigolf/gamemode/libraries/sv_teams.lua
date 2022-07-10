@@ -53,8 +53,8 @@ function Minigolf.Teams.Join(player, teamID, password)
 	for _, teamMember in pairs(teamMembers) do
 		if(teamMember ~= player)then
 			for holeName, holeScore in pairs(teamMember:GetAllHoleScores()) do
-				if(holeScore ~= HOLE_NOT_PLAYED)then
-					player:SetHoleScore(holeName, HOLE_SKIPPED)
+				if(holeScore ~= Minigolf.HOLE_NOT_PLAYED)then
+					player:SetHoleScore(holeName, Minigolf.HOLE_SKIPPED)
 				end
 			end
 
@@ -86,7 +86,7 @@ function Minigolf.Teams.Leave(player)
 	net.WriteBool(true)
 	net.Send(player)
 
-	hook.Call("MinigolfPlayerLeftTeam", gm(), player, teamID)
+	hook.Call("Minigolf.PlayerLeftTeam", Minigolf.GM(), player, teamID)
 
 	if(#team.GetPlayers(teamID) == 0)then
 		Minigolf.Teams.Remove(teamID)

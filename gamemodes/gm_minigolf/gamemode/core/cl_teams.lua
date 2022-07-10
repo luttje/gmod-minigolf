@@ -10,7 +10,7 @@ end)
 net.Receive("Minigolf.PlayerJoinedTeam", function()
    local player = net.ReadEntity()
 
-   hook.Call("MinigolfPlayerJoinTeam", gm(), player)
+   hook.Call("Minigolf.PlayerJoinTeam", Minigolf.GM(), player)
 end)
 
 local hasOpenedFirstTime = false
@@ -85,8 +85,15 @@ hook.Add("PlayerButtonDown", "Minigolf.ShowTeamMenuOnKeyPress", function(player,
 end)
 
 -- When a player joins a team
-hook.Add("MinigolfPlayerJoinTeam", "Minigolf.MinigolfPlayerJoinTeamHideMenu", function(player)
+hook.Add("Minigolf.PlayerJoinTeam", "Minigolf.MinigolfPlayerJoinTeamHideMenu", function(player)
 	if(IsValid(player) and IsValid(LocalPlayer()) and player == LocalPlayer() and IsValid(TEAM_MENU))then
 		hideMenu()
+	end
+end)
+
+hook.Add("Minigolf.ShouldDrawHolePanel", "Minigolf.DontDrawHolePanelWhilePlaying", function(start)
+	local activeTeam = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+	if(activeTeam == LocalPlayer():Team())then
+		return true
 	end
 end)

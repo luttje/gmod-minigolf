@@ -106,7 +106,7 @@ Thank you very much if you want to support me financially through a donation. I 
 
 # Credits
 
-When code is copied and/or inspired by someone else you will find a comment above/near that code specifying where the code was sourced from. The rest of the source-code was made by Lutt.online and it is licensed under the MIT License. 
+When code is copied and/or inspired by someone else you will find a comment above/near that code specifying where the code was sourced from. The rest of the source-code was made by Luttje and it is licensed under the MIT License. 
 
 
 ## Special thanks to

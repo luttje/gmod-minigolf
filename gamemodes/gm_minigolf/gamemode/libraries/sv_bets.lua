@@ -136,7 +136,7 @@
 --       local payout = math.floor(payoutSum / numWinners)
 
 --       for _, bestBettor in pairs(bestBettors) do
---         Minigolf.Messages.Send(nil, bestBettor:Nick() .. " guessed nearest the final score and won " .. tostring(payout) .. " " .. Minigolf.Text.Pluralize(PS.Config.PointsNameSingular, payout) .. "!", "@", TEXT_EFFECT_CASH)
+--         Minigolf.Messages.Send(nil, bestBettor:Nick() .. " guessed nearest the final score and won " .. tostring(payout) .. " " .. Minigolf.Text.Pluralize(PS.Config.PointsNameSingular, payout) .. "!", "@", Minigolf.TEXT_EFFECT_CASH)
 
 --         bestBettor:PS_GivePoints(payout)
 --       end
@@ -145,7 +145,7 @@
 --     for _, losingBettor in pairs(losingBettors) do
 --       -- Check if this player didn't also had winning bets
 --       if(not table.HasValue(winningBettors, losingBettor))then
---         Minigolf.Messages.Send(nil, losingBettor:Nick() .. " lost all their tokens in a bet!", "¢", TEXT_EFFECT_DANGER)
+--         Minigolf.Messages.Send(nil, losingBettor:Nick() .. " lost all their tokens in a bet!", "¢", Minigolf.TEXT_EFFECT_DANGER)
 --       end
 --     end
 
@@ -155,7 +155,7 @@
 --   local payout = math.floor(payoutSum / numWinners)
 
 --   for _, winningBettor in pairs(winningBettors) do
---     Minigolf.Messages.Send(nil, winningBettor:Nick() .. " won " .. tostring(payout) .. " " .. Minigolf.Text.Pluralize(PS.Config.PointsNameSingular, payout) .. " in a bet!", "@", TEXT_EFFECT_SPARKLE)
+--     Minigolf.Messages.Send(nil, winningBettor:Nick() .. " won " .. tostring(payout) .. " " .. Minigolf.Text.Pluralize(PS.Config.PointsNameSingular, payout) .. " in a bet!", "@", Minigolf.TEXT_EFFECT_SPARKLE)
   
 --     winningBettor:PS_GivePoints(payout)
 --   end

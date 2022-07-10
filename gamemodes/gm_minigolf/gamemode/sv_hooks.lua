@@ -1,12 +1,7 @@
-util.AddNetworkString("Minigolf.ConfigMenu")
-
 local playerLibrary = player
 
 ---@param player Player
-hook.Add("PlayerInitialSpawn", "Minigolf.SetupHoleRegistration", function(player)
-  -- Start with a HOLE_NOT_PLAYED on all holes
-  Minigolf.Holes.ResetForPlayer(player)
-
+hook.Add("PlayerInitialSpawn", "Minigolf.NetworkTeams", function(player)
   -- Network all teams with the late joiners (calls team.SetUp on the client)
   for teamID, team in pairs(Minigolf.Teams.All)do
     Minigolf.Teams.NetworkForGame(teamID, team.Name, team.Color)
@@ -15,12 +10,6 @@ hook.Add("PlayerInitialSpawn", "Minigolf.SetupHoleRegistration", function(player
 	-- Send the team info to the player joining for the first time
   Minigolf.Teams.NetworkAll(player)
 end)
-
--- Let the RocketDodger Pointshop set the model
--- ---@param player Player
--- hook.Add("PlayerSetModel", "Minigolf.SetModelToOdessa", function(player)
--- 	player:SetModel("models/player/odessa.mdl")
--- end)
 
 ---@param player Player
 ---@param spawnpoint Entity
@@ -75,16 +64,16 @@ hook.Add("PlayerSwitchFlashlight", "Minigolf.PlayerAllowSwitchFlashlight", funct
 end)
 
 -- Special hole messages, like hole in one
-hook.Add("MinigolfGetGoalMessage", "Minigolf.CustomGoalMessagesForCertainStrokes", function(player, goal, strokes, start)
-	local receivers = team.GetPlayers(player:Team())
+hook.Add("Minigolf.GetGoalMessage", "Minigolf.CustomGoalMessagesForCertainStrokes", function(player, goal, strokes, start)
+	local receivers = Minigolf.Teams.GetOtherPlayers(player:Team())
 	local par = start:GetPar()
 
 	if(strokes == 0)then
-		Minigolf.Messages.Send(receivers, player:Nick() .. " got an impossible run(0 strokes) at '" .. goal:GetHoleName() .. "'", "¡", TEXT_EFFECT_SPARKLE)
+		Minigolf.Messages.Send(receivers, player:Nick() .. " got an impossible run(0 strokes) at '" .. goal:GetHoleName() .. "'", "¡", Minigolf.TEXT_EFFECT_SPARKLE)
 		player:PlaySound("vo/ravenholm/madlaugh04.wav")
 		return false
 	elseif(strokes == 1)then
-		Minigolf.Messages.Send(playerLibrary.GetAll(), player:Nick() .. " got a HOLE IN ONE on '" .. goal:GetHoleName() .. "'", "@", TEXT_EFFECT_SPARKLE)
+		Minigolf.Messages.Send(playerLibrary.GetAll(), player:Nick() .. " got a HOLE IN ONE on '" .. goal:GetHoleName() .. "'", "@", Minigolf.TEXT_EFFECT_SPARKLE)
 		player:PlaySound("vo/k_lab/kl_excellent.wav")
 		return false
 	elseif(strokes >= start:GetMaxStrokes())then
@@ -114,86 +103,50 @@ hook.Add("MinigolfGetGoalMessage", "Minigolf.CustomGoalMessagesForCertainStrokes
 end)
 
 -- When time runs out
-hook.Add("MinigolfTimeLimitReached", "Minigolf.OutOfTimeMessage", function(player, ball, start)
-	Minigolf.Messages.Send(team.GetPlayers(player:Team()), "Disqualified! " .. player:Nick() .. " ran out of time on '" .. start:GetHoleName() .. "'", nil, TEXT_EFFECT_ATTENTION)
-	
-	player:PlaySound("vo/k_lab/kl_fiddlesticks.wav")
+hook.Add("Minigolf.TimeLimitReached", "Minigolf.OutOfTimeMessage", function(player, ball, start)
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), "Disqualified! " .. player:Nick() .. " ran out of time on '" .. start:GetHoleName() .. "'", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 end)
 
-hook.Add("MinigolfStrokeLimitReached", "Minigolf.StrokeLimitMessage", function(player, ball, start)
-	Minigolf.Messages.Send(team.GetPlayers(player:Team()), "Disqualified! " .. player:Nick() .. " has ".. start:GetMaxStrokes() .." strokes on '" .. start:GetHoleName() .. "'", "¢", TEXT_EFFECT_ATTENTION)
-
-	player:PlaySound("vo/k_lab/kl_fiddlesticks.wav")
+hook.Add("Minigolf.StrokeLimitReached", "Minigolf.StrokeLimitMessage", function(player, ball, start)
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), "Disqualified! " .. player:Nick() .. " has ".. start:GetMaxStrokes() .." strokes on '" .. start:GetHoleName() .. "'", "¢", Minigolf.TEXT_EFFECT_ATTENTION)
 end)
 
 -- When a player hits a ball
-hook.Add("MinigolfPlayerHitBall", "Minigolf.PlayerHitBallRecordPosition", function(player, ball)
+hook.Add("Minigolf.PlayerHitBall", "Minigolf.PlayerHitBallRecordPosition", function(player, ball)
 	ball._LastHitPosition = ball:GetPos()
 end)
 
 -- When a minigolf ball goes out of bounds
-hook.Add("MinigolfBallOutOfBounds", "Minigolf.OutOfBounds", function(player, ball, bound)
-	local start = ball:GetStart()
-	local trailTexture = "cable/redlaser"
-
-	if(ball._IsGoingOOB)then
+hook.Add("Minigolf.BallOutOfBounds", "Minigolf.OutOfBoundsMessage", function(player, ball, bound)
+	if(ball._IsGettingOOBMessage)then
 		return
 	end
 
-	ball._IsGoingOOB = true
-	ball:SetRenderMode(RENDERMODE_TRANSALPHA)
-	ball._OldColor = ball:GetColor()
-	ball:SetColor(Color(255, 0, 0, 150))
-	ball:SetUseable(false)
+	ball._IsGettingOOBMessage = true
 
-	-- Remove old trails
-	local oldTrail;
-
-	for _, child in pairs(ball:GetChildren()) do
-		if(child:GetClass() == "env_spritetrail")then
-			oldTrail = child
-			oldTrail:SetRenderMode(RENDERMODE_NONE)
-			break
-		end
-	end
-
-	-- Use equipped trail
-	if IsValid(oldTrail) then
-		trailTexture = oldTrail:GetModel()
-	end
-
-	local trail = util.SpriteTrail(ball, 0, Color(255, 0, 0), false, 15, 20, 1, 0.5, trailTexture)
-
-	timer.Simple(1.5, function()
-		if(IsValid(trail))then
-			SafeRemoveEntity(trail)
-		end
-
-		if(IsValid(ball))then
-			ball:MoveToPos(ball._LastHitPosition or ball:GetStart():GetPos())
-			ball:SetColor(ball._OldColor or Color(255,255,255, 255))
-			ball:SetUseable(true)
-			ball._IsGoingOOB = false
-
-			if(IsValid(oldTrail))then
-				oldTrail:SetRenderMode(RENDERMODE_NORMAL)
-			end
-		end
-	end)
-
-	Minigolf.Messages.Send(team.GetPlayers(player:Team()), player:Nick() .. " went out of bounds at '" .. start:GetHoleName() .. "'", "Ò")
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), player:Nick() .. " went out of bounds at '" .. start:GetHoleName() .. "'", "Ò")
 end)
 
-hook.Add("KeyPress", "Minigolf.AllowUseBall", function( player, key )
-	if( key == IN_USE )then
-		local tr = player:GetEyeTraceNoCursor()
+hook.Add("Minigolf.PlayerGivesUp", "Minigolf.PlayerGivesUpMessage", function(player, start)
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), player:Nick() .. " gave up!", nil, Minigolf.TEXT_EFFECT_DANGER)
+end)
 
-		for _, ent in ipairs(ents.FindInSphere(tr.HitPos, 64))do
-			if(IsValid(ent) and ent:GetClass() == "minigolf_ball")then
-				ent:OnUse(player)
-			end
+hook.Add("Minigolf.BallStartedGivingForce", "Minigolf.ShowBallForceToTeam", function(player, ball)
+	for _, teamPlayer in pairs(team.GetPlayers(player:Team())) do
+		-- Delay this until we know for sure the ball has been created clientside
+			teamPlayer:OnEntityExists(ball, function(teamPlayer, entity)
+				net.Start("Minigolf.GetBallForce")
+					net.WriteEntity(player)
+					net.WriteEntity(entity)
+				net.Send(teamPlayer)
+			end)
 		end
-	end
+end)
+
+hook.Add("Minigolf.BallStoppedGivingForce", "Minigolf.HideBallForceToTeam", function(player, ball)
+	net.Start("Minigolf.GetBallForceCancel")
+		net.WriteEntity(player)
+	net.Send(team.GetPlayers(player:Team()))
 end)
 
 -- Set comfortable speeds & no collision between players
@@ -221,8 +174,3 @@ hook.Add("PlayerDeathSound", "Minigolf.MuteDeathSound", function(player)
 	-- Return true to mute the death sound
 	return true
 end)
-
--- hook.Add("ShowHelp", "Minigolf.ShowConfigMenuOnF1", function(player)
--- 	net.Start("Minigolf.ConfigMenu")
--- 	net.Send(player)
--- end)
