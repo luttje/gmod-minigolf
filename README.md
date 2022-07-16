@@ -1,4 +1,4 @@
-![The Minigolf Logo by Syff](gamemodes/gm_minigolf/content/materials/minigolf/logo_with_background.png)
+![The Minigolf Logo (by Syff)](materials/minigolf/logo_with_background.png)
 
 # About Minigolf
 
