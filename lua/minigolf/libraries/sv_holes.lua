@@ -41,6 +41,10 @@ function Minigolf.Holes.Start(player, ball, start)
 	local holeName = start:GetUniqueHoleName()
 	local timeLimit = start:GetLimit()
 
+	if(not player:HasWeapon("golf_club"))then
+		player:Give("golf_club")
+	end
+
   player:SetActiveHole(start)
 
 	net.Start("Minigolf.SetPlayerTimeLimit")
