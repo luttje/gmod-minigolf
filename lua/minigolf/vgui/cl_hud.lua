@@ -61,6 +61,10 @@ function PANEL:Paint(w, h)
 		return
 	end
 
+	if(LocalPlayer()._LimitTimeLeft == nil)then
+		return
+	end
+	
 	local time = math.max(0, math.Round(LocalPlayer()._LimitTimeLeft - UnPredictedCurTime()))
 	self.activeHolePanel:SetPlaying(time)
 	self.activeHolePanel:PaintManual()

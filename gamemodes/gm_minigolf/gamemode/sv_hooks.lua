@@ -65,50 +65,50 @@ end)
 
 -- Special hole messages, like hole in one
 hook.Add("Minigolf.GetGoalMessage", "Minigolf.CustomGoalMessagesForCertainStrokes", function(player, goal, strokes, start)
-	local receivers = Minigolf.Teams.GetOtherPlayers(player:Team())
+	local receivers = Minigolf.Teams.GetOtherPlayersOnTeam(player)
 	local par = start:GetPar()
 
 	if(strokes == 0)then
 		Minigolf.Messages.Send(receivers, player:Nick() .. " got an impossible run(0 strokes) at '" .. goal:GetHoleName() .. "'", "¡", Minigolf.TEXT_EFFECT_SPARKLE)
 		player:PlaySound("vo/ravenholm/madlaugh04.wav")
-		return false
+		return
 	elseif(strokes == 1)then
 		Minigolf.Messages.Send(playerLibrary.GetAll(), player:Nick() .. " got a HOLE IN ONE on '" .. goal:GetHoleName() .. "'", "@", Minigolf.TEXT_EFFECT_SPARKLE)
 		player:PlaySound("vo/k_lab/kl_excellent.wav")
-		return false
+		return
 	elseif(strokes >= start:GetMaxStrokes())then
 		Minigolf.Messages.Send(receivers, player:Nick() .. " struggled to get to the end of '" .. goal:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes) .."!", "~")
 		player:PlaySound(string.format("vo/ravenholm/madlaugh0%d.wav", math.random(1,4)))
-		return false
+		return
 	end
 
 	local underPar = par - strokes
 
 	if(underPar == 0)then
 		Minigolf.Messages.Send(receivers, "Par! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
-		return false
+		return
 	elseif(underPar == 1)then
 		Minigolf.Messages.Send(receivers, "Birdie! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
-		return false
+		return
 	elseif(underPar == 2)then
 		Minigolf.Messages.Send(receivers, "Eagle! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
-		return false
+		return
 	elseif(underPar == 2)then
 		Minigolf.Messages.Send(receivers, "Eagle! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
-		return false
+		return
 	elseif(underPar == 2)then
 		Minigolf.Messages.Send(receivers, "Condor! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
-		return false
+		return
 	end
 end)
 
 -- When time runs out
 hook.Add("Minigolf.TimeLimitReached", "Minigolf.OutOfTimeMessage", function(player, ball, start)
-	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), "Disqualified! " .. player:Nick() .. " ran out of time on '" .. start:GetHoleName() .. "'", nil, Minigolf.TEXT_EFFECT_ATTENTION)
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(player), "Disqualified! " .. player:Nick() .. " ran out of time on '" .. start:GetHoleName() .. "'", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 end)
 
 hook.Add("Minigolf.StrokeLimitReached", "Minigolf.StrokeLimitMessage", function(player, ball, start)
-	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), "Disqualified! " .. player:Nick() .. " has ".. start:GetMaxStrokes() .." strokes on '" .. start:GetHoleName() .. "'", "¢", Minigolf.TEXT_EFFECT_ATTENTION)
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(player), "Disqualified! " .. player:Nick() .. " has ".. start:GetMaxStrokes() .." strokes on '" .. start:GetHoleName() .. "'", "¢", Minigolf.TEXT_EFFECT_ATTENTION)
 end)
 
 -- When a player hits a ball
@@ -123,12 +123,13 @@ hook.Add("Minigolf.BallOutOfBounds", "Minigolf.OutOfBoundsMessage", function(pla
 	end
 
 	ball._IsGettingOOBMessage = true
+	local start = ball:GetStart()
 
-	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), player:Nick() .. " went out of bounds at '" .. start:GetHoleName() .. "'", "Ò")
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(player), player:Nick() .. " went out of bounds at '" .. start:GetHoleName() .. "'", "Ò")
 end)
 
 hook.Add("Minigolf.PlayerGivesUp", "Minigolf.PlayerGivesUpMessage", function(player, start)
-	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayers(player), player:Nick() .. " gave up!", nil, Minigolf.TEXT_EFFECT_DANGER)
+	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(player), player:Nick() .. " gave up!", nil, Minigolf.TEXT_EFFECT_DANGER)
 end)
 
 hook.Add("Minigolf.BallStartedGivingForce", "Minigolf.ShowBallForceToTeam", function(player, ball)

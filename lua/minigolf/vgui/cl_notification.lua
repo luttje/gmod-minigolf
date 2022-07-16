@@ -1,6 +1,4 @@
 local MAX_DISPLAYED = 5 -- TODO: Make this configurable with a server convar
-local Minigolf.PADDING = 15
-local Minigolf.HALF_PADDING = Minigolf.PADDING * .5
 local nextCreateSparkle
 
 -- TODO: Actually make this fancy and move this to a functions

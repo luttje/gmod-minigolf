@@ -1,8 +1,8 @@
 util.AddNetworkString("Minigolf.SetPlayerTimeLimit")
 util.AddNetworkString("Minigolf.PlayerHasFinished")
-util.AddNetworkString("Minigolf.PlayerShowScoreboard")
 
 Minigolf.Holes = Minigolf.Holes or {}
+Minigolf.Holes.NetworkIDCache = {}
 Minigolf.Holes.Cache = {}
 
 function Minigolf.Holes.GetByName(findHoleName)
@@ -20,7 +20,13 @@ function Minigolf.Holes.GetByName(findHoleName)
 		end
 	end
 
-	return Minigolf.Holes.Cache[hole]
+	return nil
+end
+
+function Minigolf.Holes.GetStartByNetworkID(networkID)
+	local hole = Minigolf.Holes.NetworkIDCache[networkID]
+
+	return hole, IsValid(hole) and hole:GetBall() or nil
 end
 
 function Minigolf.Holes.ResetForPlayer(player)
@@ -42,6 +48,7 @@ function Minigolf.Holes.Start(player, ball, start)
 		net.WriteUInt(timeLimit, 32)
 	net.Broadcast()
 
+	Minigolf.Holes.NetworkIDCache[player:SteamID()] = start
 	hook.Call("Minigolf.PlayerStarted", Minigolf.GM(), player, start, ball)
 
   Minigolf.Holes.CreateTimeLimit(timeLimit, player, ball, start)
@@ -76,6 +83,7 @@ function Minigolf.Holes.End(player, ball, start, goal)
 
 		player:SetPlayerBall(nil)
 		player:SetActiveHole(nil)
+		Minigolf.Holes.NetworkIDCache[player:SteamID()] = nil
 
 		if(customMessage ~= false)then
 			Minigolf.Messages.Send(player, player:Nick() .. " made it to the hole '" .. goal:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes), "Ã")

@@ -18,12 +18,12 @@ local TEAM_OPEN_INTERVAL = 1.5
 local lastOpen = 0
 
 local function hideMenu()
-	TEAM_MENU:Remove()
-	TEAM_MENU = nil
+	Minigolf.Menus.Team:Remove()
+	Minigolf.Menus.Team = nil
 end
 
 local function showMenu(justLeftOtherTeam)
-	if(IsValid(TEAM_MENU))then
+	if(IsValid(Minigolf.Menus.Team))then
 		hideMenu()
 	end
 
@@ -37,13 +37,13 @@ local function showMenu(justLeftOtherTeam)
 	or team == TEAM_MINIGOLF_SPECTATORS 
 	-- Are in a gmod default team like the Joining/Connecting or (wrong) Spectators team
 	or not Minigolf.Teams.All[team])then
-		TEAM_MENU = vgui.Create("Minigolf.TeamMenu")
-		TEAM_MENU:BuildTeamMenu()
-		TEAM_MENU:MakePopup()
+		Minigolf.Menus.Team = vgui.Create("Minigolf.TeamMenu")
+		Minigolf.Menus.Team:BuildTeamMenu()
+		Minigolf.Menus.Team:MakePopup()
 	else
-		TEAM_MENU = vgui.Create("Minigolf.TeamMenu")
-		TEAM_MENU:BuildTeamMenu(true)
-		TEAM_MENU:MakePopup()
+		Minigolf.Menus.Team = vgui.Create("Minigolf.TeamMenu")
+		Minigolf.Menus.Team:BuildTeamMenu(true)
+		Minigolf.Menus.Team:MakePopup()
 	end
 end
 
@@ -86,14 +86,15 @@ end)
 
 -- When a player joins a team
 hook.Add("Minigolf.PlayerJoinTeam", "Minigolf.MinigolfPlayerJoinTeamHideMenu", function(player)
-	if(IsValid(player) and IsValid(LocalPlayer()) and player == LocalPlayer() and IsValid(TEAM_MENU))then
+	if(IsValid(player) and IsValid(LocalPlayer()) and player == LocalPlayer() and IsValid(Minigolf.Menus.Team))then
 		hideMenu()
 	end
 end)
 
 hook.Add("Minigolf.ShouldDrawHolePanel", "Minigolf.DontDrawHolePanelWhilePlaying", function(start)
 	local activeTeam = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+
 	if(activeTeam == LocalPlayer():Team())then
-		return true
+		return false
 	end
 end)

@@ -35,19 +35,18 @@ if(SERVER)then AddCSLuaFile("sh_util.lua") end
 include("sh_util.lua")
 
 -- Automatically include everything in these directories
-Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "libraries/"))
-Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "core/"))
-Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "vgui/"))
+Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "libraries/"), "lua/")
+Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "core/"), "lua/")
+Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "vgui/"), "lua/")
 
 if(SERVER)then
-	AddCSLuaFile("minigolf/cl_init.lua")
-	include("minigolf/sv_init.lua")
+	AddCSLuaFile("cl_init.lua")
+	include("sv_init.lua")
 
 	AddCSLuaFile("sh_hooks.lua")
 	include("sv_hooks.lua")
 elseif(CLIENT)then
-	include("cl_hooks.lua")
-	include("minigolf/cl_init.lua")
+	include("cl_init.lua")
 end
 
 include("sh_hooks.lua")

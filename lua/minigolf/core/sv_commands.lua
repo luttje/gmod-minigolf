@@ -8,8 +8,8 @@ hook.Add("PlayerSay", "Minigolf.ProcessCommands", function(player, text)
     return
   end
 
-  local firstSpace = string.find(text, " ", prefixLength, true)
-  local command = string.Trim(string.sub(text, prefixLength, firstSpace))
+  local firstSpace = string.find(text, " ", prefixLength + 1, true)
+  local command = string.Trim(string.sub(text, prefixLength + 1))
   local callback = Minigolf.Commands.GetCallback(command)
 
   if(not callback)then

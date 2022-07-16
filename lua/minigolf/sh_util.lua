@@ -23,13 +23,16 @@ function Minigolf.PathCombine(...)
 end
 
 ---@param directory string Which directory should be loaded
+---@param baseFolder string|nil Optional basefolder instead of gamemodes/ (e.g: lua/)
 ---@param preLoad function|nil Optional function to be called right before loading the file
 ---@param postLoad function|nil Optional function to be called right after loading the file
-function Minigolf.IncludeDirectory(directory, preLoad, postLoad)
-  local gamemodeDirectory = "gamemodes/"
+function Minigolf.IncludeDirectory(directory, baseFolder, preLoad, postLoad)
+  if(baseFolder == nil)then
+    baseFolder = "gamemodes/"
+  end
 
-  if(directory:StartWith(gamemodeDirectory))then
-    directory = directory:sub(gamemodeDirectory:len() + 1)
+  if(directory:StartWith(baseFolder))then
+    directory = directory:sub(baseFolder:len() + 1)
   end
   
   local files, directories = file.Find(directory .. "/*", "LUA")

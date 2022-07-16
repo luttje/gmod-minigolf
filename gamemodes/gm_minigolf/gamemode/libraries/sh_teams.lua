@@ -2,7 +2,7 @@ Minigolf.Teams = Minigolf.Teams or {}
 Minigolf.Teams.All = Minigolf.Teams.All or {}
 Minigolf.Teams.MenuKey = KEY_T
 
-function Minigolf.Teams.GetOtherPlayers(player)
+function Minigolf.Teams.GetOtherPlayersOnTeam(player)
 	local teamPlayers = team.GetPlayers(player:Team())
 	local otherPlayers = {}
 
@@ -22,9 +22,11 @@ function Minigolf.Teams.Update(owner, name, color, password, updateID)
   local teamID = updateID or #Minigolf.Teams.All + 1
 
 	Minigolf.Teams.All[teamID] = {
+		ID = teamID,
 		Name = name,
 		Password = password or false,
 		TeamOwner = owner or false,
+		MemberNetworkIds = {},
 		Index = teamID,
 		Color = color,
 	}

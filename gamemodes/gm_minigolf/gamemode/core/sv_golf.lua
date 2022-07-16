@@ -34,7 +34,8 @@ hook.Add("Minigolf.CanStartPlaying", "Minigolf.RestrictWhenTeamsPlaying", functi
 
 	-- Don't allow other teams to play until the active team is done
 	local activeTeam = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
-	if(activeTeam and player:Team() ~= activeTeam)then
+
+	if(activeTeam > Minigolf.NO_TEAM_PLAYING and player:Team() ~= activeTeam)then
 		Minigolf.Messages.Send(player, "Another team is already playing this hole", nil, Minigolf.TEXT_EFFECT_DANGER)
 
 		return false

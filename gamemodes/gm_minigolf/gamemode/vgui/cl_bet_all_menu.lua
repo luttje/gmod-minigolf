@@ -16,12 +16,12 @@
 -- 	actionButton:SetPos(Minigolf.PADDING, Minigolf.PADDING)
 -- 	actionButton.DoClick = function(btn)
 -- 		self:Remove()
--- 		if(IsValid(BET_MENU))then
--- 			BET_MENU:Remove()
+-- 		if(IsValid(Minigolf.Menus.Betting))then
+-- 			Minigolf.Menus.Betting:Remove()
 -- 		end
 	
--- 		BET_MENU = vgui.Create("Minigolf.BetMenu", GetHUDPanel())
--- 		BET_MENU:MakePopup()
+-- 		Minigolf.Menus.Betting = vgui.Create("Minigolf.BetMenu", GetHUDPanel())
+-- 		Minigolf.Menus.Betting:MakePopup()
 -- 	end
 -- 	self.actionButton = actionButton
 	

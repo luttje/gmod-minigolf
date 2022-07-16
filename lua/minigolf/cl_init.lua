@@ -1,3 +1,4 @@
+Minigolf.Menus = {}
 Minigolf.Convars.ShowHints = CreateClientConVar("minigolf_show_hints", "1", true, false, "Whether to show hints on screen in Minigolf")
 
 -- Fonts

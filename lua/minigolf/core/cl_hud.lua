@@ -29,7 +29,8 @@ hook.Add("HUDPaint", "Minigolf.DrawHoleStarts", function()
 					ent._HolePanel._Alphad = false
 				end
 				
-			local shouldDrawHolePanel = hook.Call("Minigolf.ShouldDrawHolePanel", Minigolf.GM(), ent)
+				local shouldDrawHolePanel = hook.Call("Minigolf.ShouldDrawHolePanel", Minigolf.GM(), ent)
+				
 				if(shouldDrawHolePanel ~= nil and shouldDrawHolePanel == false)then
 					ent._HolePanel:SetAlpha(0)
 					return

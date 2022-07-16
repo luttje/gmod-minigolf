@@ -68,7 +68,7 @@ function ENT:Use(activator, caller)
 			if(IsValid(ballPlayer))then
 				Minigolf.Messages.Send(activator, "You can not play on this hole as '" .. ballPlayer:Nick() .. "' is already playing'!", nil, Minigolf.TEXT_EFFECT_DANGER)
 			else
-				ball:Remove()
+				Minigolf.Holes.End(nil, ball, ball:GetStart())
 				Minigolf.Messages.Send(activator, "A player disconnected while playing here. Removed their ball, try again to start playing.", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 			end
 		end

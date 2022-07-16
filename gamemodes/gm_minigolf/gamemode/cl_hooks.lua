@@ -63,14 +63,14 @@ hook.Add("Minigolf.AdjustHintsTexts", "Minigolf.AdjustHintsTexts", function(text
 	--table.insert(texts, "Press 'B' or type /bet to see and place bets")
 end)
 
-hooks.Add("Minigolf.AdjustRebuildHolePanel", "Minigolf.AdjustRebuildHolePanel", function(holePanel, hole, strokes)
+hook.Add("Minigolf.AdjustRebuildHolePanel", "Minigolf.AdjustRebuildHolePanel", function(holePanel, hole, strokes)
 	local activeTeam = hole:GetNWInt("ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 
 	if(currentSwappingTime ~= nil)then
 		holePanel:SetAlpha(200 + (55 * math.sin(CurTime())))
 		holePanel.hintLabel:SetText("Waiting for a team member to start playing\nYou have " .. currentSwappingTime .. " seconds to switch player!")
 		holePanel.hintLabel:SetContentAlignment(5) -- TODO: not working
-	elseif(activeTeam ~= LocalPlayer():Team())then
+	elseif(activeTeam > Minigolf.NO_TEAM_PLAYING and activeTeam ~= LocalPlayer():Team())then
 		holePanel.hintLabel:SetText(team.GetName(activeTeam) .. " is currently playing this hole")
 	elseif(activeTeam == LocalPlayer():Team())then
 		holePanel.hintLabel:SetText("Your team is currently playing this hole.")

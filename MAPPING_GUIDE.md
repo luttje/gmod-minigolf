@@ -67,6 +67,18 @@ Luttje: [golf_dev_minimal_v3.vmf](https://mega.nz/file/plRx0QhI#fRTKcXxUoKOdpZDc
   * When the ball touches this brush the ball is considered Out-Of-Bounds. The ball will be reset to the last valid position.
   * There are no properties for this entity.
 
+## Additional KeyValues
+
+You can control more behaviour by applying any of the following key/value pairs on entities.
+
+* (Key) `minigolf_collide`
+  * Possible values:
+    * `except_players`: Collide with everything, except players
+    * `only_balls`: Collide only with minigolf balls
+    * `only_others`: Collide only with other entities that have `only_others` (or `balls_and_others`) as a value for this property
+    * `balls_and_others`: Collide with balls and entities with `only_others` or `balls_and_others` as a value for this property
+  * Useful for func_physboxes that should only interact with balls or other physboxes
+
 
 ## Tips & Problems
 

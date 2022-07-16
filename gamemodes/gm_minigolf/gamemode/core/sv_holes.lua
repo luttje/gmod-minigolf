@@ -1,5 +1,6 @@
 util.AddNetworkString("Minigolf.SetSwapTimeLimit")
 util.AddNetworkString("Minigolf.EndSwapTimeLimit")
+util.AddNetworkString("Minigolf.PlayerShowScoreboard")
 
 function Minigolf.Holes.EndSwapTimer(teamPlayers, start)
 	local holeName = start:GetUniqueHoleName()
@@ -37,7 +38,8 @@ function Minigolf.Holes.CreateTimeLimitSwap(timeLimit, player, teamID, start, st
 	local isLastPlayer = true
 
 	for _, otherPly in pairs(teamPlayers) do
-		if(otherPly:GetHoleScore(start) == Minigolf.HOLE_NOT_PLAYED)then
+		if(otherPly ~= player 
+		and otherPly:GetHoleScore(start) == Minigolf.HOLE_NOT_PLAYED)then
 			isLastPlayer = false
 			break
 		end
@@ -55,32 +57,34 @@ function Minigolf.Holes.CreateTimeLimitSwap(timeLimit, player, teamID, start, st
 		if(IsValid(player))then
 			-- Indicate we are waiting for someone to take their turn
 			player:SetHoleWaitingForSwap(start)
-
-			-- Remove the play timelimit timer
-			timer.Remove((player:AccountID() or player:UserID()) .. holeName .. "TimeLimit")
 		end
 
 		-- Start the timelimit for switching hole
 		timer.Create(holeName .. "SwapTimeLimit", timeLimit, 1, function()
-			local wereDisqualified = false
+			local disqualifiedPlayer = nil
+			
+			-- Refresh the players on this team (some may have left)
+			teamPlayers = team.GetPlayers(teamID)
 
 			Minigolf.Holes.EndSwapTimer(teamPlayers, start)
 
 			-- Penalize the players by disqualifying them
 			for _, otherPly in pairs(teamPlayers) do
-				if(IsValid(otherPly))then
+				if(IsValid(otherPly) and otherPly ~= player)then
 					if(otherPly:GetHoleScore(start) == Minigolf.HOLE_NOT_PLAYED)then
 						Minigolf.Messages.Send(otherPly, "You have been disqualified for taking too long to take your turn on '".. start:GetHoleName() .."'!", Minigolf.TEXT_EFFECT_ATTENTION)
 				
 						otherPly:SetHoleScore(start, Minigolf.HOLE_DISQUALIFIED)
 
-						wereDisqualified = true
+						disqualifiedPlayer = otherPly
+						break
 					end
 				end
 			end
 
-			if(wereDisqualified)then
-				Minigolf.Messages.Send(teamPlayers, "Some players took too long to take their turn and got disqualified")
+			if(disqualifiedPlayer ~= nil)then
+				print(disqualifiedPlayer:Nick() .. " took too long to take their turn and got disqualified")
+				Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(disqualifiedPlayer), disqualifiedPlayer:Nick() .. " took too long to take their turn and got disqualified")
 			end
 
 			Minigolf.Holes.ProcessTeamEnd(teamID, start)
@@ -140,17 +144,19 @@ hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.SwapTeamMemberOnFinishHole", f
 	local teamID = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 	local teamPlayers = team.GetPlayers(teamID)
 
+	if(IsValid(ball))then
+		ball:Remove()
+	end
+
 	for _, otherPly in pairs(teamPlayers) do
-		if(otherPly:GetHoleScore(start) == Minigolf.HOLE_NOT_PLAYED)then
+		if(otherPly ~= player and otherPly:GetHoleScore(start) == Minigolf.HOLE_NOT_PLAYED)then
 			Minigolf.Holes.CreateTimeLimitSwap(30, player, teamID, start, strokes)
 
-			if(IsValid(ball))then
-				ball:Remove()
-			end
-
+			-- Not everyone has played yet, so let someone swap in.
 			return
 		end
 	end
 
+	-- End this teams play here
 	Minigolf.Holes.ProcessTeamEnd(teamID, start)
 end)

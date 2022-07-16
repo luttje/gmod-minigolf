@@ -1,9 +1,9 @@
-hook.Add("PlayerDisconnected", "Minigolf.ActivePlayerLeavesResetHole", function(player)
-	local ball = player:GetPlayerBall()
+gameevent.Listen( "player_disconnect" )
+hook.Add("player_disconnect", "Minigolf.ActivePlayerLeavesResetHole", function(data)
+	local start, ball = Minigolf.Holes.GetStartByNetworkID(data.networkid)
 
-	if(IsValid(player) and IsValid(ball))then
-		local start = ball:GetStart()
-		Minigolf.Holes.End(player, ball, start)
+	if(IsValid(start))then
+		Minigolf.Holes.End(nil, ball, start)
 	end
 end)
 
@@ -58,5 +58,15 @@ hook.Add("Minigolf.CanStartPlaying", "Minigolf.DontAllowAlreadyPlayed", function
 		Minigolf.Messages.Send(player, "You already played this hole and got " .. holeStrokes .. " " .. Minigolf.Text.Pluralize("stroke", holeStrokes) .. " on it")
 
 		return false
+	end
+end)
+
+hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.ClearTimeLimit", function(player, ball, start, strokes)
+	local holeName = start:GetUniqueHoleName()
+
+	-- The player may have left our team waiting
+	if(IsValid(player))then
+		-- Remove the play timelimit timer
+		timer.Remove((player:AccountID() or player:UserID()) .. holeName .. "TimeLimit")
 	end
 end)

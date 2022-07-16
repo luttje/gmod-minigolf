@@ -16,7 +16,7 @@ local playerLibrary = player
 
 local logoMaterial = Material("minigolf/logo_compact.png")
 
-SCOREBOARD_PANEL = SCOREBOARD_PANEL
+Minigolf.Menus.Scoreboard = Minigolf.Menus.Scoreboard
 
 local PANEL = {}
 
@@ -270,6 +270,7 @@ function PANEL:LayoutTeamInfo(w, h, rowY, teamID)
 			column:SetPos((i-1) * HOLE_WIDTH, rowY * BAR_HEIGHT)
 
 			local activeTeam = hole:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+			
 			if(activeTeam == teamPlayer:Team())then
 				column:SetHighlight(true)
 			end
@@ -349,7 +350,7 @@ function PANEL:Paint(w, h)
 
 	surface.DrawTexturedRect(w * .5 - (logoW * .5), -logoH - Minigolf.PADDING, logoW, logoH)
 
-	if(SCOREBOARD_PANEL.lastHole ~= nil)then
+	if(Minigolf.Menus.Scoreboard.lastHole ~= nil)then
 		draw.SimpleText("Press your scoreboard key to close this scoreboard", "MinigolfMainBold", w * .5, h + Minigolf.PADDING * 2, Minigolf.COLOR_LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 end
@@ -360,8 +361,8 @@ function PANEL:OnKeyCodeReleased(key)
 
 	-- If the scoreboard key is pressed then close the scoreboard
 	if(key == _G[scoreKey] or key == KEY_ESCAPE)then
-		if(IsValid(SCOREBOARD_PANEL))then
-			SCOREBOARD_PANEL:Remove()
+		if(IsValid(Minigolf.Menus.Scoreboard))then
+			Minigolf.Menus.Scoreboard:Remove()
 			gui.HideGameUI()
 		end
 	end
@@ -376,13 +377,13 @@ net.Receive("Minigolf.PlayerShowScoreboard", function()
 	local clearLocalScores = net.ReadBool()
 
 	--TODO: Be able to use mouse, however for game fluidity closing with TAB is preferable
-	if(not IsValid(SCOREBOARD_PANEL))then
-		SCOREBOARD_PANEL = vgui.Create("Minigolf.ScoreBoard")
-		SCOREBOARD_PANEL.lastHole = hole
-		SCOREBOARD_PANEL.scoresOverride = holeScores
+	if(not IsValid(Minigolf.Menus.Scoreboard))then
+		Minigolf.Menus.Scoreboard = vgui.Create("Minigolf.ScoreBoard")
+		Minigolf.Menus.Scoreboard.lastHole = hole
+		Minigolf.Menus.Scoreboard.scoresOverride = holeScores
 
-		SCOREBOARD_PANEL:MakePopup()
-		SCOREBOARD_PANEL:Restore()
+		Minigolf.Menus.Scoreboard:MakePopup()
+		Minigolf.Menus.Scoreboard:Restore()
 	end
 
 	if(clearLocalScores)then
@@ -394,15 +395,15 @@ end)
 
 -- When the scoreboard needs to be shown
 hook.Add("ScoreboardShow", "Minigolf.ScoreboardShowBoard", function()
-	if(IsValid(SCOREBOARD_PANEL))then
-		SCOREBOARD_PANEL:Remove()
+	if(IsValid(Minigolf.Menus.Scoreboard))then
+		Minigolf.Menus.Scoreboard:Remove()
 
 		return false
 	end
 
-	SCOREBOARD_PANEL = vgui.Create("Minigolf.ScoreBoard")
-	SCOREBOARD_PANEL:MakePopup()
-	SCOREBOARD_PANEL:Restore()
+	Minigolf.Menus.Scoreboard = vgui.Create("Minigolf.ScoreBoard")
+	Minigolf.Menus.Scoreboard:MakePopup()
+	Minigolf.Menus.Scoreboard:Restore()
 
 	-- Override default
 	return false
@@ -410,7 +411,7 @@ end)
 
 -- When the scoreboard can be be hidden
 hook.Add("ScoreboardHide", "Minigolf.ScoreboardHideBoard", function()
-	if(IsValid(SCOREBOARD_PANEL))then
-		SCOREBOARD_PANEL:Close()
+	if(IsValid(Minigolf.Menus.Scoreboard))then
+		Minigolf.Menus.Scoreboard:Close()
 	end
 end)

@@ -10,17 +10,17 @@
 -- local lastOpen = 0
 
 -- local function hideMenu()
--- 	BET_MENU:Remove()
--- 	BET_MENU = nil
+-- 	Minigolf.Menus.Betting:Remove()
+-- 	Minigolf.Menus.Betting = nil
 -- end
 
 -- local function showMenu(justLeftOtherTeam)
--- 	if(IsValid(BET_MENU))then
+-- 	if(IsValid(Minigolf.Menus.Betting))then
 -- 		hideMenu()
 -- 	end
 
--- 	BET_MENU = vgui.Create("Minigolf.BetMenu")
--- 	BET_MENU:MakePopup()
+-- 	Minigolf.Menus.Betting = vgui.Create("Minigolf.BetMenu")
+-- 	Minigolf.Menus.Betting:MakePopup()
 -- end
 
 -- -- Add a command to open the menu
@@ -49,12 +49,12 @@
 -- 	actionButton:SetPos(Minigolf.PADDING, Minigolf.PADDING)
 -- 	actionButton.DoClick = function(btn)
 -- 		self:Remove()
--- 		if(IsValid(BET_MENU))then
--- 			BET_MENU:Remove()
+-- 		if(IsValid(Minigolf.Menus.Betting))then
+-- 			Minigolf.Menus.Betting:Remove()
 -- 		end
 	
--- 		BET_MENU = vgui.Create("Minigolf.BetOverviewMenu", GetHUDPanel())
--- 		BET_MENU:MakePopup()
+-- 		Minigolf.Menus.Betting = vgui.Create("Minigolf.BetOverviewMenu", GetHUDPanel())
+-- 		Minigolf.Menus.Betting:MakePopup()
 -- 	end
 -- 	self.actionButton = actionButton
 	

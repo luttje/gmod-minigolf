@@ -274,8 +274,7 @@ hook.Add("PlayerSpawn", "Minigolf.SetInitialTeam", function(player)
   end
 end)
 
-hook.Add("PlayerDisconnected", "Minigolf.ActiveTeamPlayerLeavesReset", function(player)
-	if(IsValid(player))then
-		Minigolf.Teams.Leave(player)
-	end
+gameevent.Listen( "player_disconnect" )
+hook.Add("player_disconnect", "Minigolf.ActiveTeamPlayerLeavesReset", function(data)
+	Minigolf.Teams.LeaveByNetworkID(data.networkid)
 end)
