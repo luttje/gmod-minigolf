@@ -70,3 +70,22 @@ hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.ClearTimeLimit", function(play
 		timer.Remove((player:AccountID() or player:UserID()) .. holeName .. "TimeLimit")
 	end
 end)
+
+hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.ResetHolesForFinishedPlayers", function(player, ball, start, strokes)
+	local holeCount = 0
+
+	for holeName, holeScore in pairs(player:GetAllHoleScores()) do
+		if(holeScore ~= Minigolf.HOLE_NOT_PLAYED)then
+			holeCount = holeCount + 1
+		end
+	end
+
+  if(holeCount == Minigolf.Holes.TotalCount)then
+	  hook.Call("Minigolf.PlayerFinishedAllHoles", Minigolf.GM(), player, start)
+	end
+end)
+
+hook.Add("Minigolf.PlayerFinishedAllHoles", "Minigolf.ResetWhenPlayerFinishedAllHoles", function(player, lastHole)
+	Minigolf.Holes.ResetForPlayer(player)
+	Minigolf.Messages.Send(nil, player:Nick() .. " has finished all the holes!")
+end)

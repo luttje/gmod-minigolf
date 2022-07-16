@@ -93,52 +93,38 @@ function Minigolf.Holes.CreateTimeLimitSwap(timeLimit, player, teamID, start, st
 end
 
 function Minigolf.Holes.ProcessTeamEnd(teamID, start)
-  local minHolesPlayed = 9999999 -- To find which player played the least holes
 	local teamPlayers = team.GetPlayers(teamID)
 	local teamName = team.GetName(teamID)
-	local holeName = start:GetUniqueHoleName()
-
-	for _, otherPly in pairs(teamPlayers) do
-		local plyHoleCount = 0
-		for holeName, holeScore in pairs(otherPly:GetAllHoleScores()) do
-			if(holeScore ~= Minigolf.HOLE_NOT_PLAYED)then
-				plyHoleCount = plyHoleCount + 1
-			end
-		end
-
-		if(plyHoleCount < minHolesPlayed)then
-			minHolesPlayed = plyHoleCount
-		end
-	end
 
 	start:SetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 
-	-- Check if the player with the least holes played has actually played all holes (thus the team is finished)
-  local allHolesPlayed = minHolesPlayed == Minigolf.Holes.TotalCount
+  hook.Call("Minigolf.TeamFinishedHole", Minigolf.GM(), teamID, teamPlayers, start)
 
-  hook.Call("Minigolf.TeamFinishedHole", Minigolf.GM(), teamID, teamPlayers, start, allHolesPlayed)
-
-	-- Check if all holes have been played
-	if(allHolesPlayed)then
-		Minigolf.Messages.Send(nil, "Team '" .. teamName .. "' has finished all the holes! They can restart.")
-
-		for _,teamPlayer in pairs(teamPlayers) do
-			net.Start("Minigolf.PlayerShowScoreboard")
-			net.WriteEntity(start)
-			net.WriteTable(teamPlayer:GetAllHoleScores())
-			net.WriteBool(true) -- Clear the local scores (so flag checkmarks reset)
-			net.Send(teamPlayer)
-
-			teamPlayer:PlaySound("plats/elevbell1.wav")
-		end
-
-		for _, teamMember in pairs(teamPlayers) do
-			Minigolf.Holes.ResetForPlayer(teamMember)
-		end
-	else
-		Minigolf.Messages.Send(nil, "Team '" .. teamName .. "' is done playing at '" .. start:GetHoleName() .. "'")
-	end
+	Minigolf.Messages.Send(nil, "Team '" .. teamName .. "' is done playing at '" .. start:GetHoleName() .. "'")
 end
+
+hook.Remove("Minigolf.PlayerFinishedAllHoles", "Minigolf.ResetWhenPlayerFinishedAllHoles")
+hook.Add("Minigolf.PlayerFinishedAllHoles", "Minigolf.ResetTeamWhenPlayerFinishedAllHoles", function(player, lastHole) 
+	local teamID = player:Team()
+	local teamPlayers = team.GetPlayers(teamID)
+	local teamName = team.GetName(teamID)
+
+	Minigolf.Messages.Send(nil, "Team '" .. teamName .. "' has finished all the holes!")
+
+	for _,teamPlayer in pairs(teamPlayers) do
+		net.Start("Minigolf.PlayerShowScoreboard")
+		net.WriteEntity(lastHole)
+		net.WriteTable(teamPlayer:GetAllHoleScores())
+		net.WriteBool(true) -- Clear the local scores (so flag checkmarks reset)
+		net.Send(teamPlayer)
+
+		teamPlayer:PlaySound("plats/elevbell1.wav")
+	end
+
+	for _, teamMember in pairs(teamPlayers) do
+		Minigolf.Holes.ResetForPlayer(teamMember)
+	end
+end)
 
 hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.SwapTeamMemberOnFinishHole", function(player, ball, start, strokes)
 	local teamID = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)

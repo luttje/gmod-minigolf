@@ -5,8 +5,6 @@ local finishSounds = {
 }
 
 hook.Add("Minigolf.PlayerFinished", "Minigolf.PlayerFinished", function(player, start, strokes)
-	player._LimitTimeLeft = nil
-
 	-- If it's a teammate, then player the end sound
 	if(player:Team() == LocalPlayer():Team())then
 		surface.PlaySound(table.Random(finishSounds))
@@ -22,21 +20,6 @@ net.Receive("Minigolf.SetSwapTimeLimit", function()
 	LocalPlayer()._LimitTimeLeft = UnPredictedCurTime() + timeLimit
 end)
 
--- Called to inform of the owner of a ball
-net.Receive("Minigolf.SetPlayerTimeLimit", function()
-	local owner = net.ReadEntity()
-	local timeLimit = net.ReadUInt(32)
-
-	LocalPlayer()._LimitTimeLeftForSwap = false
-
-	if(not IsValid(owner))then
-		-- Ignore data about players we can't see
-		return
-	end
-
-	owner._LimitTimeLeft = UnPredictedCurTime() + timeLimit
-end)
-
 -- Called to inform swapping has occurred
 net.Receive("Minigolf.EndSwapTimeLimit", function()
 	local start = net.ReadEntity() -- Note: could be null for players far away
@@ -45,3 +28,6 @@ net.Receive("Minigolf.EndSwapTimeLimit", function()
 	LocalPlayer()._LimitTimeLeft = nil
 end)
 
+hook.Add("Minigolf.PlayerTimeLimit", "Minigolf.ClearTimeLimitForSwapOnTimeLimit", function(owner, timeLimit)
+	LocalPlayer()._LimitTimeLeftForSwap = false
+end)
