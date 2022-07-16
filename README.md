@@ -2,7 +2,9 @@
 
 # About Minigolf
 
-A free of charge minigolf gamemode for Garry's Mod. Play a relaxing game of minigolf/putt-putt alone or in a team.
+A free of charge minigolf addon for Garry's Mod. Play a relaxing game of minigolf/putt-putt on any compatible map.
+
+You can play the included gamemode (gm_minigolf) or load any compatible map on Sandbox (or other gamemodes).
 
 
 ## Gifs
@@ -10,7 +12,7 @@ A free of charge minigolf gamemode for Garry's Mod. Play a relaxing game of mini
 __⛳ Play holes built by a mapper ([see how in the mapping guide](./MAPPING_GUIDE.md))__
 ![How golfing works](.github/assets/minigolf.gif)
 
-__💯 Play those holes with friends in a customizable team (T) and check your scores on the scoreboard (TAB)__
+__💯 Play those holes with friends in a customizable team (T) and check your scores on the scoreboard (TAB)__ *(Only available in the gamemode)*
 ![Configuring a team](.github/assets/teams_menu.gif)
 
 __😈 Adjustable speed Windmills and other track obstacles for your friends to annoy you with__
