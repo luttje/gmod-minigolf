@@ -2,8 +2,8 @@ local gamemode = engine.ActiveGamemode()
 
 if(gamemode == "gm_minigolf")then
   -- When a minigolf ball hits the goal give tokens
-  hook.Add("MinigolfPlayerFinishedHole", "MyAddon.RewardTokensToPlayer", function(player, ball, start, strokes)
-    if(strokes == HOLE_DISQUALIFIED)then
+  hook.Add("Minigolf.PlayerFinishedHole", "MyAddon.RewardTokensToPlayer", function(player, ball, start, strokes)
+    if(strokes == Minigolf.HOLE_DISQUALIFIED)then
       return
     end
 
@@ -64,7 +64,7 @@ if(gamemode == "gm_minigolf")then
     end
 
     if(reward > 0 and IsValid(player))then
-      Minigolf.Messages.Send(player, string.format("You got rewarded %d %s for your %s", reward, PS.Config.PointsName, named), nil, TEXT_EFFECT_CASH)
+      Minigolf.Messages.Send(player, string.format("You got rewarded %d %s for your %s", reward, PS.Config.PointsName, named), nil, Minigolf.TEXT_EFFECT_CASH)
       player:PS_GivePoints(reward)
     end
   end)

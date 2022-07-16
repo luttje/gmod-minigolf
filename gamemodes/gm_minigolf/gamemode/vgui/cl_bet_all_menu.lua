@@ -1,5 +1,5 @@
 
--- local BAR_HEIGHT = PADDING * 4
+-- local BAR_HEIGHT = Minigolf.PADDING * 4
 -- local scrW, scrH = ScrW(), ScrH()
 -- local PANEL = {}
 
@@ -12,16 +12,16 @@
 -- 	local actionButton = vgui.Create("MinigolfActionButton", self)
 -- 	actionButton:SetText("Make new bet")
 -- 	actionButton:SizeToContents()
--- 	actionButton:SetSize(actionButton:GetWide() + (PADDING * 2), actionButton:GetTall() + (PADDING))
--- 	actionButton:SetPos(PADDING, PADDING)
+-- 	actionButton:SetSize(actionButton:GetWide() + (Minigolf.PADDING * 2), actionButton:GetTall() + (Minigolf.PADDING))
+-- 	actionButton:SetPos(Minigolf.PADDING, Minigolf.PADDING)
 -- 	actionButton.DoClick = function(btn)
 -- 		self:Remove()
--- 		if(IsValid(BET_MENU))then
--- 			BET_MENU:Remove()
+-- 		if(IsValid(Minigolf.Menus.Betting))then
+-- 			Minigolf.Menus.Betting:Remove()
 -- 		end
 	
--- 		BET_MENU = vgui.Create("Minigolf.BetMenu", GetHUDPanel())
--- 		BET_MENU:MakePopup()
+-- 		Minigolf.Menus.Betting = vgui.Create("Minigolf.BetMenu", GetHUDPanel())
+-- 		Minigolf.Menus.Betting:MakePopup()
 -- 	end
 -- 	self.actionButton = actionButton
 	
@@ -29,12 +29,12 @@
 -- 	closeButton.DoClick = function(btn)
 -- 		self:Remove()
 -- 	end
--- 	closeButton:SetPos(width - PADDING - closeButton:GetWide(), PADDING)
+-- 	closeButton:SetPos(width - Minigolf.PADDING - closeButton:GetWide(), Minigolf.PADDING)
 -- 	self.closeButton = closeButton
 
 -- 	local bettingList = vgui.Create("DListView", self)
--- 	bettingList:SetPos(PADDING, BAR_HEIGHT + PADDING)
--- 	bettingList:SetWide(width - PADDING * 2)
+-- 	bettingList:SetPos(Minigolf.PADDING, BAR_HEIGHT + Minigolf.PADDING)
+-- 	bettingList:SetWide(width - Minigolf.PADDING * 2)
 -- 	bettingList:SetTall(200)
 -- 	bettingList:SetMultiSelect(false)
 -- 	bettingList:AddColumn("Bets on Player")
@@ -46,7 +46,7 @@
 -- 		bettingList._Index = betIndex
 -- 	end
 	
--- 	self:SetTall(PADDING + bettingList:GetTall() + PADDING + BAR_HEIGHT)
+-- 	self:SetTall(Minigolf.PADDING + bettingList:GetTall() + Minigolf.PADDING + BAR_HEIGHT)
 -- 	self:Center()
 -- end
 
@@ -55,7 +55,7 @@
 
 -- 	draw.RoundedBox(16, 0, 0, w, h, Color(255,255,255,255))
 
--- 	draw.SimpleText("Overview of bets on upcoming players", "MinigolfMainBold", w * .5, PADDING * 2, COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+-- 	draw.SimpleText("Overview of bets on upcoming players", "MinigolfMainBold", w * .5, Minigolf.PADDING * 2, Minigolf.COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 -- end
 
 

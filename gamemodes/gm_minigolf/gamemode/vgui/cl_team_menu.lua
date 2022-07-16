@@ -9,48 +9,48 @@ function PANEL:BuildTeamMenu(isEditting)
 	closeButton.DoClick = function(btn)
 		self:Remove()
 	end
-	closeButton:SetPos(width - PADDING - closeButton:GetWide(), PADDING)
+	closeButton:SetPos(width - Minigolf.PADDING - closeButton:GetWide(), Minigolf.PADDING)
 	self.closeButton = closeButton
 	
 	self.startTime = UnPredictedCurTime()
 	
 	local teamLabel = vgui.Create("DLabel", self)
-	teamLabel:SetPos(PADDING, 22 + PADDING)
+	teamLabel:SetPos(Minigolf.PADDING, 22 + Minigolf.PADDING)
 	teamLabel:SetText("Your team name:")
-	teamLabel:SetTextColor(COLOR_DARK)
+	teamLabel:SetTextColor(Minigolf.COLOR_DARK)
 	teamLabel:SizeToContents()
 	
 	local posX, posY = teamLabel:GetPos()
-	local offsetX = posX + teamLabel:GetWide() + PADDING
+	local offsetX = posX + teamLabel:GetWide() + Minigolf.PADDING
 	local teamEntry = vgui.Create("DTextEntry", self)
 	teamEntry:SetEditable(true)
 	teamEntry:SetPos(offsetX, posY)
-	teamEntry:SetWide(width - offsetX - PADDING)
+	teamEntry:SetWide(width - offsetX - Minigolf.PADDING)
 
 	self.teamEntry = teamEntry
 	
 	local passwordLabel = vgui.Create("DLabel" , self)
-	passwordLabel:SetPos(PADDING, posY + teamEntry:GetTall() + PADDING)
+	passwordLabel:SetPos(Minigolf.PADDING, posY + teamEntry:GetTall() + Minigolf.PADDING)
 	passwordLabel:SetText("Password (enter nothing to keep the same):")
-	passwordLabel:SetTextColor(COLOR_DARK)
+	passwordLabel:SetTextColor(Minigolf.COLOR_DARK)
 	passwordLabel:SizeToContents()
 
 	posX, posY = passwordLabel:GetPos()
-	offsetX = posX + passwordLabel:GetWide() + PADDING
+	offsetX = posX + passwordLabel:GetWide() + Minigolf.PADDING
 	
 	local passwordEntry = vgui.Create("DTextEntry", self)
 	passwordEntry:SetEditable(true)
 	passwordEntry:SetPos(offsetX, posY)
-	passwordEntry:SetWide(width - offsetX - PADDING)
+	passwordEntry:SetWide(width - offsetX - Minigolf.PADDING)
 	
 	self.passwordEntry = passwordEntry
 	
   posX, posY = passwordLabel:GetPos()
 
 	local colorLabel = vgui.Create("DLabel" , self)
-	colorLabel:SetPos(PADDING, posY + passwordLabel:GetTall() + PADDING)
+	colorLabel:SetPos(Minigolf.PADDING, posY + passwordLabel:GetTall() + Minigolf.PADDING)
 	colorLabel:SetText("Team color:")
-	colorLabel:SetTextColor(COLOR_DARK)
+	colorLabel:SetTextColor(Minigolf.COLOR_DARK)
   colorLabel:SizeToContents()
   self.colorLabel = colorLabel
   
@@ -58,8 +58,8 @@ function PANEL:BuildTeamMenu(isEditting)
   colorPicker:SetPalette(false)
   colorPicker:SetAlphaBar(false)
   colorPicker:SetWangs(false)
-  colorPicker:SetSize(width - PADDING - PADDING - colorLabel:GetWide() - PADDING, 128)
-  colorPicker:SetPos(width - colorPicker:GetWide() - PADDING, posY + passwordLabel:GetTall() + PADDING)
+  colorPicker:SetSize(width - Minigolf.PADDING - Minigolf.PADDING - colorLabel:GetWide() - Minigolf.PADDING, 128)
+  colorPicker:SetPos(width - colorPicker:GetWide() - Minigolf.PADDING, posY + passwordLabel:GetTall() + Minigolf.PADDING)
 
   colorPicker.ValueChanged = function(colorPicker, color)
     -- color table doesn't have Color metatable (known Gmod bug mentioned @ https://wiki.facepunch.com/gmod/DColorMixer:ValueChanged)
@@ -79,8 +79,8 @@ function PANEL:BuildTeamMenu(isEditting)
     colorPicker:ValueChanged(self.teamColor)
 
     local teamList = vgui.Create("DListView", self)
-    teamList:SetPos(PADDING, posY + PADDING + colorPicker:GetTall())
-    teamList:SetSize(width - PADDING * 2, 100)
+    teamList:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + colorPicker:GetTall())
+    teamList:SetSize(width - Minigolf.PADDING * 2, 100)
     teamList:SetMultiSelect( false )
     teamList:AddColumn("Player")
     teamList:AddColumn("SteamID")
@@ -130,7 +130,7 @@ function PANEL:BuildTeamMenu(isEditting)
     posX, posY = teamList:GetPos()
 
     local leaveButton = vgui.Create("DButton", self)
-    leaveButton:SetPos(PADDING, posY + PADDING + teamList:GetTall())
+    leaveButton:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + teamList:GetTall())
     leaveButton:SetText("Leave Team")
     leaveButton:SizeToContents()
     leaveButton.DoClick = function()
@@ -149,26 +149,26 @@ function PANEL:BuildTeamMenu(isEditting)
     posX, posY = leaveButton:GetPos()
 	
     local teamButton = vgui.Create("DButton", self)
-    teamButton:SetSize(width - (PADDING * 2), 50)
-    teamButton:SetPos(PADDING, posY + PADDING + leaveButton:GetTall())
+    teamButton:SetSize(width - (Minigolf.PADDING * 2), 50)
+    teamButton:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + leaveButton:GetTall())
     teamButton:SetText("Update Team")
     teamButton.DoClick = function()
       local password = passwordEntry:GetValue()
-      local passwordSet = password ~= "";
+      local passwordSet = password ~= ""
       local name = teamEntry:GetValue()
 
       if(utf8.len(name) == 0)then
-        Minigolf.Messages.Print("The name of a team can't be empty!", nil, TEXT_EFFECT_DANGER)
+        Minigolf.Messages.Print("The name of a team can't be empty!", nil, Minigolf.TEXT_EFFECT_DANGER)
         return
       end
 
-      if(utf8.len(name) > TEAM_NAME_LENGTH_MAX)then
-        Minigolf.Messages.Print(TEAM_NAME_LENGTH_MAX_MESSAGE, nil, TEXT_EFFECT_DANGER)
+      if(utf8.len(name) > Minigolf.TEAM_NAME_LENGTH_MAX)then
+        Minigolf.Messages.Print(Minigolf.TEAM_NAME_LENGTH_MAX_MESSAGE, nil, Minigolf.TEXT_EFFECT_DANGER)
         return
       end
       
-      if(utf8.len(name) < TEAM_NAME_LENGTH_MIN)then
-        Minigolf.Messages.Print(TEAM_NAME_LENGTH_MIN_MESSAGE, nil, TEXT_EFFECT_DANGER)
+      if(utf8.len(name) < Minigolf.TEAM_NAME_LENGTH_MIN)then
+        Minigolf.Messages.Print(Minigolf.TEAM_NAME_LENGTH_MIN_MESSAGE, nil, Minigolf.TEXT_EFFECT_DANGER)
         return
       end
 
@@ -205,26 +205,26 @@ function PANEL:BuildTeamMenu(isEditting)
     end)
 
     local teamButton = vgui.Create("DButton", self)
-    teamButton:SetSize(width - (PADDING * 2), 50)
-    teamButton:SetPos(PADDING, posY + PADDING + colorPicker:GetTall())
+    teamButton:SetSize(width - (Minigolf.PADDING * 2), 50)
+    teamButton:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + colorPicker:GetTall())
     teamButton:SetText("Create Team")
     teamButton.DoClick = function()
       local password = passwordEntry:GetValue()
-      local passwordSet = password ~= "";
+      local passwordSet = password ~= ""
       local name = string.Trim(teamEntry:GetValue())
   
       if(utf8.len(name) == 0)then
-        Minigolf.Messages.Print("The name of a team can't be empty!", nil, TEXT_EFFECT_DANGER)
+        Minigolf.Messages.Print("The name of a team can't be empty!", nil, Minigolf.TEXT_EFFECT_DANGER)
         return
       end
   
-      if(utf8.len(name) > TEAM_NAME_LENGTH_MAX)then
-        Minigolf.Messages.Print(TEAM_NAME_LENGTH_MAX_MESSAGE, nil, TEXT_EFFECT_DANGER)
+      if(utf8.len(name) > Minigolf.TEAM_NAME_LENGTH_MAX)then
+        Minigolf.Messages.Print(Minigolf.TEAM_NAME_LENGTH_MAX_MESSAGE, nil, Minigolf.TEXT_EFFECT_DANGER)
         return
       end
       
-      if(utf8.len(name) < TEAM_NAME_LENGTH_MIN)then
-        Minigolf.Messages.Print(TEAM_NAME_LENGTH_MIN_MESSAGE, nil, TEXT_EFFECT_DANGER)
+      if(utf8.len(name) < Minigolf.TEAM_NAME_LENGTH_MIN)then
+        Minigolf.Messages.Print(Minigolf.TEAM_NAME_LENGTH_MIN_MESSAGE, nil, Minigolf.TEXT_EFFECT_DANGER)
         return
       end
   
@@ -245,8 +245,8 @@ function PANEL:BuildTeamMenu(isEditting)
     posX, posY = teamButton:GetPos()
   
     local joinButton = vgui.Create("DButton", self)
-    joinButton:SetSize(width - (PADDING * 2), 22)
-    joinButton:SetPos(PADDING, posY + PADDING + teamButton:GetTall())
+    joinButton:SetSize(width - (Minigolf.PADDING * 2), 22)
+    joinButton:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + teamButton:GetTall())
     joinButton:SetText("Join another team")
     joinButton.DoClick = function ()
       local joinMenu = DermaMenu()
@@ -281,7 +281,7 @@ function PANEL:BuildTeamMenu(isEditting)
     lastHeight = joinButton:GetTall()
   end
 
-	self:SetTall(posY + lastHeight + PADDING)
+	self:SetTall(posY + lastHeight + Minigolf.PADDING)
   self:Center()
 end
 
@@ -290,10 +290,10 @@ function PANEL:Paint(w, h)
 
 	draw.RoundedBox(16, 0, 0, w, h, Color(255,255,255,255))
 
-  draw.SimpleText("Your Team", "MinigolfMainBold", w * .5, PADDING * 2, COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+  draw.SimpleText("Your Team", "MinigolfMainBold", w * .5, Minigolf.PADDING * 2, Minigolf.COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
   
   surface.SetDrawColor(self.teamColor)
-  surface.DrawRect(self.colorLabel.x, self.colorLabel.y + self.colorLabel:GetTall() + PADDING, self.colorLabel:GetWide(), self.colorLabel:GetWide())
+  surface.DrawRect(self.colorLabel.x, self.colorLabel.y + self.colorLabel:GetTall() + Minigolf.PADDING, self.colorLabel:GetWide(), self.colorLabel:GetWide())
 end
 
 function PANEL:OnKeyCodeReleased(key)

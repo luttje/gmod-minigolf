@@ -34,7 +34,7 @@ concommand.Add("team_leave", function(player, cmd, args)
 	local teamID = player:Team()
 
 	if(IsValid(player:GetActiveHole()))then
-		Minigolf.Messages.Send(player, "Can not leave the team whilst your playing a hole!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "Can not leave the team whilst your playing a hole!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
@@ -60,7 +60,7 @@ concommand.Add("team_leave", function(player, cmd, args)
 	end
 	
 	if(not Minigolf.Teams.Leave(player))then
-		Minigolf.Messages.Send(player, "Can not leave team, are you in a team?", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "Can not leave team, are you in a team?", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
@@ -75,22 +75,22 @@ concommand.Add("team_kick", function(player, cmd, args)
 	local target = player.GetBySteamID(args[1])
 
 	if(not IsValid(target))then
-		Minigolf.Messages.Send(player, "This player isn't in the server!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "This player isn't in the server!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
 	if(target:Team() ~= teamID)then
-		Minigolf.Messages.Send(player, "This player isn't on your team!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "This player isn't on your team!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
 	if(not player:GetTeamLeader())then
-		Minigolf.Messages.Send(player, "You are not a team leader so can't kick!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "You are not a team leader so can't kick!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
 	if(IsValid(target:GetActiveHole()))then
-		Minigolf.Messages.Send(player, "You cannot kick this player whilst they're playing a hole!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "You cannot kick this player whilst they're playing a hole!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 	
@@ -114,17 +114,17 @@ concommand.Add("team_set_rank", function(player, cmd, args)
 	local isNowTeamLeader = args[2] == "leader" and true or false
 
 	if(not player:GetTeamLeader())then
-		Minigolf.Messages.Send(player, "You aren't team leader, so can't demote or promote players!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "You aren't team leader, so can't demote or promote players!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
 	if(not IsValid(target))then
-		Minigolf.Messages.Send(player, "This player isn't in the server!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "This player isn't in the server!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
 	if(target:Team() ~= teamID)then
-		Minigolf.Messages.Send(player, "This player isn't on your team!", nil, TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(player, "This player isn't on your team!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 		return
 	end
 
@@ -133,7 +133,7 @@ concommand.Add("team_set_rank", function(player, cmd, args)
 		local otherLeaders = Minigolf.Teams.GetTeamLeaders(teamID, target)
 
 		if(#otherLeaders == 0)then
-			Minigolf.Messages.Send(player, "You can't demote the only team leader!", nil, TEXT_EFFECT_ATTENTION)
+			Minigolf.Messages.Send(player, "You can't demote the only team leader!", nil, Minigolf.TEXT_EFFECT_ATTENTION)
 			return
 		end
 	end
@@ -141,11 +141,11 @@ concommand.Add("team_set_rank", function(player, cmd, args)
 	target:SetTeamLeader(isNowTeamLeader)
 	
 	if(isNowTeamLeader)then
-		Minigolf.Messages.Send(target, "You were promoted to team leader", TEXT_EFFECT_SPARKLE)
-		Minigolf.Messages.Send(team.GetPlayers(teamID), player:Nick() .. " was promoted to team leader", "\\", TEXT_EFFECT_SPARKLE)
+		Minigolf.Messages.Send(target, "You were promoted to team leader", Minigolf.TEXT_EFFECT_SPARKLE)
+		Minigolf.Messages.Send(team.GetPlayers(teamID), player:Nick() .. " was promoted to team leader", "\\", Minigolf.TEXT_EFFECT_SPARKLE)
 	else
-		Minigolf.Messages.Send(target, "You were demoted to regular team member", TEXT_EFFECT_ATTENTION)
-		Minigolf.Messages.Send(team.GetPlayers(teamID), player:Nick() .. " was demoted to regular team member", "\\", TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(target, "You were demoted to regular team member", Minigolf.TEXT_EFFECT_ATTENTION)
+		Minigolf.Messages.Send(team.GetPlayers(teamID), player:Nick() .. " was demoted to regular team member", "\\", Minigolf.TEXT_EFFECT_ATTENTION)
 	end
 end)
 
@@ -163,17 +163,17 @@ net.Receive("Minigolf.TryUpdateTeam", function(len, player)
   local isBad, badWord = Minigolf.Text.ContainsBadWords(teamName)
 
   if(isBad)then
-    Minigolf.Messages.Send(player, string.format(TEAM_NAME_PROFANITY_MESSAGE, badWord))
+    Minigolf.Messages.Send(player, string.format(Minigolf.TEAM_NAME_PROFANITY_MESSAGE, badWord))
     return
   end
 
-  if(utf8.len(teamName) > TEAM_NAME_LENGTH_MAX)then
-    Minigolf.Messages.Print(player, TEAM_NAME_LENGTH_MAX, nil, TEXT_EFFECT_DANGER)
+  if(utf8.len(teamName) > Minigolf.TEAM_NAME_LENGTH_MAX)then
+    Minigolf.Messages.Print(player, Minigolf.TEAM_NAME_LENGTH_MAX, nil, Minigolf.TEXT_EFFECT_DANGER)
     return
   end
   
-  if(utf8.len(teamName) < TEAM_NAME_LENGTH_MIN)then
-    Minigolf.Messages.Print(player, TEAM_NAME_LENGTH_MIN, nil, TEXT_EFFECT_DANGER)
+  if(utf8.len(teamName) < Minigolf.TEAM_NAME_LENGTH_MIN)then
+    Minigolf.Messages.Print(player, Minigolf.TEAM_NAME_LENGTH_MIN, nil, Minigolf.TEXT_EFFECT_DANGER)
     return
   end
 
@@ -191,7 +191,7 @@ net.Receive("Minigolf.TryUpdateTeam", function(len, player)
 	local index = Minigolf.Teams.Update(player, teamName, teamColor, teamPassword, targetTeam.Index)
 	Minigolf.Teams.Join(player, index, teamPassword)
 
-	hook.Call("MinigolfMinigolf.TryUpdateTeamd", gm(), index, teamName, teamColor, teamPassword)
+	hook.Call("Minigolf.Minigolf.TryUpdateTeamd", Minigolf.GM(), index, teamName, teamColor, teamPassword)
 
 	if(oldName ~= teamName)then
 		Minigolf.Messages.Send(team.GetPlayers(player:Team()), player:Nick() .. " updated team '" .. oldName .. "' to become '" .. teamName .. "'", "N")
@@ -214,17 +214,17 @@ net.Receive("Minigolf.TryCreateTeam", function(len, player)
   local isBad, badWord = Minigolf.Text.ContainsBadWords(teamName)
 
   if(isBad)then
-    Minigolf.Messages.Send(player, string.format(TEAM_NAME_PROFANITY_MESSAGE, badWord))
+    Minigolf.Messages.Send(player, string.format(Minigolf.TEAM_NAME_PROFANITY_MESSAGE, badWord))
     return
   end
   
-  if(utf8.len(teamName) > TEAM_NAME_LENGTH_MAX)then
-    Minigolf.Messages.Print(player, TEAM_NAME_LENGTH_MAX_MESSAGE, nil, TEXT_EFFECT_DANGER)
+  if(utf8.len(teamName) > Minigolf.TEAM_NAME_LENGTH_MAX)then
+    Minigolf.Messages.Print(player, Minigolf.TEAM_NAME_LENGTH_MAX_MESSAGE, nil, Minigolf.TEXT_EFFECT_DANGER)
     return
   end
   
-  if(utf8.len(teamName) < TEAM_NAME_LENGTH_MIN)then
-    Minigolf.Messages.Print(player, TEAM_NAME_LENGTH_MIN_MESSAGE, nil, TEXT_EFFECT_DANGER)
+  if(utf8.len(teamName) < Minigolf.TEAM_NAME_LENGTH_MIN)then
+    Minigolf.Messages.Print(player, Minigolf.TEAM_NAME_LENGTH_MIN_MESSAGE, nil, Minigolf.TEXT_EFFECT_DANGER)
     return
   end
 
@@ -244,7 +244,7 @@ net.Receive("Minigolf.TryCreateTeam", function(len, player)
 	-- Make them team leader of their own team
 	player:SetTeamLeader(true)
 	
-	hook.Call("MinigolfTeamMade", gm(), index, teamName, teamColor, teamPassword)
+	hook.Call("Minigolf.TeamMade", Minigolf.GM(), index, teamName, teamColor, teamPassword)
 
 	Minigolf.Messages.Send(team.GetPlayers(player:Team()), player:Nick() .. " created team '" .. teamName .. "'", "N")
 end)
@@ -274,8 +274,7 @@ hook.Add("PlayerSpawn", "Minigolf.SetInitialTeam", function(player)
   end
 end)
 
-hook.Add("PlayerDisconnected", "Minigolf.ActiveTeamPlayerLeavesReset", function(player)
-	if(IsValid(player))then
-		Minigolf.Teams.Leave(player)
-	end
+gameevent.Listen( "player_disconnect" )
+hook.Add("player_disconnect", "Minigolf.ActiveTeamPlayerLeavesReset", function(data)
+	Minigolf.Teams.LeaveByNetworkID(data.networkid)
 end)

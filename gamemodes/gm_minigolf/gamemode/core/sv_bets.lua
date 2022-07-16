@@ -6,27 +6,27 @@
 -- 	local activeHole = player:GetActiveHole()
 
 -- 	if(not targetPlayer)then
--- 		Minigolf.Messages.Send(player, "You have not selected a valid player!", nil, TEXT_EFFECT_DANGER)
+-- 		Minigolf.Messages.Send(player, "You have not selected a valid player!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 		return
 -- 	end
 
 -- 	if(not betAmount)then
--- 		Minigolf.Messages.Send(player, "You have not given a valid amount!", nil, TEXT_EFFECT_DANGER)
+-- 		Minigolf.Messages.Send(player, "You have not given a valid amount!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 		return
 -- 	end
 
 -- 	if(not player:PS_HasPoints(betAmount))then
--- 		Minigolf.Messages.Send(player, "You do not have this many points!", nil, TEXT_EFFECT_DANGER)
+-- 		Minigolf.Messages.Send(player, "You do not have this many points!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 		return
 -- 	end
 
 -- 	if(not targetHole)then
--- 		Minigolf.Messages.Send(player, "You have not selected a valid hole!", nil, TEXT_EFFECT_DANGER)
+-- 		Minigolf.Messages.Send(player, "You have not selected a valid hole!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 		return
 -- 	end
 
 -- 	if(activeHole == targetHole)then
--- 		Minigolf.Messages.Send(player, "You can not place a bet when the player is already playing the hole!", nil, TEXT_EFFECT_DANGER)
+-- 		Minigolf.Messages.Send(player, "You can not place a bet when the player is already playing the hole!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 		return
 -- 	end
 
@@ -35,7 +35,7 @@
 
 -- 		-- Check if someone has bet on a higher stroke score than the player themselves don't allow to bet a higher score than that (or the player could just stall)
 -- 		if(expectedScore >= lowestStrokes)then
--- 			Minigolf.Messages.Send(player, string.format("Someone has already bet you'd do better than %d strokes! To bet on yourself you must bet on winning in fewer strokes.", lowestStrokes), nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Send(player, string.format("Someone has already bet you'd do better than %d strokes! To bet on yourself you must bet on winning in fewer strokes.", lowestStrokes), nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 -- 	else
@@ -43,7 +43,7 @@
 -- 		local betOfTargetPlayer = Minigolf.Bets.GetStrokesOf(targetPlayer, targetPlayer, targetHole)
 
 -- 		if(betOfTargetPlayer and betOfTargetPlayer >= expectedScore)then
--- 			Minigolf.Messages.Send(player, string.format("The player themselves have already bet they'll do this in %d strokes! Only betting they'll do it in more strokes makes sense.", betOfTargetPlayer), nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Send(player, string.format("The player themselves have already bet they'll do this in %d strokes! Only betting they'll do it in more strokes makes sense.", betOfTargetPlayer), nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 -- 	end
@@ -51,7 +51,7 @@
 -- 	Minigolf.Bets.Place(player, targetPlayer, targetHole, expectedScore, betAmount)
 -- end)
 
--- hook.Add("MinigolfPlayerFinishedHole", "Minigolf.CallPayoutBetsOnHoleFinish", function(player, ball, start, strokes)
+-- hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.CallPayoutBetsOnHoleFinish", function(player, ball, start, strokes)
 -- 	-- E.g: 5 strokes on a par 3 would be +2 (two over par)
 -- 	local score = strokes - start:GetPar()
 	

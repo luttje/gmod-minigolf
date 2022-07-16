@@ -1,5 +1,5 @@
 -- local MENU_KEY = KEY_B
--- local BAR_HEIGHT = PADDING * 4
+-- local BAR_HEIGHT = Minigolf.PADDING * 4
 -- local scrW, scrH = ScrW(), ScrH()
 -- local PANEL = {}
 
@@ -10,17 +10,17 @@
 -- local lastOpen = 0
 
 -- local function hideMenu()
--- 	BET_MENU:Remove()
--- 	BET_MENU = nil
+-- 	Minigolf.Menus.Betting:Remove()
+-- 	Minigolf.Menus.Betting = nil
 -- end
 
 -- local function showMenu(justLeftOtherTeam)
--- 	if(IsValid(BET_MENU))then
+-- 	if(IsValid(Minigolf.Menus.Betting))then
 -- 		hideMenu()
 -- 	end
 
--- 	BET_MENU = vgui.Create("Minigolf.BetMenu")
--- 	BET_MENU:MakePopup()
+-- 	Minigolf.Menus.Betting = vgui.Create("Minigolf.BetMenu")
+-- 	Minigolf.Menus.Betting:MakePopup()
 -- end
 
 -- -- Add a command to open the menu
@@ -45,16 +45,16 @@
 -- 	local actionButton = vgui.Create("MinigolfActionButton", self)
 -- 	actionButton:SetText("View active bets")
 -- 	actionButton:SizeToContents()
--- 	actionButton:SetSize(actionButton:GetWide() + (PADDING * 2), actionButton:GetTall() + (PADDING))
--- 	actionButton:SetPos(PADDING, PADDING)
+-- 	actionButton:SetSize(actionButton:GetWide() + (Minigolf.PADDING * 2), actionButton:GetTall() + (Minigolf.PADDING))
+-- 	actionButton:SetPos(Minigolf.PADDING, Minigolf.PADDING)
 -- 	actionButton.DoClick = function(btn)
 -- 		self:Remove()
--- 		if(IsValid(BET_MENU))then
--- 			BET_MENU:Remove()
+-- 		if(IsValid(Minigolf.Menus.Betting))then
+-- 			Minigolf.Menus.Betting:Remove()
 -- 		end
 	
--- 		BET_MENU = vgui.Create("Minigolf.BetOverviewMenu", GetHUDPanel())
--- 		BET_MENU:MakePopup()
+-- 		Minigolf.Menus.Betting = vgui.Create("Minigolf.BetOverviewMenu", GetHUDPanel())
+-- 		Minigolf.Menus.Betting:MakePopup()
 -- 	end
 -- 	self.actionButton = actionButton
 	
@@ -62,33 +62,33 @@
 -- 	closeButton.DoClick = function(btn)
 -- 		self:Remove()
 -- 	end
--- 	closeButton:SetPos(width - PADDING - closeButton:GetWide(), PADDING)
+-- 	closeButton:SetPos(width - Minigolf.PADDING - closeButton:GetWide(), Minigolf.PADDING)
 -- 	self.closeButton = closeButton
 	
 -- 	local infoLabel = vgui.Create("DLabel", self)
--- 	infoLabel:SetPos(PADDING, BAR_HEIGHT + PADDING)
+-- 	infoLabel:SetPos(Minigolf.PADDING, BAR_HEIGHT + Minigolf.PADDING)
 -- 	infoLabel:SetText("Early betting system that needs much improvement. Please pay attention to your betting and report problems and suggestions to a developer.")
--- 	infoLabel:SetTextColor(COLOR_DARK)
+-- 	infoLabel:SetTextColor(Minigolf.COLOR_DARK)
 -- 	infoLabel:SetAutoStretchVertical(true)
--- 	infoLabel:SetWide(width - PADDING * 2)
+-- 	infoLabel:SetWide(width - Minigolf.PADDING * 2)
 -- 	infoLabel:SetWrap(true)
 	
 -- 	local posX, posY = infoLabel:GetPos()
 
 -- 	local amountLabel = vgui.Create("DLabel", self)
--- 	amountLabel:SetPos(PADDING, posY + PADDING + infoLabel:GetTall() + PADDING)
+-- 	amountLabel:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + infoLabel:GetTall() + Minigolf.PADDING)
 -- 	amountLabel:SetText("Bet this many tokens:")
--- 	amountLabel:SetTextColor(COLOR_DARK)
+-- 	amountLabel:SetTextColor(Minigolf.COLOR_DARK)
 -- 	amountLabel:SizeToContents()
 	
 -- 	local posX, posY = amountLabel:GetPos()
--- 	local offsetX = posX + amountLabel:GetWide() + PADDING
+-- 	local offsetX = posX + amountLabel:GetWide() + Minigolf.PADDING
 -- 	local amountEntry = vgui.Create("DTextEntry", self)
 -- 	amountEntry:SetEditable(true)
 -- 	amountEntry:SetText("0")
 -- 	amountEntry:SetEditable(true)
 -- 	amountEntry:SetPos(offsetX, posY)
--- 	amountEntry:SetWide(width - offsetX - PADDING)
+-- 	amountEntry:SetWide(width - offsetX - Minigolf.PADDING)
 -- 	amountEntry:SetUpdateOnType(true)
 -- 	amountEntry:SetNumeric(true)
 
@@ -104,18 +104,18 @@
 -- 	self.amountEntry = amountEntry
 	
 -- 	local targetLabel = vgui.Create("DLabel" , self)
--- 	targetLabel:SetPos(PADDING, posY + amountEntry:GetTall() + PADDING)
+-- 	targetLabel:SetPos(Minigolf.PADDING, posY + amountEntry:GetTall() + Minigolf.PADDING)
 -- 	targetLabel:SetText("That this player:")
--- 	targetLabel:SetTextColor(COLOR_DARK)
+-- 	targetLabel:SetTextColor(Minigolf.COLOR_DARK)
 -- 	targetLabel:SizeToContents()
 
 -- 	posX, posY = targetLabel:GetPos()
--- 	offsetX = posX + targetLabel:GetWide() + PADDING
+-- 	offsetX = posX + targetLabel:GetWide() + Minigolf.PADDING
 	
 -- 	local userEntry = vgui.Create("DComboBox", self)
 -- 	userEntry:SetValue("<user to bet on>")
 -- 	userEntry:SetPos(offsetX, posY)
--- 	userEntry:SetWide(width - offsetX - PADDING)
+-- 	userEntry:SetWide(width - offsetX - Minigolf.PADDING)
 	
 -- 	for _, ply in pairs(playerLibrary.GetAll()) do
 -- 		userEntry:AddChoice(ply:Nick(), ply)
@@ -124,21 +124,21 @@
 -- 	self.userEntry = userEntry
 	
 -- 	posX, posY = userEntry:GetPos()
--- 	offsetX = posX + userEntry:GetWide() + PADDING
+-- 	offsetX = posX + userEntry:GetWide() + Minigolf.PADDING
 	
 -- 	local holeLabel = vgui.Create("DLabel" , self)
--- 	holeLabel:SetPos(PADDING, posY + userEntry:GetTall() + PADDING)
+-- 	holeLabel:SetPos(Minigolf.PADDING, posY + userEntry:GetTall() + Minigolf.PADDING)
 -- 	holeLabel:SetText("On this hole:")
--- 	holeLabel:SetTextColor(COLOR_DARK)
+-- 	holeLabel:SetTextColor(Minigolf.COLOR_DARK)
 -- 	holeLabel:SizeToContents()
 
 -- 	posX, posY = holeLabel:GetPos()
--- 	offsetX = posX + holeLabel:GetWide() + PADDING
+-- 	offsetX = posX + holeLabel:GetWide() + Minigolf.PADDING
 	
 -- 	local holeEntry = vgui.Create("DComboBox", self)
 -- 	holeEntry:SetValue("<hole that they'll get the given score on>")
 -- 	holeEntry:SetPos(offsetX, posY)
--- 	holeEntry:SetWide(width - offsetX - PADDING)
+-- 	holeEntry:SetWide(width - offsetX - Minigolf.PADDING)
 	
 -- 	for _, hole in pairs(ents.FindByClass("minigolf_hole_start")) do
 -- 		holeEntry:AddChoice(hole:GetHoleName(), hole)
@@ -154,9 +154,9 @@
 -- 	scoreEntry:SetMax(256)
 -- 	scoreEntry:SetValue(1)
 -- 	scoreEntry:SetDecimals(0)
--- 	scoreEntry:SetPos(PADDING, posY + holeEntry:GetTall() + PADDING)
--- 	scoreEntry:SetSize(width - PADDING - PADDING, 25)
--- 	scoreEntry.Label:SetTextColor(COLOR_DARK)
+-- 	scoreEntry:SetPos(Minigolf.PADDING, posY + holeEntry:GetTall() + Minigolf.PADDING)
+-- 	scoreEntry:SetSize(width - Minigolf.PADDING - Minigolf.PADDING, 25)
+-- 	scoreEntry.Label:SetTextColor(Minigolf.COLOR_DARK)
 -- 	scoreEntry.Label:SizeToContents()
 
 -- 	holeEntry.OnSelect = function(holeEntry, index, value, data)
@@ -168,8 +168,8 @@
 -- 	posX, posY = scoreEntry:GetPos()
 
 -- 	local betButton = vgui.Create("DButton", self)
--- 	betButton:SetSize(width - (PADDING * 2), 50)
--- 	betButton:SetPos(PADDING, posY + PADDING + scoreEntry:GetTall())
+-- 	betButton:SetSize(width - (Minigolf.PADDING * 2), 50)
+-- 	betButton:SetPos(Minigolf.PADDING, posY + Minigolf.PADDING + scoreEntry:GetTall())
 -- 	betButton:SetText("Place Bet")
 -- 	betButton.DoClick = function()
 -- 		local _, targetPlayer = userEntry:GetSelected()
@@ -178,27 +178,27 @@
 -- 		local _, targetHole = holeEntry:GetSelected()
 
 -- 		if(not targetPlayer)then
--- 			Minigolf.Messages.Print("No Player selected to bet on!", nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Print("No Player selected to bet on!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 
 -- 		if(not betAmount)then
--- 			Minigolf.Messages.Print("No valid bet amount given!", nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Print("No valid bet amount given!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 
 -- 		if(not LocalPlayer():PS_HasPoints(betAmount))then
--- 			Minigolf.Messages.Print("You do not have this many points!", nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Print("You do not have this many points!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 		
 -- 		if(not expectedScore or expectedScore == "")then
--- 			Minigolf.Messages.Print("No expected score given!", nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Print("No expected score given!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 
 -- 		if(not targetHole)then
--- 			Minigolf.Messages.Print("No target hole selected!", nil, TEXT_EFFECT_DANGER)
+-- 			Minigolf.Messages.Print("No target hole selected!", nil, Minigolf.TEXT_EFFECT_DANGER)
 -- 			return
 -- 		end
 
@@ -207,7 +207,7 @@
 
 -- 	self.betButton = betButton
 
--- 	self:SetTall(PADDING + self.betButton:GetTall() + PADDING + self.userEntry:GetTall() + PADDING + self.amountEntry:GetTall() + PADDING + self.scoreEntry:GetTall() + PADDING + self.holeEntry:GetTall() + PADDING + infoLabel:GetTall() + PADDING + PADDING + BAR_HEIGHT)
+-- 	self:SetTall(Minigolf.PADDING + self.betButton:GetTall() + Minigolf.PADDING + self.userEntry:GetTall() + Minigolf.PADDING + self.amountEntry:GetTall() + Minigolf.PADDING + self.scoreEntry:GetTall() + Minigolf.PADDING + self.holeEntry:GetTall() + Minigolf.PADDING + infoLabel:GetTall() + Minigolf.PADDING + Minigolf.PADDING + BAR_HEIGHT)
 -- 	self:Center()
 -- end
 
@@ -226,7 +226,7 @@
 
 -- 	draw.RoundedBox(16, 0, 0, w, h, Color(255,255,255,255))
 
--- 	draw.SimpleText("Place bets on upcoming players", "MinigolfMainBold", w * .5, PADDING * 2, COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+-- 	draw.SimpleText("Place bets on upcoming players", "MinigolfMainBold", w * .5, Minigolf.PADDING * 2, Minigolf.COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 -- end
 
 -- function PANEL:OnKeyCodeReleased(key)

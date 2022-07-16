@@ -1,4 +1,13 @@
-local BAR_HEIGHT = PADDING * 2
+--[[
+	TODO: Move all Team related stuff to the gamemode, only call hooks here.
+		Then test:
+		- Does the addon work without the gamemode?
+		- Does the gamemode work with the addon?
+--]]
+
+
+
+local BAR_HEIGHT = Minigolf.PADDING * 2
 local LOGO_WIDTH = 256
 local LOGO_HEIGHT = 128
 local HOLE_WIDTH = 125
@@ -7,7 +16,7 @@ local playerLibrary = player
 
 local logoMaterial = Material("minigolf/logo_compact.png")
 
-SCOREBOARD_PANEL = SCOREBOARD_PANEL
+Minigolf.Menus.Scoreboard = Minigolf.Menus.Scoreboard
 
 local PANEL = {}
 
@@ -24,13 +33,13 @@ function PANEL:PerformLayout(w, h)
 end
 
 function PANEL:Paint(w, h)
-	local color = COLOR_PRIMARY_LIGHT
-	local borderColor = COLOR_PRIMARY
+	local color = Minigolf.COLOR_PRIMARY_LIGHT
+	local borderColor = Minigolf.COLOR_PRIMARY
 	local textColor = Color(255, 255, 255, 255)
 
 	if(self:GetHeading())then
-		color = COLOR_SECONDARY_LIGHT
-		borderColor = COLOR_SECONDARY
+		color = Minigolf.COLOR_SECONDARY_LIGHT
+		borderColor = Minigolf.COLOR_SECONDARY
 	end
 
 	if(self:GetHighlight())then
@@ -98,11 +107,11 @@ function PANEL:Close()
 end
 
 function PANEL:CalculateSize()
-	local minHeight = PADDING + LOGO_HEIGHT + PADDING + PADDING + BAR_HEIGHT + BAR_HEIGHT
+	local minHeight = Minigolf.PADDING + LOGO_HEIGHT + Minigolf.PADDING + Minigolf.PADDING + BAR_HEIGHT + BAR_HEIGHT
 	local maxHeight = ScrH() * .8
 	local numRows = #playerLibrary.GetAll() + #Minigolf.Teams.All
 
-	local height = PADDING + LOGO_HEIGHT + PADDING + PADDING + BAR_HEIGHT + (numRows * BAR_HEIGHT)
+	local height = Minigolf.PADDING + LOGO_HEIGHT + Minigolf.PADDING + Minigolf.PADDING + BAR_HEIGHT + (numRows * BAR_HEIGHT)
 
 	if(height < minHeight)then
 		print("capped scoreboard at min, height was: ", height)
@@ -162,7 +171,7 @@ function PANEL:LoadHoles(w, h)
 	self.horizontalPanel = horizontalPanel
 
 	local headingPanel = vgui.Create("Panel", horizontalPanel)
-	headingPanel:SetSize(#holes * HOLE_WIDTH, PADDING + LOGO_HEIGHT + PADDING - BAR_HEIGHT - PADDING)
+	headingPanel:SetSize(#holes * HOLE_WIDTH, Minigolf.PADDING + LOGO_HEIGHT + Minigolf.PADDING - BAR_HEIGHT - Minigolf.PADDING)
 
 	for i, hole in pairs(holes) do
 		local column = vgui.Create("Minigolf.ScoreBoardColumn", headingPanel)
@@ -219,7 +228,7 @@ function PANEL:LayoutScorePanel(w, h, currentY, numRows)
 	nameScrollPanel:Dock(FILL)
 
 	local scoreScrollPanel = vgui.Create("DScrollPanel", self.horizontalPanel)
-	scoreScrollPanel:SetSize(#holes * HOLE_WIDTH, h - PADDING - PADDING - BAR_HEIGHT - currentY)
+	scoreScrollPanel:SetSize(#holes * HOLE_WIDTH, h - Minigolf.PADDING - Minigolf.PADDING - BAR_HEIGHT - currentY)
 	scoreScrollPanel:SetPos(0, currentY)
 
 	nameScrollPanel.OnVScroll = function(pnl, offset)
@@ -237,7 +246,7 @@ function PANEL:LayoutScorePanel(w, h, currentY, numRows)
 	scorePanel:SetSize(#holes * HOLE_WIDTH, BAR_HEIGHT * numRows)
 	scorePanel:SetPos(0, 0)
 	scorePanel.Paint = function(scorePanel, w, h)
-		surface.SetDrawColor(COLOR_PRIMARY_LIGHT)
+		surface.SetDrawColor(Minigolf.COLOR_PRIMARY_LIGHT)
 		surface.DrawRect(0, 0, w, h)
 	end
 
@@ -260,7 +269,9 @@ function PANEL:LayoutTeamInfo(w, h, rowY, teamID)
 			column:SetSize(HOLE_WIDTH, BAR_HEIGHT)
 			column:SetPos((i-1) * HOLE_WIDTH, rowY * BAR_HEIGHT)
 
-			if(hole:GetActiveTeam() == teamPlayer:Team())then
+			local activeTeam = hole:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+			
+			if(activeTeam == teamPlayer:Team())then
 				column:SetHighlight(true)
 			end
 
@@ -273,7 +284,7 @@ function PANEL:LayoutTeamInfo(w, h, rowY, teamID)
 			if(self.scoresOverride and self.scoresOverride[holeName])then
 				self:SetColumnScoreText(column, self.scoresOverride[holeName], hole:GetPar())
 			else
-				self:SetColumnScoreText(column, teamPlayer:GetNWInt(holeName .. "Strokes", HOLE_NOT_PLAYED), hole:GetPar())
+				self:SetColumnScoreText(column, teamPlayer:GetNWInt(holeName .. "Strokes", Minigolf.HOLE_NOT_PLAYED), hole:GetPar())
 			end
 		end
 
@@ -284,15 +295,12 @@ function PANEL:LayoutTeamInfo(w, h, rowY, teamID)
 end
 
 function PANEL:SetColumnScoreText(column, strokes, par)
-	if(strokes == HOLE_NOT_PLAYED)then
+	if(strokes == Minigolf.HOLE_NOT_PLAYED)then
 		column:SetText("")
 		column:SetTooltip("The player hasn't played on this hole yet.")
-	elseif(strokes == HOLE_DISQUALIFIED)then
+	elseif(strokes == Minigolf.HOLE_DISQUALIFIED)then
 		column:SetText("DSQ")
 		column:SetTooltip("On this hole the player either ran out of time or has reached the maximum strokes.")
-	elseif(strokes == HOLE_SKIPPED)then
-		column:SetText("SKIPPING")
-		column:SetTooltip("The player is skipping this hole since they joined the team late.")
 	else
 		local relativeToParText = "better than par."
 
@@ -305,18 +313,20 @@ function PANEL:SetColumnScoreText(column, strokes, par)
 		column:SetText(strokes)
 		column:SetTooltip("The player got " .. tostring(strokes) .. " " .. Minigolf.Text.Pluralize("stroke", strokes) .. ". That is " .. relativeToParText)
 	end
+
+	hook.Call("Minigolf.AdjustColumnScore", Minigolf.GM(), column, strokes, par)
 end
 
 function PANEL:PerformLayout(w, h)
-	-- self.mapLogo:SetPos(PADDING, PADDING)
+	-- self.mapLogo:SetPos(Minigolf.PADDING, Minigolf.PADDING)
 	-- self.mapLogo:SetSize(LOGO_WIDTH, LOGO_HEIGHT)
 
 	-- Arithmetic written out in full because it's easier to see where the padding is going
-	self.holeScroller:SetSize(w - PADDING - PADDING - LOGO_WIDTH - PADDING, h - PADDING - PADDING - BAR_HEIGHT)
-	self.holeScroller:SetPos(PADDING + LOGO_WIDTH + PADDING, PADDING + BAR_HEIGHT)
+	self.holeScroller:SetSize(w - Minigolf.PADDING - Minigolf.PADDING - LOGO_WIDTH - Minigolf.PADDING, h - Minigolf.PADDING - Minigolf.PADDING - BAR_HEIGHT)
+	self.holeScroller:SetPos(Minigolf.PADDING + LOGO_WIDTH + Minigolf.PADDING, Minigolf.PADDING + BAR_HEIGHT)
 
-	self.labelPanel:SetSize(w - PADDING - self.holeScroller:GetWide() - PADDING, h - PADDING - LOGO_HEIGHT - PADDING - PADDING)
-	self.labelPanel:SetPos(PADDING, PADDING + LOGO_HEIGHT + PADDING)
+	self.labelPanel:SetSize(w - Minigolf.PADDING - self.holeScroller:GetWide() - Minigolf.PADDING, h - Minigolf.PADDING - LOGO_HEIGHT - Minigolf.PADDING - Minigolf.PADDING)
+	self.labelPanel:SetPos(Minigolf.PADDING, Minigolf.PADDING + LOGO_HEIGHT + Minigolf.PADDING)
 end
 
 function PANEL:Paint(w, h)
@@ -331,17 +341,17 @@ function PANEL:Paint(w, h)
 
 	draw.RoundedBox(16, 0, 0, w, h, Color(255,255,255,255))
 
-	draw.SimpleText(teamName, "MinigolfMainBold", w * .5, PADDING * 2, COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(teamName, "MinigolfMainBold", w * .5, Minigolf.PADDING * 2, Minigolf.COLOR_PRIMARY, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
 	surface.SetDrawColor(255, 255, 255, 255)
 	surface.SetMaterial(logoMaterial)
 
 	local logoW, logoH = 256, 256
 
-	surface.DrawTexturedRect(w * .5 - (logoW * .5), -logoH - PADDING, logoW, logoH)
+	surface.DrawTexturedRect(w * .5 - (logoW * .5), -logoH - Minigolf.PADDING, logoW, logoH)
 
-	if(SCOREBOARD_PANEL.lastHole ~= nil)then
-		draw.SimpleText("Press your scoreboard key to close this scoreboard", "MinigolfMainBold", w * .5, h + PADDING * 2, COLOR_LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	if(Minigolf.Menus.Scoreboard.lastHole ~= nil)then
+		draw.SimpleText("Press your scoreboard key to close this scoreboard", "MinigolfMainBold", w * .5, h + Minigolf.PADDING * 2, Minigolf.COLOR_LIGHT, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 end
 
@@ -351,8 +361,8 @@ function PANEL:OnKeyCodeReleased(key)
 
 	-- If the scoreboard key is pressed then close the scoreboard
 	if(key == _G[scoreKey] or key == KEY_ESCAPE)then
-		if(IsValid(SCOREBOARD_PANEL))then
-			SCOREBOARD_PANEL:Remove()
+		if(IsValid(Minigolf.Menus.Scoreboard))then
+			Minigolf.Menus.Scoreboard:Remove()
 			gui.HideGameUI()
 		end
 	end
@@ -367,13 +377,13 @@ net.Receive("Minigolf.PlayerShowScoreboard", function()
 	local clearLocalScores = net.ReadBool()
 
 	--TODO: Be able to use mouse, however for game fluidity closing with TAB is preferable
-	if(not IsValid(SCOREBOARD_PANEL))then
-		SCOREBOARD_PANEL = vgui.Create("Minigolf.ScoreBoard")
-		SCOREBOARD_PANEL.lastHole = hole
-		SCOREBOARD_PANEL.scoresOverride = holeScores
+	if(not IsValid(Minigolf.Menus.Scoreboard))then
+		Minigolf.Menus.Scoreboard = vgui.Create("Minigolf.ScoreBoard")
+		Minigolf.Menus.Scoreboard.lastHole = hole
+		Minigolf.Menus.Scoreboard.scoresOverride = holeScores
 
-		SCOREBOARD_PANEL:MakePopup()
-		SCOREBOARD_PANEL:Restore()
+		Minigolf.Menus.Scoreboard:MakePopup()
+		Minigolf.Menus.Scoreboard:Restore()
 	end
 
 	if(clearLocalScores)then
@@ -385,15 +395,15 @@ end)
 
 -- When the scoreboard needs to be shown
 hook.Add("ScoreboardShow", "Minigolf.ScoreboardShowBoard", function()
-	if(IsValid(SCOREBOARD_PANEL))then
-		SCOREBOARD_PANEL:Remove()
+	if(IsValid(Minigolf.Menus.Scoreboard))then
+		Minigolf.Menus.Scoreboard:Remove()
 
 		return false
 	end
 
-	SCOREBOARD_PANEL = vgui.Create("Minigolf.ScoreBoard")
-	SCOREBOARD_PANEL:MakePopup()
-	SCOREBOARD_PANEL:Restore()
+	Minigolf.Menus.Scoreboard = vgui.Create("Minigolf.ScoreBoard")
+	Minigolf.Menus.Scoreboard:MakePopup()
+	Minigolf.Menus.Scoreboard:Restore()
 
 	-- Override default
 	return false
@@ -401,7 +411,7 @@ end)
 
 -- When the scoreboard can be be hidden
 hook.Add("ScoreboardHide", "Minigolf.ScoreboardHideBoard", function()
-	if(IsValid(SCOREBOARD_PANEL))then
-		SCOREBOARD_PANEL:Close()
+	if(IsValid(Minigolf.Menus.Scoreboard))then
+		Minigolf.Menus.Scoreboard:Close()
 	end
 end)

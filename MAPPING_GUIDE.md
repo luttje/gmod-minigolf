@@ -8,17 +8,16 @@ The mapper has full control of the minigolf tracks using the scripted entities (
 
 * Mostly done map by Elkinda which combines all maps listed below into a single hub: [golf_rocket_hub_alpha2.vmf](https://mega.nz/file/YwJ3VYpZ#ENYi4mB4WAoo5yG8q9HoVXRAL7RfWCEz7pRYSQ2ltSI) ([compiled .bsp](https://mega.nz/file/xgQBHQbQ#bvPVcAeJK0t2cMNDRmVRkYOOVYHJs3NzNhABXKzRiHM))
 
-* Almost complete desert map by Lutt.online: [golf_desert_alpha14.vmf](https://mega.nz/file/0pQ2xCwK#-sucFspNSbrhFL7TbZAinv_wLFnUuCdO01CW_EYvAWI) ([compiled .bsp](https://mega.nz/file/UoBQDK5C#hddIisUFQx76LGsxLu3vmodgJi3qLebt9OEEnZkX2cg))
+* Almost complete desert map by Luttje: [golf_desert_alpha14.vmf](https://mega.nz/file/0pQ2xCwK#-sucFspNSbrhFL7TbZAinv_wLFnUuCdO01CW_EYvAWI) ([compiled .bsp](https://mega.nz/file/UoBQDK5C#hddIisUFQx76LGsxLu3vmodgJi3qLebt9OEEnZkX2cg))
 
 * Experimental map by Elkinda: [golf_test_course21.vmf](https://mega.nz/file/k9I0zQbJ#dPyflT2VTlAb-5rNSg8Xos5r7DuNkqeNw9tnWiy_p9s) ([compiled .bsp](https://mega.nz/file/I5QwnSyZ#gwDysjK2NCMgydm7Tf9yuL2K-E6sVF7LhX5iFdl6lDE))
-
-* Minimal development map by Lutt.online: [golf_dev_minimal_v3.vmf](https://mega.nz/file/plRx0QhI#fRTKcXxUoKOdpZDczYsg_1hxx-KaR26JkuDEyPmEQ2Q) ([compiled .bsp](https://mega.nz/file/o0JXVaqZ#qXpBKSirzDj_IfVMcTLIQyHJe3Uwk-DCkZATkFlJWH4))
+Luttje: [golf_dev_minimal_v3.vmf](https://mega.nz/file/plRx0QhI#fRTKcXxUoKOdpZDczYsg_1hxx-KaR26JkuDEyPmEQ2Q) ([compiled .bsp](https://mega.nz/file/o0JXVaqZ#qXpBKSirzDj_IfVMcTLIQyHJe3Uwk-DCkZATkFlJWH4))
 
 * Community Map: [golf_garage_league_start2.vmf](https://mega.nz/file/8gJ21QwL#a7IkniJWbvy709oF_VnMP7pTMm_zS59woA2xpyfguew) ([compiled .bsp](https://mega.nz/file/0wBgVaCC#eFux76pG3qXKuXkoia18Lb6d83eT3aj9i0PEJRTygfk))
   * Holes by (garage boxes 0 through 7, 10 and 11 are free):
 
     8. **Elkinda's "Terrain"**
-    9. **Lutt.online's "Bouncer"**
+    9. **Luttje's "Bouncer"**
 
 
 ## Scripted Entity Reference
@@ -67,6 +66,18 @@ The mapper has full control of the minigolf tracks using the scripted entities (
 * Out of bounds brush: `minigolf_trigger_oob`
   * When the ball touches this brush the ball is considered Out-Of-Bounds. The ball will be reset to the last valid position.
   * There are no properties for this entity.
+
+## Additional KeyValues
+
+You can control more behaviour by applying any of the following key/value pairs on entities.
+
+* (Key) `minigolf_collide`
+  * Possible values:
+    * `except_players`: Collide with everything, except players
+    * `only_balls`: Collide only with minigolf balls
+    * `only_others`: Collide only with other entities that have `only_others` (or `balls_and_others`) as a value for this property
+    * `balls_and_others`: Collide with balls and entities with `only_others` or `balls_and_others` as a value for this property
+  * Useful for func_physboxes that should only interact with balls or other physboxes
 
 
 ## Tips & Problems
