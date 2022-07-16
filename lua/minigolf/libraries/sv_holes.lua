@@ -73,6 +73,7 @@ function Minigolf.Holes.CreateTimeLimit(timeLimit, player, ball, start)
 end
 
 function Minigolf.Holes.End(player, ball, start, goal)
+	print(ball)
 	local strokes = ball:GetStrokes()
 	local customMessage = false
 

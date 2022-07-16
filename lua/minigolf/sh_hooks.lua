@@ -6,23 +6,33 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 	local isEnt1Ball = ent1:GetClass() == "minigolf_ball"
 	local isEnt2Ball = ent2:GetClass() == "minigolf_ball"
 
-	local mayEnt1CollideBalls = ent1._MinigolfCollide == "only_balls" or ent1._MinigolfCollide == "balls_and_others"
-	local mayEnt2CollideBalls = ent2._MinigolfCollide == "only_balls" or ent2._MinigolfCollide == "balls_and_others"
-	local mayEnt1CollideOthers = ent1._MinigolfCollide == "only_others" or ent1._MinigolfCollide == "balls_and_others"
-	local mayEnt2CollideOthers = ent2._MinigolfCollide == "only_others" or ent2._MinigolfCollide == "balls_and_others"
+	local mayEnt1CollideBallsExclusive = ent1._MinigolfCollide == "only_balls"
+	local mayEnt2CollideBallsExclusive = ent2._MinigolfCollide == "only_balls"
+	local mayEnt1CollideOthersExclusive = ent1._MinigolfCollide == "only_others"
+	local mayEnt2CollideOthersExclusive = ent2._MinigolfCollide == "only_others"
+	local mayEnt1CollideOthers = mayEnt1CollideOthersExclusive or ent1._MinigolfCollide == "balls_and_others"
+	local mayEnt2CollideOthers = mayEnt2CollideOthersExclusive or ent2._MinigolfCollide == "balls_and_others"
 
-	if((mayEnt1CollideBalls and not isEnt2Ball)
-	or mayEnt2CollideBalls and not isEnt1Ball)then
+	if((mayEnt1CollideOthersExclusive and not mayEnt2CollideOthers)
+	or (mayEnt2CollideOthersExclusive and not mayEnt1CollideOthers))then
+		-- Collide with other entities only
+		return false
+	end
+
+	if((mayEnt1CollideBallsExclusive or mayEnt2CollideBallsExclusive) 
+	and not ((mayEnt1CollideBallsExclusive and isEnt2Ball)
+	or (mayEnt2CollideBallsExclusive and isEnt1Ball)))then
 		-- Collide only with minigolf balls
 		return false
 	end
 
 	if((mayEnt1CollideOthers or mayEnt2CollideOthers) 
-	and (mayEnt1CollideOthers ~= mayEnt2CollideOthers))then
-		-- Collide only with other entities that have `only_others` or `balls_and_others`
+	and not ((mayEnt1CollideOthers and (isEnt2Ball or mayEnt2CollideOthers))
+	or (mayEnt2CollideOthers and (isEnt1Ball or mayEnt1CollideOthers))))then
+		-- Collide with other entities and balls only
 		return false
 	end
-
+	
 	-- After this we only check if a player is one of the colliders
 	if(not (ent1:IsPlayer() or ent2:IsPlayer()))then
 		return
@@ -41,7 +51,7 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 end)
 
 hook.Add("EntityKeyValue", "Minigolf.MarkEntitiesWithCollideRules", function(ent, key, value)
-	if(key == "minigolf_collide")then
+	if(key:lower() == "minigolfcollide")then
 		ent._MinigolfCollide = value:lower()
 	end
 end)

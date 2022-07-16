@@ -44,3 +44,8 @@ luac.out
 
 # Ignore (Symlinked) directory with GLua definitions
 .glua
+
+# Ignore map compilation files
+maps/*.log
+maps/*.prt
+maps/*.vmx

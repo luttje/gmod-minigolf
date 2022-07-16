@@ -71,7 +71,7 @@ Luttje: [golf_dev_minimal_v3.vmf](https://mega.nz/file/plRx0QhI#fRTKcXxUoKOdpZDc
 
 You can control more behaviour by applying any of the following key/value pairs on entities.
 
-* (Key) `minigolf_collide`
+* (Key) `minigolfCollide`
   * Possible values:
     * `except_players`: Collide with everything, except players
     * `only_balls`: Collide only with minigolf balls
