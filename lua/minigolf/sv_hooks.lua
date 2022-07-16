@@ -2,6 +2,8 @@ local playerLibrary = player
 
 ---@param player Player
 hook.Add("PlayerInitialSpawn", "Minigolf.SetupHoleRegistration", function(player)
+  Minigolf.Commands.ShowHelpConsole(player)
+
   -- Start with a Minigolf.HOLE_NOT_PLAYED on all holes
   Minigolf.Holes.ResetForPlayer(player)
 end)
@@ -87,4 +89,22 @@ hook.Add("KeyPress", "Minigolf.AllowUseBall", function( player, key )
 			end
 		end
 	end
+end)
+
+hook.Add("Minigolf.BallStartedGivingForce", "Minigolf.ShowBallForceToTeam", function(player, ball)
+	for _, teamPlayer in pairs(team.GetPlayers(player:Team())) do
+		-- Delay this until we know for sure the ball has been created clientside
+			teamPlayer:OnEntityExists(ball, function(teamPlayer, entity)
+				net.Start("Minigolf.GetBallForce")
+					net.WriteEntity(player)
+					net.WriteEntity(entity)
+				net.Send(teamPlayer)
+			end)
+		end
+end)
+
+hook.Add("Minigolf.BallStoppedGivingForce", "Minigolf.HideBallForceToTeam", function(player, ball)
+	net.Start("Minigolf.GetBallForceCancel")
+		net.WriteEntity(player)
+	net.Send(team.GetPlayers(player:Team()))
 end)

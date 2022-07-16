@@ -1,6 +1,6 @@
 local entityMeta = FindMetaTable("Entity")
 
-Minigolf.Entity = {}
+Minigolf.Entity = Minigolf.Entity or {}
 
 --- Calculates if the given entity is within distance of another entity.
 ---@param entity Entity

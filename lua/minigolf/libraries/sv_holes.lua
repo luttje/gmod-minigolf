@@ -2,8 +2,8 @@ util.AddNetworkString("Minigolf.SetPlayerTimeLimit")
 util.AddNetworkString("Minigolf.PlayerHasFinished")
 
 Minigolf.Holes = Minigolf.Holes or {}
-Minigolf.Holes.NetworkIDCache = {}
-Minigolf.Holes.Cache = {}
+Minigolf.Holes.NetworkIDCache = Minigolf.Holes.NetworkIDCache or {}
+Minigolf.Holes.Cache = Minigolf.Holes.Cache or {}
 
 function Minigolf.Holes.GetByName(findHoleName)
 	if(Minigolf.Holes.Cache[findHoleName])then
@@ -44,6 +44,8 @@ function Minigolf.Holes.Start(player, ball, start)
 	if(not player:HasWeapon("golf_club"))then
 		player:Give("golf_club")
 	end
+
+	player:SelectWeapon("golf_club")
 
   player:SetActiveHole(start)
 

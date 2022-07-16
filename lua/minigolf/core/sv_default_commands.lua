@@ -18,11 +18,5 @@ Minigolf.Commands.Register("gmcredits", function(player)
 end, "Show information on this minigolf addon and who made it happen")
 
 Minigolf.Commands.Register("help", function(player)
-  local prefix = Minigolf.Convars.CommandPrefix:GetString()
-	
-	player:ChatPrint("All Commands:")
-
-  for _,commandData in pairs(Minigolf.Commands.GetAll()) do
-		player:ChatPrint(string.format("   %s%s: %s", prefix, commandData.command, commandData.description))
-	end
+  Minigolf.Commands.ShowHelp(player)
 end, "Lists all available commands")

@@ -51,6 +51,7 @@ hook.Add("Minigolf.AdjustHolePanel", "Minigolf.DrawTeamMemberTimes", function(ho
 
 				local time = math.max(0, math.Round(player._LimitTimeLeft - UnPredictedCurTime()))
 				holePanel:SetPlaying(time)
+				holePanel:PaintManual()
 				
 				return true
 			end

@@ -1,7 +1,7 @@
 -- Store messages received
 local storedMessages = {}
 
-Minigolf.Messages = {}
+Minigolf.Messages = Minigolf.Messages or {}
 
 --- Prints a message to the message medium (screen) immediately.
 ---@overload fun(msg:string, icon:string):nil

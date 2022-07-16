@@ -1,4 +1,4 @@
-Minigolf.Text = {}
+Minigolf.Text = Minigolf.Text or {}
 
 -- Pluralizes text depending on the amount
 function Minigolf.Text.Pluralize(text, amount)

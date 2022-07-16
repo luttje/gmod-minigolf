@@ -1,6 +1,6 @@
 util.AddNetworkString("Minigolf.PrintMessageToScreen")
 
-Minigolf.Messages = {}
+Minigolf.Messages = Minigolf.Messages or {}
 
 function Minigolf.Messages.Send(receivers, message, icon, textEffect)
 	net.Start("Minigolf.PrintMessageToScreen")

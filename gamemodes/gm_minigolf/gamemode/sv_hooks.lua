@@ -132,24 +132,6 @@ hook.Add("Minigolf.PlayerGivesUp", "Minigolf.PlayerGivesUpMessage", function(pla
 	Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(player), player:Nick() .. " gave up!", nil, Minigolf.TEXT_EFFECT_DANGER)
 end)
 
-hook.Add("Minigolf.BallStartedGivingForce", "Minigolf.ShowBallForceToTeam", function(player, ball)
-	for _, teamPlayer in pairs(team.GetPlayers(player:Team())) do
-		-- Delay this until we know for sure the ball has been created clientside
-			teamPlayer:OnEntityExists(ball, function(teamPlayer, entity)
-				net.Start("Minigolf.GetBallForce")
-					net.WriteEntity(player)
-					net.WriteEntity(entity)
-				net.Send(teamPlayer)
-			end)
-		end
-end)
-
-hook.Add("Minigolf.BallStoppedGivingForce", "Minigolf.HideBallForceToTeam", function(player, ball)
-	net.Start("Minigolf.GetBallForceCancel")
-		net.WriteEntity(player)
-	net.Send(team.GetPlayers(player:Team()))
-end)
-
 -- Set comfortable speeds & no collision between players
 hook.Add("PlayerSpawn", "Minigolf.SetupSpeeds", function(player)
 	player:SetWalkSpeed(120)

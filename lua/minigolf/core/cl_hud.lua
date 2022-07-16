@@ -1,5 +1,11 @@
 local hudPanel
 
+hook.Add("HUDShouldDraw", "Minigolf.HideWeaponSelectionWhileGolfing", function(name)
+	if(LocalPlayer()._LimitTimeLeft and name == "CHudWeaponSelection") then
+		return false
+	end
+end)
+
 hook.Add("HUDPaint", "Minigolf.DrawHUD", function()
 	if(not hudPanel and IsValid(LocalPlayer()))then
 		hudPanel = vgui.Create("Minigolf.HUD")
@@ -30,7 +36,7 @@ hook.Add("HUDPaint", "Minigolf.DrawHoleStarts", function()
 				end
 				
 				local shouldDrawHolePanel = hook.Call("Minigolf.ShouldDrawHolePanel", Minigolf.GM(), ent)
-				
+
 				if(shouldDrawHolePanel ~= nil and shouldDrawHolePanel == false)then
 					ent._HolePanel:SetAlpha(0)
 					return
