@@ -59,21 +59,11 @@ For your dedicated server you will want to add [a workshop collection like this]
 ./srcds_run -game garrysmod -tickrate 66 +gamemode gm_minigolf +map golf_rocket_hub_alpha2 -maxplayers 32 -disableluarefresh
 ```
 
+## Configurations
 
-## Configuration
-
-### How do I reward PointShop points for scoring in a hole?
-
-Copy the file at [`docs/examples/sv_pointshop_rewards.lua`](docs/examples/sv_pointshop_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
-
-### Can I add PointShop items that change the ball skins or something?
-
-Yes something: we've included examples in [`docs/examples/pointshop_items`](docs/examples/pointshop_items) where you can see how to have:
-* **Ball Area Effects:** A texture flat on the ground underneath the ball.
-* **Ball Trails:** Trails, but not for a player but their Minigolf ball.
-* **Balls:** A skin or completely different model for a players' ball.
-
-None of these items affect the performance of a ball. So even though a model is not perfectly spherical, it'll still roll as if it is (which is good).
+You can customize how this addon behaves in the map, using console variables (Convars) or with your own code. Read more about it here:
+* [Console Commands and PointShop rewards](docs/CONFIGURATIONS.md)
+* [Mapping Guide](docs/MAPPING_GUIDE.md)
 
 
 ## Additional tools for development
@@ -85,7 +75,7 @@ We try to develop the code with helpful EmmyLua annotations. At the same time yo
 
 # ❤ Contributing
 
-If you want to improve some code in this gamemode, feel free to open a ticket or shoot in your Pull Request. I'm not intending to maintain this repository full-time, though I'll merge in good additions when I find the time. Please have a look (and feel free to contribute) to the [`CONVENTIONS.md`](CONVENTIONS.md)
+If you want to improve some code in this gamemode, feel free to open a ticket or shoot in your Pull Request. I'm not intending to maintain this repository full-time, though I'll merge in good additions when I find the time. Please have a look (and feel free to contribute) to the [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md)
 
 
 ## Mapping

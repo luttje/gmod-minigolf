@@ -42,3 +42,23 @@ end, "Enables on screen help")
 Minigolf.Commands.Register("disablehints", function(player)
   player:ConCommand("minigolf_show_hints 1")
 end, "Disables on screen help")
+
+Minigolf.Commands.Register("enableautopower", function(player)
+  if(not Minigolf.Convars.PlayerConfigPowerMode:GetBool())then
+		Minigolf.Messages.Send(player, "The admin does not allow you to change your power mode.", nil, Minigolf.TEXT_EFFECT_DANGER)
+		return
+	end
+
+	player:SetNWBool("Minigolf.AutoPowerMode", true)
+	Minigolf.Messages.Send(player, "Automatic power mode enabled!", nil, Minigolf.TEXT_EFFECT_NORMAL)
+end, "Enables automatic power mode")
+
+Minigolf.Commands.Register("disableautopower", function(player)
+	if(not Minigolf.Convars.PlayerConfigPowerMode:GetBool())then
+		Minigolf.Messages.Send(player, "The admin does not allow you to change your power mode.", nil, Minigolf.TEXT_EFFECT_DANGER)
+		return
+	end
+	
+	player:SetNWBool("Minigolf.AutoPowerMode", false)
+	Minigolf.Messages.Send(player, "Automatic power mode disabled!", nil, Minigolf.TEXT_EFFECT_NORMAL)
+end, "Disables automatic power mode")

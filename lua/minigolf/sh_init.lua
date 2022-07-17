@@ -2,6 +2,9 @@ Minigolf = Minigolf or {}
 
 Minigolf.Convars = {}
 Minigolf.Convars.CommandPrefix = CreateConVar("minigolf_command_prefix", "+", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "The prefix for all minigolf commands.")
+Minigolf.Convars.PlayerConfigPowerMode = CreateConVar("minigolf_allow_change_power_mode", "1", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Can a player change their own power mode?")
+Minigolf.Convars.DefaultAutoPowerMode = CreateConVar("minigolf_auto_power_mode", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Should the powerbar bounce back and forth until the player releases a key?")
+Minigolf.Convars.AutoPowerVelocity = CreateConVar("minigolf_auto_power_velocity", "50", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "How fast should the powerbar bounce back and forth? (lower number is slower)")
 
 Minigolf.CANCEL_BALL_FORCE = -1
 

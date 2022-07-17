@@ -43,8 +43,8 @@ end
 local PADDING_FLOOR_TEXT = 256
 local FORCE_MAX = 1280
 local FORCE_FRACTION_MAX = 1
-local FORCE_FRACTION_MIN = 0.01
-local SCROLL_MODIFIER = 0.01 -- 0.01 = 1% change per scroll
+local FORCE_FRACTION_MIN = 0.0001
+local SCROLL_MODIFIER = 2
 local PITCH_MULTIPLIER = 100
 local PITCH_MIN = 0
 local PITCH_MAX = 90
@@ -93,6 +93,29 @@ net.Receive("Minigolf.GetBallForceCancel", function()
 	drawingName = nil
 end)
 
+local currentVelocity = SCROLL_MODIFIER
+hook.Add("Think", "Minigolf.AdjustPowerAutomaticallyOnAutoMode", function(cmd, x, y, ang)
+	if(not IsValid(inputtingForceBall))then
+		return
+	end
+
+	local isAutoPowerMode = LocalPlayer():GetNWBool("Minigolf.AutoPowerMode", false)
+
+	if(not isAutoPowerMode)then
+		return
+	end
+
+	local velocityModifier = Minigolf.Convars.AutoPowerVelocity:GetInt() * 0.01 * RealFrameTime()
+
+	if(currentForce >= FORCE_FRACTION_MAX)then
+		currentVelocity = -SCROLL_MODIFIER
+	elseif(currentForce <= FORCE_FRACTION_MIN)then
+		currentVelocity = SCROLL_MODIFIER
+	end
+
+	currentForce = currentForce + (currentVelocity*velocityModifier)
+end)
+
 -- Translate scrolling to adjusting the force
 local lastTimePitchErrorPlayed = 0
 hook.Add("InputMouseApply", "Minigolf.AdjustPowerWithButtonsAndScrolla", function(cmd, x, y, ang)
@@ -100,10 +123,14 @@ hook.Add("InputMouseApply", "Minigolf.AdjustPowerWithButtonsAndScrolla", functio
 		return
 	end
 
+	local isAutoPowerMode = LocalPlayer():GetNWBool("Minigolf.AutoPowerMode", false)
 	local reloadButton = input.GetKeyCode(input.LookupBinding("reload"))
 
 	if(input.IsButtonDown(reloadButton))then
-		currentForce = FORCE_FRACTION_MIN
+		if(not isAutoPowerMode)then
+			currentForce = FORCE_FRACTION_MIN
+		end
+
 		currentPitch = PITCH_MIN
 		return
 	end
@@ -127,7 +154,7 @@ hook.Add("InputMouseApply", "Minigolf.AdjustPowerWithButtonsAndScrolla", functio
 		scrollDelta = 0
 	end
 
-	adjust = scrollDelta * SCROLL_MODIFIER
+	adjust = scrollDelta * SCROLL_MODIFIER * RealFrameTime()
 
 	if(adjust == 0)then
 		return
@@ -143,7 +170,7 @@ hook.Add("InputMouseApply", "Minigolf.AdjustPowerWithButtonsAndScrolla", functio
 	local maxPitch = start:GetMaxPitch()
 	local speedButton = input.GetKeyCode(input.LookupBinding("speed"))
 
-	if(not input.IsButtonDown(speedButton))then
+	if(not input.IsButtonDown(speedButton) and not isAutoPowerMode)then
 		currentForce = math.Round(math.max(FORCE_FRACTION_MIN, math.min(FORCE_FRACTION_MAX, currentForce + adjust)),2)
 		return
 	end
@@ -243,6 +270,7 @@ hook.Add("PostDrawTranslucentRenderables", "Minigolf.DrawBallOwner", function(is
 					local texts = {}
 					local textsRight = {}
 					local showHints = Minigolf.Convars.ShowHints:GetBool()
+					local isAutoPowerMode = LocalPlayer():GetNWBool("Minigolf.AutoPowerMode", false)
 
 					if(IsValid(player))then
 						if(player == LocalPlayer())then
@@ -255,13 +283,21 @@ hook.Add("PostDrawTranslucentRenderables", "Minigolf.DrawBallOwner", function(is
 									textsRight[#textsRight + 1] = string.format("Press '%s' to shoot", input.LookupBinding("attack"):upper())
 
 									if(maxPitch ~= 0)then
-										textsRight[#textsRight + 1] = string.format("Hold '%s' and use the same keys to change the pitch and make a 'lob shot'.", input.LookupBinding("speed"):upper())
+										if(isAutoPowerMode)then
+											textsRight[#textsRight + 1] = string.format("Scroll (or use PAGE UP and PAGE DOWN) to set the pitch for a 'lob shot'.", input.LookupBinding("speed"):upper())
+										else
+											textsRight[#textsRight + 1] = string.format("Hold '%s' and scroll (or use PAGE UP and PAGE DOWN) to set the pitch for a 'lob shot'.", input.LookupBinding("speed"):upper())
+										end
 									end
 
-									textsRight[#textsRight + 1] = "SCROLL your mouse wheel or use 'PAGE UP' and 'PAGE DOWN' to set the force"
+									if(not isAutoPowerMode)then
+										textsRight[#textsRight + 1] = "SCROLL your mouse wheel or use 'PAGE UP' and 'PAGE DOWN' to set the force"
+									end
 								end
 
-								textsRight[#textsRight + 1] = "Force: " .. (currentForce * 100)
+								if(not isAutoPowerMode)then
+									textsRight[#textsRight + 1] = "Force: " .. (currentForce * 100)
+								end
 							else
 								if(ball:GetVelocity():Length() > 0 and showHints)then
 									texts[#texts + 1] = string.format("Wait for the ball to stop rolling...")

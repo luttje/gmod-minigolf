@@ -6,6 +6,8 @@ hook.Add("PlayerInitialSpawn", "Minigolf.SetupHoleRegistration", function(player
 
   -- Start with a Minigolf.HOLE_NOT_PLAYED on all holes
   Minigolf.Holes.ResetForPlayer(player)
+
+	player:SetNWBool("Minigolf.AutoPowerMode", Minigolf.Convars.DefaultAutoPowerMode:GetBool())
 end)
 
 -- When time runs out

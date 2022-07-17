@@ -1,8 +1,10 @@
-# Code Conventions
+# Contributing
+
+## Code Conventions
 
 In order to keep the code readable this document specifies the conventions this code tries to adhere to. **Disclaimer:** You might catch code breaking these conventions, or find some conventions too tedious. When that is the case feel free to open an issue with your feedback.
 
-# Naming
+## Naming
 
 * Global variables shouldn't exist, but if they do they are `UpperCamelCase` a.k.a. `PascalCase`
 * Functions and "properties" within a variable are also `UpperCamelCase`
@@ -13,7 +15,7 @@ In order to keep the code readable this document specifies the conventions this 
 * If you need to use the player library just define `local _player = player` at the top of the file.
 
 
-# Syntax
+## Syntax
 
 * Do not use GLua specific syntax like `/* C-like comments */`, `!`, `&&` and `||`, but use the regular Lua counterparts instead (respectively: `--[[ multiline comment ]]`, `not`, `and`, and `or`)
 * Do not end instructions with a semi-colon (;)
@@ -53,17 +55,17 @@ end
 ```
 
 
-# Structure
+## Structure
 
 This section attempts to inform you where certain code should be placed
 
-## Directory: `gamemode/core`
+### Directory: `gamemode/core`
 
 Only code that are critical for the functioning of the gamemode.
 
-As a rule of thumb: code in the core is generally not recycleable, but specific to a certain cause.
+As a rule of thumb: code in the core is generally not recyclable, but specific to a certain cause.
 
-## Directory: `gamemode/libraries`
+### Directory: `gamemode/libraries`
 
 All functions that are useful for more than one context should be placed in this folder. Each file contains a library: a collection of functions which manipulate the same object, or otherwise involve the same subject.
 
