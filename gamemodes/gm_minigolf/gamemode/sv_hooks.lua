@@ -69,15 +69,15 @@ hook.Add("Minigolf.GetGoalMessage", "Minigolf.CustomGoalMessagesForCertainStroke
 	local par = start:GetPar()
 
 	if(strokes == 0)then
-		Minigolf.Messages.Send(receivers, player:Nick() .. " got an impossible run(0 strokes) at '" .. goal:GetHoleName() .. "'", "¡", Minigolf.TEXT_EFFECT_SPARKLE)
+		Minigolf.Messages.Send(receivers, player:Nick() .. " got an impossible run(0 strokes) at '" .. start:GetHoleName() .. "'", "¡", Minigolf.TEXT_EFFECT_SPARKLE)
 		player:PlaySound("vo/ravenholm/madlaugh04.wav")
 		return
 	elseif(strokes == 1)then
-		Minigolf.Messages.Send(playerLibrary.GetAll(), player:Nick() .. " got a HOLE IN ONE on '" .. goal:GetHoleName() .. "'", "@", Minigolf.TEXT_EFFECT_SPARKLE)
+		Minigolf.Messages.Send(playerLibrary.GetAll(), player:Nick() .. " got a HOLE IN ONE on '" .. start:GetHoleName() .. "'", "@", Minigolf.TEXT_EFFECT_SPARKLE)
 		player:PlaySound("vo/k_lab/kl_excellent.wav")
 		return
 	elseif(strokes >= start:GetMaxStrokes())then
-		Minigolf.Messages.Send(receivers, player:Nick() .. " struggled to get to the end of '" .. goal:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes) .."!", "~")
+		Minigolf.Messages.Send(receivers, player:Nick() .. " struggled to get to the end of '" .. start:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes) .."!", "~")
 		player:PlaySound(string.format("vo/ravenholm/madlaugh0%d.wav", math.random(1,4)))
 		return
 	end
@@ -85,19 +85,19 @@ hook.Add("Minigolf.GetGoalMessage", "Minigolf.CustomGoalMessagesForCertainStroke
 	local underPar = par - strokes
 
 	if(underPar == 0)then
-		Minigolf.Messages.Send(receivers, "Par! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
+		Minigolf.Messages.Send(receivers, "Par! ".. player:Nick() .. " got to '" .. start:GetHoleName() .. "'")
 		return
 	elseif(underPar == 1)then
-		Minigolf.Messages.Send(receivers, "Birdie! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
+		Minigolf.Messages.Send(receivers, "Birdie! ".. player:Nick() .. " got to '" .. start:GetHoleName() .. "'")
 		return
 	elseif(underPar == 2)then
-		Minigolf.Messages.Send(receivers, "Eagle! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
+		Minigolf.Messages.Send(receivers, "Eagle! ".. player:Nick() .. " got to '" .. start:GetHoleName() .. "'")
 		return
 	elseif(underPar == 2)then
-		Minigolf.Messages.Send(receivers, "Eagle! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
+		Minigolf.Messages.Send(receivers, "Eagle! ".. player:Nick() .. " got to '" .. start:GetHoleName() .. "'")
 		return
 	elseif(underPar == 2)then
-		Minigolf.Messages.Send(receivers, "Condor! ".. player:Nick() .. " got to '" .. goal:GetHoleName() .. "'")
+		Minigolf.Messages.Send(receivers, "Condor! ".. player:Nick() .. " got to '" .. start:GetHoleName() .. "'")
 		return
 	end
 end)

@@ -7,7 +7,7 @@ end
 
 function ENT:StartTouch(entity)
 	if(IsValid(entity) and entity:GetClass() == "minigolf_ball")then
-		if(self:GetHoleName() == entity:GetStart():GetHoleName())then
+		if(self:GetStart() == entity:GetStart())then
 			Minigolf.Holes.End(entity:GetPlayer(), entity, entity:GetStart(), self)
 		else
 			hook.Call("Minigolf.BallOutOfBounds", Minigolf.GM(), entity:GetPlayer(), entity, self)
@@ -25,7 +25,7 @@ function ENT:KeyValue(key, value)
 	elseif(key == "course")then
 		self:SetCourse(tostring(value):Trim())
 	elseif(key == "start_hole")then
-		print(self, key, value, type(value))
+		self:SetStartName(tostring(value):Trim())
 	end
 end
 
@@ -50,8 +50,23 @@ function ENT:GetCourse()
 	return self._HoleCourse or ""
 end
 
+function ENT:SetStartName(startName)
+	self._StartName = startName
+end
+
 function ENT:GetStart()
 	if(self._Start)then
+		return self._Start
+	end
+
+	if(self._StartName)then
+		local start = ents.FindByName(self._StartName)[1]
+	
+		if(not IsValid(start))then
+			error("Minigolf: Start hole ".. tostring(self._StartName) .." did not exist for entity ".. tostring(self) .."!")
+		end
+
+		self._Start = start
 		return self._Start
 	end
 	

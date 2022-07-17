@@ -61,7 +61,6 @@ end)
 
 hook.Add("Minigolf.AdjustHintsTexts", "Minigolf.AdjustHintsTexts", function(texts)
 	table.insert(texts, "Press 'T' or type /team to open the team menu")
-	--table.insert(texts, "Press 'B' or type /bet to see and place bets")
 end)
 
 hook.Add("Minigolf.AdjustRebuildHolePanel", "Minigolf.AdjustRebuildHolePanel", function(holePanel, hole, strokes)

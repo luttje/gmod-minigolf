@@ -12,6 +12,8 @@ _In order to quickly add the below entities you can include the [`minigolf.fgd`]
 Describes where players start to play on a minigolf track (by pressing `USE` on it). The hole and description are displayed on the players' GUI.
 
 #### Available Properties:
+  * `targetname`: You need to give every start entity a unique name. One or more `minigolf_hole_end` will point to this.
+
   * `par`: average amount of strokes players should aim for (default: 3)
 
   * `hole`: the name of this hole (required)
@@ -66,10 +68,23 @@ Specifies the end/goal/hole. When the ball touches this brush the player will ha
 Because of this design, in theory it's possible (untested) to have a hole with a single start and multiple valid ends (that all point to the same start.)
 
 #### Available Properties:
-  * `hole`: the name (must match a start hole’s name)
+  * `start_hole`: The targetname of a `minigolf_hole_start` that is associated with this end.
 
-  * `course`: the name of the course this hole is on (must match a start hole’s course name if the start hole has one set)
 
+#### Hammer Instructions:
+  1. Create one or multiple brushes in Hammer, along the edges and over the top of the minigolf track. 
+
+  2. Give these brushes the 'trigger' material on all faces. 
+
+  3. Now press [`Ctrl + T` to tie it to an entity](https://developer.valvesoftware.com/wiki/Hammer_Tools_Menu#Tie_to_Entity_.3CCtrl.2BT.3E)
+
+  4. Choose `minigolf_hole_start` as the entity type by typing it into the class name (or selecting it if you are using the `minigolf.fgd`).
+
+  5. Edit the `start_hole` (Start Hole) property using the eyedropper tool.
+
+  6. Click the `minigolf_hole_start` that is associated with this end:
+  ![Using the eyedropper to select the associated start entity](assets/mapping/pick_start_entity.jpg)
+  _You need to have made sure that the `minigolf_hole_start` has a name (`targetname` property)._
 
 ### `minigolf_hole_flag`
 This entity adds a flag to a hole. When the player comes near the flag it will raise, allowing them to see the ball better around the hole area.

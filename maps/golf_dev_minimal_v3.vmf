@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "9351"
-	"mapversion" "453"
+	"mapversion" "460"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "453"
+	"mapversion" "460"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -785,53 +785,6 @@ world
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
-	}
-	group
-	{
-		"id" "37786"
-		editor
-		{
-			"color" "0 188 233"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-}
-entity
-{
-	"id" "37787"
-	"classname" "minigolf_hole_start"
-	"angles" "0 0 0"
-	"limit" "60"
-	"maxStrokes" "12"
-	"origin" "1223.48 -471.66 328"
-	"par" "3"
-	editor
-	{
-		"color" "0 188 233"
-		"groupid" "37786"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[1000 -2768]"
-	}
-}
-entity
-{
-	"id" "37789"
-	"classname" "minigolf_hole_start"
-	"angles" "0 0 0"
-	"hole" "Bridge"
-	"limit" "60"
-	"maxStrokes" "12"
-	"origin" "1024.68 -495.79 344"
-	"par" "4"
-	editor
-	{
-		"color" "0 188 233"
-		"groupid" "37786"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[1000 -2768]"
 	}
 }
 entity
@@ -5460,280 +5413,6 @@ entity
 }
 entity
 {
-	"id" "37588"
-	"classname" "minigolf_hole_end"
-	"hole" "Simpler"
-	"hole_start" "Points to an entity this end belongs to."
-	"origin" "869 -164 330"
-	"spawnflags" "1"
-	"start_hole" "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
-	solid
-	{
-		"id" "37572"
-		side
-		{
-			"id" "20355"
-			"plane" "(871 -172 331) (867 -172 331) (861 -166 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 12] 0.25"
-			"vaxis" "[0 -1 0 48] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20354"
-			"plane" "(871 -156 329) (867 -156 329) (861 -162 329)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 12] 0.25"
-			"vaxis" "[0 -1 0 48] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20353"
-			"plane" "(871 -172 329) (867 -172 329) (867 -172 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 12] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20352"
-			"plane" "(867 -156 329) (871 -156 329) (871 -156 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 12] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20351"
-			"plane" "(861 -166 329) (861 -162 329) (861 -162 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 1 0 16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20350"
-			"plane" "(877 -162 329) (877 -166 329) (877 -166 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 1 0 16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20349"
-			"plane" "(861 -162 329) (867 -156 329) (867 -156 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 1 0 16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20348"
-			"plane" "(871 -156 329) (877 -162 329) (877 -162 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 1 0 16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20347"
-			"plane" "(867 -172 329) (861 -166 329) (861 -166 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 1 0 16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20346"
-			"plane" "(877 -166 329) (871 -172 329) (871 -172 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 1 0 16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		editor
-		{
-			"color" "220 30 220"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 1500]"
-	}
-}
-entity
-{
-	"id" "37692"
-	"classname" "minigolf_hole_end"
-	"hole" "Simpler 3"
-	"hole_start" "Points to an entity this end belongs to."
-	"origin" "920 -836 330"
-	"spawnflags" "1"
-	"start_hole" "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
-	solid
-	{
-		"id" "37689"
-		side
-		{
-			"id" "20405"
-			"plane" "(922 -844 331) (918 -844 331) (912 -838 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[-1 0 0 0] 0.25"
-			"vaxis" "[0 1 0 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20404"
-			"plane" "(922 -828 329) (918 -828 329) (912 -834 329)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[-1 0 0 0] 0.25"
-			"vaxis" "[0 1 0 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20403"
-			"plane" "(918 -828 329) (922 -828 329) (922 -828 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[-1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20402"
-			"plane" "(922 -844 329) (918 -844 329) (918 -844 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[-1 0 0 0] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20401"
-			"plane" "(928 -834 329) (928 -838 329) (928 -838 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 -16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20400"
-			"plane" "(912 -838 329) (912 -834 329) (912 -834 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 -16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20399"
-			"plane" "(928 -838 329) (922 -844 329) (922 -844 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 -16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20398"
-			"plane" "(918 -844 329) (912 -838 329) (912 -838 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 -16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20397"
-			"plane" "(922 -828 329) (928 -834 329) (928 -834 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 -16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20396"
-			"plane" "(912 -834 329) (918 -828 329) (918 -828 331)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 -16] 0.25"
-			"vaxis" "[0 0 -1 4] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		editor
-		{
-			"color" "220 30 220"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 2500]"
-	}
-}
-entity
-{
 	"id" "37737"
 	"classname" "minigolf_hole_end"
 	"origin" "576 -524 330"
@@ -6134,143 +5813,6 @@ entity
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 10500]"
-	}
-}
-entity
-{
-	"id" "37791"
-	"classname" "minigolf_hole_end"
-	"hole" "Bridge"
-	"hole_start" "Points to an entity this end belongs to."
-	"origin" "1224 -472 331.5"
-	"spawnflags" "1"
-	"start_hole" "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
-	solid
-	{
-		"id" "37792"
-		side
-		{
-			"id" "20777"
-			"plane" "(1216 -474 333) (1216 -470 333) (1222 -464 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 0] 0.25"
-			"vaxis" "[-1 0 0 32] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20776"
-			"plane" "(1232 -474 330) (1232 -470 330) (1226 -464 330)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 0] 0.25"
-			"vaxis" "[-1 0 0 32] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20775"
-			"plane" "(1216 -474 330) (1216 -470 330) (1216 -470 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 0] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20774"
-			"plane" "(1232 -470 330) (1232 -474 330) (1232 -474 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[0 -1 0 0] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20773"
-			"plane" "(1222 -464 330) (1226 -464 330) (1226 -464 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 -32] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20772"
-			"plane" "(1226 -480 330) (1222 -480 330) (1222 -480 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 -32] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20771"
-			"plane" "(1226 -464 330) (1232 -470 330) (1232 -470 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 -32] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20770"
-			"plane" "(1232 -474 330) (1226 -480 330) (1226 -480 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 -32] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20769"
-			"plane" "(1216 -470 330) (1222 -464 330) (1222 -464 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 -32] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		side
-		{
-			"id" "20768"
-			"plane" "(1222 -480 330) (1216 -474 330) (1216 -474 333)"
-			"material" "TOOLS/TOOLSTRIGGER"
-			"uaxis" "[1 0 0 -32] 0.25"
-			"vaxis" "[0 0 -1 16] 0.25"
-			"rotation" "0"
-			"lightmapscale" "16"
-			"smoothing_groups" "0"
-		}
-		editor
-		{
-			"color" "220 30 220"
-			"visgroupshown" "1"
-			"visgroupautoshown" "1"
-		}
-	}
-	editor
-	{
-		"color" "220 30 220"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[0 15500]"
 	}
 }
 entity
@@ -10436,13 +9978,453 @@ entity
 		"logicalpos" "[0 10500]"
 	}
 }
+entity
+{
+	"id" "37588"
+	"classname" "minigolf_hole_end"
+	"hole" "Simpler"
+	"origin" "869 -164 330"
+	"spawnflags" "1"
+	solid
+	{
+		"id" "37572"
+		side
+		{
+			"id" "21259"
+			"plane" "(871 -172 331) (867 -172 331) (861 -166 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 12] 0.25"
+			"vaxis" "[0 -1 0 48] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21258"
+			"plane" "(871 -156 329) (867 -156 329) (861 -162 329)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 12] 0.25"
+			"vaxis" "[0 -1 0 48] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21257"
+			"plane" "(871 -172 329) (867 -172 329) (867 -172 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 12] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21256"
+			"plane" "(867 -156 329) (871 -156 329) (871 -156 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 12] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21255"
+			"plane" "(861 -166 329) (861 -162 329) (861 -162 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 1 0 16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21254"
+			"plane" "(877 -162 329) (877 -166 329) (877 -166 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 1 0 16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21253"
+			"plane" "(861 -162 329) (867 -156 329) (867 -156 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 1 0 16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21252"
+			"plane" "(871 -156 329) (877 -162 329) (877 -162 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 1 0 16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21251"
+			"plane" "(867 -172 329) (861 -166 329) (861 -166 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 1 0 16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21250"
+			"plane" "(877 -166 329) (871 -172 329) (871 -172 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 1 0 16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "220 30 220"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 1500]"
+	}
+}
+entity
+{
+	"id" "38899"
+	"classname" "minigolf_hole_flag"
+	"angles" "0 0 0"
+	"origin" "1226 -472.77 330"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 1000]"
+	}
+}
+entity
+{
+	"id" "37692"
+	"classname" "minigolf_hole_end"
+	"hole" "Simpler 3"
+	"origin" "920 -836 330"
+	"spawnflags" "1"
+	solid
+	{
+		"id" "37689"
+		side
+		{
+			"id" "21269"
+			"plane" "(922 -844 331) (918 -844 331) (912 -838 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[-1 0 0 0] 0.25"
+			"vaxis" "[0 1 0 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21268"
+			"plane" "(922 -828 329) (918 -828 329) (912 -834 329)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[-1 0 0 0] 0.25"
+			"vaxis" "[0 1 0 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21267"
+			"plane" "(918 -828 329) (922 -828 329) (922 -828 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[-1 0 0 0] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21266"
+			"plane" "(922 -844 329) (918 -844 329) (918 -844 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[-1 0 0 0] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21265"
+			"plane" "(928 -834 329) (928 -838 329) (928 -838 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 -16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21264"
+			"plane" "(912 -838 329) (912 -834 329) (912 -834 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 -16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21263"
+			"plane" "(928 -838 329) (922 -844 329) (922 -844 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 -16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21262"
+			"plane" "(918 -844 329) (912 -838 329) (912 -838 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 -16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21261"
+			"plane" "(922 -828 329) (928 -834 329) (928 -834 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 -16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21260"
+			"plane" "(912 -834 329) (918 -828 329) (918 -828 331)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 -16] 0.25"
+			"vaxis" "[0 0 -1 4] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "220 30 220"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 2500]"
+	}
+}
+entity
+{
+	"id" "37791"
+	"classname" "minigolf_hole_end"
+	"origin" "1224 -472 331.5"
+	"spawnflags" "1"
+	"start_hole" "hole_bridges"
+	solid
+	{
+		"id" "37792"
+		side
+		{
+			"id" "21279"
+			"plane" "(1216 -474 333) (1216 -470 333) (1222 -464 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 0] 0.25"
+			"vaxis" "[-1 0 0 32] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21278"
+			"plane" "(1232 -474 330) (1232 -470 330) (1226 -464 330)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 0] 0.25"
+			"vaxis" "[-1 0 0 32] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21277"
+			"plane" "(1216 -474 330) (1216 -470 330) (1216 -470 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 0] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21276"
+			"plane" "(1232 -470 330) (1232 -474 330) (1232 -474 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[0 -1 0 0] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21275"
+			"plane" "(1222 -464 330) (1226 -464 330) (1226 -464 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 -32] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21274"
+			"plane" "(1226 -480 330) (1222 -480 330) (1222 -480 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 -32] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21273"
+			"plane" "(1226 -464 330) (1232 -470 330) (1232 -470 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 -32] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21272"
+			"plane" "(1232 -474 330) (1226 -480 330) (1226 -480 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 -32] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21271"
+			"plane" "(1216 -470 330) (1222 -464 330) (1222 -464 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 -32] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "21270"
+			"plane" "(1222 -480 330) (1216 -474 330) (1216 -474 333)"
+			"material" "TOOLS/TOOLSTRIGGER"
+			"uaxis" "[1 0 0 -32] 0.25"
+			"vaxis" "[0 0 -1 16] 0.25"
+			"rotation" "0"
+			"lightmapscale" "16"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "220 30 220"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 15500]"
+	}
+}
+entity
+{
+	"id" "38998"
+	"classname" "minigolf_hole_start"
+	"angles" "0 0 0"
+	"hole" "Bridges"
+	"limit" "60"
+	"maxPitch" "90"
+	"maxStrokes" "12"
+	"order" "3"
+	"origin" "1026.54 -494.09 342.16"
+	"par" "1"
+	"targetname" "hole_bridges"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[1000 -2768]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[586.466 -502.263 375.616]"
-		"look" "[470.458 -510.364 346.621]"
+		"position" "[1074.79 -491.262 358.88]"
+		"look" "[955.789 -505.438 357.207]"
 	}
 }
 cordon

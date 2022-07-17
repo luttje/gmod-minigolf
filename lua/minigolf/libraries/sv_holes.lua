@@ -73,7 +73,6 @@ function Minigolf.Holes.CreateTimeLimit(timeLimit, player, ball, start)
 end
 
 function Minigolf.Holes.End(player, ball, start, goal)
-	print(ball)
 	local strokes = ball:GetStrokes()
 	local customMessage = false
 
@@ -93,7 +92,7 @@ function Minigolf.Holes.End(player, ball, start, goal)
 		Minigolf.Holes.NetworkIDCache[player:SteamID()] = nil
 
 		if(customMessage ~= false)then
-			Minigolf.Messages.Send(player, player:Nick() .. " made it to the hole '" .. goal:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes), "Ã")
+			Minigolf.Messages.Send(player, player:Nick() .. " made it to the hole '" .. start:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes), "Ã")
 		end
 	else
 		--Minigolf.Messages.Send(player.GetAll(), "A player disconnected at hole '" .. start:GetHoleName() .. "!", "¡")
