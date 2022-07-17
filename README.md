@@ -39,7 +39,7 @@ __😈 Adjustable speed Windmills and other track obstacles for your friends to 
 
 ### Workshop
 
-This gamemode is available on workshop. [Subscribe here](https://steamcommunity.com/sharedfiles/filedetails/?id=2313854259) to quickly install this gamemode. _Remember to run this gamemode as at least a 2-player P2P, Local or Dedicated Server, it won't work in singleplayer._
+This gamemode is available on workshop. [Subscribe here](https://steamcommunity.com/sharedfiles/filedetails/?id=2313854259) to quickly install this gamemode.
 
 For your dedicated server you will want to add [a workshop collection like this](https://steamcommunity.com/sharedfiles/filedetails/?id=2232411122) to your server using the startup parameter: `+host_workshop_collection 2232411122`
 
@@ -54,11 +54,7 @@ For your dedicated server you will want to add [a workshop collection like this]
 
 ## Starting the gamemode
 
-Make sure you start the gamemode as a Multiplayer server (P2P or Local Server) or on a Dedicated Server. Since the gamemode uses predicted hooks the gamemode won't work in Singleplayer.
-
-![Starting a multiplayer server](docs/assets/local_server.jpg)
-
-### Example startup parameters for a dedicated server
+**Example startup parameters for a dedicated server:**
 ```
 ./srcds_run -game garrysmod -tickrate 66 +gamemode gm_minigolf +map golf_rocket_hub_alpha2 -maxplayers 32 -disableluarefresh
 ```

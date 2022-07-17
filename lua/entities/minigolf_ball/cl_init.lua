@@ -94,54 +94,66 @@ net.Receive("Minigolf.GetBallForceCancel", function()
 end)
 
 -- Translate scrolling to adjusting the force
-if(game.SinglePlayer())then	ErrorNoHalt("Minigolf Test Warning: SetupMove is not called in Singleplayer (because it's predicted)\n") end
 local lastTimePitchErrorPlayed = 0
-hook.Add("SetupMove", "Minigolf.ScrollToAdjustPower", function(player, moveData, userCmd)
-	if(IsValid(inputtingForceBall))then
-		if(moveData:KeyPressed(IN_RELOAD))then
-			currentForce = FORCE_FRACTION_MIN
-			currentPitch = PITCH_MIN
-			return
-		end
+hook.Add("InputMouseApply", "Minigolf.AdjustPowerWithButtonsAndScrolla", function(cmd, x, y, ang)
+	if(not IsValid(inputtingForceBall))then
+		return
+	end
 
-		local scrollDelta = userCmd:GetMouseWheel()
-		local adjust = 0
+	local reloadButton = input.GetKeyCode(input.LookupBinding("reload"))
 
-		if(scrollDelta ~= 0)then
-			-- Prevent 4x inputs when doing once scroll notch
-			if CurTime() > lastWheelInput then
-				lastWheelInput = CurTime() + 0.01
-			else scrollDelta = 0 end
+	if(input.IsButtonDown(reloadButton))then
+		currentForce = FORCE_FRACTION_MIN
+		currentPitch = PITCH_MIN
+		return
+	end
 
-			adjust = scrollDelta * SCROLL_MODIFIER
-		elseif(input.IsKeyDown(KEY_PAGEUP))then
-			adjust = SCROLL_MODIFIER
-		elseif(input.IsKeyDown(KEY_PAGEDOWN))then
-			adjust = -SCROLL_MODIFIER
-		end
+	local scrollDelta = cmd:GetMouseWheel()
 
-		if(adjust ~= 0)then
-			local start = inputtingForceBall:GetStart()
+	if(input.IsButtonDown(KEY_PAGEUP))then
+		scrollDelta = scrollDelta + 1
+	elseif(input.IsButtonDown(KEY_PAGEDOWN))then
+		scrollDelta = scrollDelta - 1
+	end
+	local adjust = 0
 
-			if(not IsValid(start))then
-				-- Wait for the netmessage to tell us what the hole of this ball is
-				return
-			end
+	if(scrollDelta == 0)then
+		return
+	end
 
-			local maxPitch = start:GetMaxPitch()
+	if CurTime() > lastWheelInput then
+		lastWheelInput = CurTime() + 0.01
+	else 
+		scrollDelta = 0
+	end
 
-			if(moveData:KeyDown(IN_SPEED))then
-				if(maxPitch ~= 0)then
-					currentPitch = math.min(PITCH_MAX, math.max(PITCH_MIN, currentPitch + (adjust * -PITCH_MULTIPLIER)))
-				elseif(UnPredictedCurTime() - lastTimePitchErrorPlayed > 1)then
-					lastTimePitchErrorPlayed = UnPredictedCurTime()
-					LocalPlayer():EmitSound("Resource/warning.wav", 75, 200, 0.1)
-					Minigolf.Messages.Print("Making lob shots is prohibited on this hole", "÷", Minigolf.TEXT_EFFECT_ATTENTION)
-				end
-			else
-				currentForce = math.Round(math.max(FORCE_FRACTION_MIN, math.min(FORCE_FRACTION_MAX, currentForce + adjust)),2)
-			end
-		end
+	adjust = scrollDelta * SCROLL_MODIFIER
+
+	if(adjust == 0)then
+		return
+	end
+
+	local start = inputtingForceBall:GetStart()
+
+	if(not IsValid(start))then
+		-- Wait for the netmessage to tell us what the hole of this ball is
+		return
+	end
+
+	local maxPitch = start:GetMaxPitch()
+	local speedButton = input.GetKeyCode(input.LookupBinding("speed"))
+
+	if(not input.IsButtonDown(speedButton))then
+		currentForce = math.Round(math.max(FORCE_FRACTION_MIN, math.min(FORCE_FRACTION_MAX, currentForce + adjust)),2)
+		return
+	end
+
+	if(maxPitch ~= 0)then
+		currentPitch = math.min(PITCH_MAX, math.max(PITCH_MIN, currentPitch + (adjust * -PITCH_MULTIPLIER)))
+	elseif(UnPredictedCurTime() - lastTimePitchErrorPlayed > 1)then
+		lastTimePitchErrorPlayed = UnPredictedCurTime()
+		LocalPlayer():EmitSound("Resource/warning.wav", 75, 200, 0.1)
+		Minigolf.Messages.Print("Making lob shots is prohibited on this hole", "÷", Minigolf.TEXT_EFFECT_ATTENTION)
 	end
 end)
 
