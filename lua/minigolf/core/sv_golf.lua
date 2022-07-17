@@ -60,16 +60,23 @@ hook.Add("Minigolf.CanStartPlaying", "Minigolf.DontAllowAlreadyPlayed", function
 end)
 
 hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.ClearTimeLimit", function(player, ball, start, strokes)
+	if(not IsValid(player))then
+		-- The player finished because they disconnected
+		return
+	end
+
 	local holeName = start:GetUniqueHoleName()
 
-	-- The player may have left our team waiting
-	if(IsValid(player))then
-		-- Remove the play timelimit timer
-		timer.Remove((player:AccountID() or player:UserID()) .. holeName .. "TimeLimit")
-	end
+	-- Remove the play timelimit timer
+	timer.Remove((player:AccountID() or player:UserID()) .. holeName .. "TimeLimit")
 end)
 
 hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.ResetHolesForFinishedPlayers", function(player, ball, start, strokes)
+	if(not IsValid(player))then
+		-- The player finished because they disconnected
+		return
+	end
+
 	local holeCount = 0
 
 	for holeName, holeScore in pairs(player:GetAllHoleScores()) do

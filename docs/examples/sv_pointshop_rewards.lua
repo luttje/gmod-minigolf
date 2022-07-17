@@ -7,6 +7,11 @@ if(gamemode == "gm_minigolf")then
       return
     end
 
+    if(not IsValid(player))then
+      -- The player finished because they disconnected
+      return
+    end
+
     local start = ball:GetStart()
     local par = start:GetPar()
     local named = "score"
@@ -63,7 +68,7 @@ if(gamemode == "gm_minigolf")then
       named = "hole in one!"
     end
 
-    if(reward > 0 and IsValid(player))then
+    if(reward > 0)then
       Minigolf.Messages.Send(player, string.format("You got rewarded %d %s for your %s", reward, PS.Config.PointsName, named), nil, Minigolf.TEXT_EFFECT_CASH)
       player:PS_GivePoints(reward)
     end
