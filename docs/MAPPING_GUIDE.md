@@ -1,7 +1,7 @@
 # Mapping for Minigolf
 The mapper has full control of the minigolf tracks using the scripted entities (SENTs) specified in the chapter below.
 
-![Example of a minigolf_hole_start and minigolf_trigger_oob brush](.github/assets/mapping/object_information_panel.jpg)
+![Example of a minigolf_hole_start and minigolf_trigger_oob brush](docs/assets/mapping/object_information_panel.jpg)
 
 
 ## Examples
@@ -60,7 +60,7 @@ Luttje: [golf_dev_minimal_v3.vmf](https://mega.nz/file/plRx0QhI#fRTKcXxUoKOdpZDc
     
     2. Rotate the entity in the object properties menu to change the rotation of the flag relative to the top(x/y) view:
     
-       ![Showing the direction relative to the top view](.github/assets/mapping/flag_direction.jpg)
+       ![Showing the direction relative to the top view](docs/assets/mapping/flag_direction.jpg)
     
     3. Make sure the entity is touching the related `minigolf_hole_end`
 * Out of bounds brush: `minigolf_trigger_oob`
@@ -88,14 +88,14 @@ Source Engine is great at optimizing games for computers with non-ideal hardware
 
 1. Compile your map (`File > Run Map`)
 2. In Hammer, go to `Map > Load Portal File`
-  ![Loading a portal file](.github/assets/mapping/load_portal_file.jpg)
+  ![Loading a portal file](docs/assets/mapping/load_portal_file.jpg)
 3. A simple healthy map looks like this:
-  ![Simple empty map](.github/assets/mapping/portals_simple.jpg)
+  ![Simple empty map](docs/assets/mapping/portals_simple.jpg)
 4. Let's create a minigolf hole in it, compile and then reload our portal file:
-  ![Complex portals due to minigolf hole](.github/assets/mapping/portals_complex.jpg)
+  ![Complex portals due to minigolf hole](docs/assets/mapping/portals_complex.jpg)
 5. To fix this we will tie the brushes that make up the minigolf track to a `func_detail` entity (select all those brushes and press `Ctrl + T`):
-  ![Complex portals due to minigolf hole](.github/assets/mapping/tie_to_entity.jpg)
+  ![Complex portals due to minigolf hole](docs/assets/mapping/tie_to_entity.jpg)
 6. After we compile again and re-load our portal file we see that it has helped to reduce portals:
-  ![Simple portals again](.github/assets/mapping/portals_fixed.jpg)
+  ![Simple portals again](docs/assets/mapping/portals_fixed.jpg)
 
 _[Click here to read more about how these portals optimize the game](https://developer.valvesoftware.com/wiki/Visibility_optimization), as well as to see why we don't need them around our minigolf tracks_

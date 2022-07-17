@@ -10,9 +10,9 @@
     ".glua*",
     ".vscode*",
     ".gitignore",
+    "docs*",
     "CONVENTIONS.md",
     "LICENSE",
-    "MAPPING_GUIDE.md",
     "README.md"
   ]
 }

@@ -9,14 +9,14 @@ You can play the included gamemode (gm_minigolf) or load any compatible map on S
 
 ## Gifs
 
-__⛳ Play holes built by a mapper ([see how in the mapping guide](./MAPPING_GUIDE.md))__
-![How golfing works](.github/assets/minigolf.gif)
+__⛳ Play holes built by a mapper ([see how in the mapping guide](docs/MAPPING_GUIDE.md))__
+![How golfing works](docs/assets/minigolf.gif)
 
 __💯 Play those holes with friends in a customizable team (T) and check your scores on the scoreboard (TAB)__ *(Only available in the gamemode)*
-![Configuring a team](.github/assets/teams_menu.gif)
+![Configuring a team](docs/assets/teams_menu.gif)
 
 __😈 Adjustable speed Windmills and other track obstacles for your friends to annoy you with__
-![Configuring a team](.github/assets/windmill.gif)
+![Configuring a team](docs/assets/windmill.gif)
 
 
 # Installation, Starting and Configuration
@@ -56,7 +56,7 @@ For your dedicated server you will want to add [a workshop collection like this]
 
 Make sure you start the gamemode as a Multiplayer server (P2P or Local Server) or on a Dedicated Server. Since the gamemode uses predicted hooks the gamemode won't work in Singleplayer.
 
-![Starting a multiplayer server](.github/assets/local_server.jpg)
+![Starting a multiplayer server](docs/assets/local_server.jpg)
 
 ### Example startup parameters for a dedicated server
 ```
@@ -68,11 +68,11 @@ Make sure you start the gamemode as a Multiplayer server (P2P or Local Server) o
 
 ### How do I reward PointShop points for scoring in a hole?
 
-Copy the file at [`.github/examples/sv_pointshop_rewards.lua`](.github/examples/sv_pointshop_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
+Copy the file at [`docs/examples/sv_pointshop_rewards.lua`](docs/examples/sv_pointshop_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
 
 ### Can I add PointShop items that change the ball skins or something?
 
-Yes something: we've included examples in [`.github/examples/pointshop_items`](.github/examples/pointshop_items) where you can see how to have:
+Yes something: we've included examples in [`docs/examples/pointshop_items`](docs/examples/pointshop_items) where you can see how to have:
 * **Ball Area Effects:** A texture flat on the ground underneath the ball.
 * **Ball Trails:** Trails, but not for a player but their Minigolf ball.
 * **Balls:** A skin or completely different model for a players' ball.
@@ -94,9 +94,9 @@ If you want to improve some code in this gamemode, feel free to open a ticket or
 
 ## Mapping
 
-The mapper is the one in control of the golf tracks, for instructions on how to design the map look at [the mapping guide](MAPPING_GUIDE.md)
+The mapper is the one in control of the golf tracks, for instructions on how to design the map look at [the mapping guide](docs/MAPPING_GUIDE.md)
 
-For a map to play on check out the [`maps/`](maps/) directory. Or for the `.vmf` source files check [the mapping guide for links](MAPPING_GUIDE.md)
+For a map to play on check out the [`maps/`](maps/) directory. Or for the `.vmf` source files check [the mapping guide for links](docs/MAPPING_GUIDE.md)
 
 
 ## Support me / Donate
