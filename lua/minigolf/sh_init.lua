@@ -17,6 +17,11 @@ Minigolf.TEXT_EFFECT_DANGER = 2
 Minigolf.TEXT_EFFECT_SPARKLE = 3
 Minigolf.TEXT_EFFECT_CASH = 4
 
+-- Retry rule enumerations
+Minigolf.RETRY_RULE_AFTER_COMPLETING = 1
+Minigolf.RETRY_RULE_AFTER_TIME_LIMIT = 2
+Minigolf.RETRY_RULE_AFTER_MAX_STROKES = 3
+
 -- Sizing constants
 Minigolf.PADDING = 10
 Minigolf.HALF_PADDING = Minigolf.PADDING * .5

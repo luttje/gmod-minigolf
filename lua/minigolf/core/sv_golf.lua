@@ -46,16 +46,14 @@ hook.Add("SetupPlayerVisibility", "Minigolf.SyncPlayerPVSWithBall", function(pla
 end)
 
 hook.Add("Minigolf.CanStartPlaying", "Minigolf.DontAllowAlreadyPlayed", function(player, start)
-	-- Don't allow replays of a hole
-	-- TODO: Make configurable by admin to allow replays
-	local holeStrokes = player:GetHoleScore(start)
+	local retriesLeft = player:GetAllowedRetries(start)
 
-	if(holeStrokes == Minigolf.HOLE_DISQUALIFIED)then
-		Minigolf.Messages.Send(player, "You already played this hole and got disqualified on it")
-
-		return false
-	elseif(holeStrokes > Minigolf.HOLE_NOT_PLAYED)then
-		Minigolf.Messages.Send(player, "You already played this hole and got " .. holeStrokes .. " " .. Minigolf.Text.Pluralize("stroke", holeStrokes) .. " on it")
+	if(retriesLeft == nil or retriesLeft == -1)then
+		return
+	end
+	
+	if(retriesLeft <= 0)then
+		Minigolf.Messages.Send(player, "You can not retry this hole!", "Ã")
 
 		return false
 	end

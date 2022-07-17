@@ -78,7 +78,7 @@ function Minigolf.Holes.End(player, ball, start, goal)
 
 	-- They may have disconnected
 	if(IsValid(player))then
-		-- Goal can be nil when we end because of strike or time limit
+		-- Goal can be nil when we end because of a time limit
 		if(goal)then
 			customMessage = hook.Call("Minigolf.GetGoalMessage", Minigolf.GM(), player, goal, strokes, start)
 		else
@@ -86,6 +86,11 @@ function Minigolf.Holes.End(player, ball, start, goal)
 		end
 
 		player:SetHoleScore(start, strokes)
+		player:SetAllowedRetries(start, start:GetMaxRetries(
+			(strokes >= start:GetMaxStrokes() and Minigolf.RETRY_RULE_AFTER_MAX_STROKES)
+			or (goal == nil and Minigolf.RETRY_RULE_AFTER_TIME_LIMIT)
+			or Minigolf.RETRY_RULE_AFTER_COMPLETING
+		))
 
 		player:SetPlayerBall(nil)
 		player:SetActiveHole(nil)

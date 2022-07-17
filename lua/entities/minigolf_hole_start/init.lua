@@ -15,6 +15,7 @@ end
 function ENT:Initialize()
 	if ( CLIENT ) then return end
 
+	self._MaxRetryRules = self._MaxRetryRules or {}
 	self:SetModel(self.Model)
 	self:SetMoveType(MOVETYPE_NONE)
 	self:SetUseType( SIMPLE_USE )
@@ -97,6 +98,12 @@ function ENT:KeyValue(key, value)
 		self:SetMaxStrokes(tonumber(value))
 	elseif(key == "maxpitch")then
 		self:SetMaxPitch(tonumber(value))
+	elseif(key == "maxretriesaftercompleting")then
+		self:SetMaxRetries(Minigolf.RETRY_RULE_AFTER_COMPLETING, tonumber(value))
+	elseif(key == "maxretriesaftertimelimit")then
+		self:SetMaxRetries(Minigolf.RETRY_RULE_AFTER_TIME_LIMIT, tonumber(value))
+	elseif(key == "maxretriesaftermaxstrokes")then
+		self:SetMaxRetries(Minigolf.RETRY_RULE_AFTER_MAX_STROKES, tonumber(value))
 	end
 end
 
@@ -193,6 +200,15 @@ end
 
 function ENT:GetDescription()
 	return self._HoleDescription
+end
+
+function ENT:SetMaxRetries(rule, maxRetries)
+	self._MaxRetryRules = self._MaxRetryRules or {}
+	self._MaxRetryRules[rule] = maxRetries
+end
+
+function ENT:GetMaxRetries(rule)
+	return self._MaxRetryRules[rule] or 0
 end
 
 function ENT:UpdateTransmitState()	

@@ -1,6 +1,6 @@
-Minigolf.Player = Minigolf.Player or {}
-
 util.AddNetworkString("Minigolf.PlaySound")
+
+Minigolf.Player = Minigolf.Player or {}
 
 local playerMeta = FindMetaTable("Player")
 local playerLibrary = player
@@ -100,7 +100,7 @@ playerMeta.PlaySound = Minigolf.Player.PlaySound
 --- Set ball to nil when it's removed
 ---@param player Player
 ---@param ball Entity
-function Minigolf.SetPlayerBall(player, ball)
+function Minigolf.Player.SetBall(player, ball)
   player._Ball = ball
   player:SetNWEntity("PlayerBall", ball)
 
@@ -109,48 +109,49 @@ end
 
 --- Gets the ball entity that the player deployed on a hole
 ---@param player Player
-function Minigolf.GetPlayerBall(player)
+function Minigolf.Player.GetBall(player)
   return player._Ball
 end
 
-playerMeta.SetPlayerBall = Minigolf.SetPlayerBall
-playerMeta.GetPlayerBall = Minigolf.GetPlayerBall
+playerMeta.SetPlayerBall = Minigolf.Player.SetBall
+playerMeta.GetPlayerBall = Minigolf.Player.GetBall
 
 --[[
   Getter and setter for the active hole this player is playing on
 --]]
 -- Set hole to nil when the player is done
-function Minigolf.SetActiveHole(player, hole)
+function Minigolf.Player.SetActiveHole(player, hole)
   player._ActiveHole = hole
   player:SetNWEntity("Minigolf.ActiveHole", hole ~= nil and hole or NULL)
 
   return hole
 end
 
-function Minigolf.GetActiveHole(player)
+function Minigolf.Player.GetActiveHole(player)
   return player._ActiveHole
 end
 
-playerMeta.SetActiveHole = Minigolf.SetActiveHole
-playerMeta.GetActiveHole = Minigolf.GetActiveHole
+playerMeta.SetActiveHole = Minigolf.Player.SetActiveHole
+playerMeta.GetActiveHole = Minigolf.Player.GetActiveHole
 
 --[[
   Getter and setters for the scores on holes
 --]]
-function Minigolf.ResetHoleScores(player)
+function Minigolf.Player.ResetHoleScores(player)
   player._Holes = {}
+  player._AllowedRetries = {}
 
   return player._Holes
 end
 
-function Minigolf.GetAllHoleScores(player)
+function Minigolf.Player.GetAllHoleScores(player)
   return player._Holes
 end
 
 ---@param player Player The player to set the score for
 ---@param start Entity|string The hole entity or name of the hole to get the score for
 ---@param strokes number The amount of strokes to set for this hole
-function Minigolf.SetHoleScore(player, start, strokes)
+function Minigolf.Player.SetHoleScore(player, start, strokes)
   local holeName = start
 
   if(type(start) ~= "string")then
@@ -165,7 +166,7 @@ end
 
 ---@param player Player The player to get the score for
 ---@param start Entity|string The hole entity or name of the hole to get the score for
-function Minigolf.GetHoleScore(player, start)
+function Minigolf.Player.GetHoleScore(player, start)
   local holeName = start
 
   if(type(start) ~= "string")then
@@ -175,15 +176,15 @@ function Minigolf.GetHoleScore(player, start)
   return player._Holes[holeName]
 end
 
-playerMeta.ResetHoleScores = Minigolf.ResetHoleScores
-playerMeta.GetAllHoleScores = Minigolf.GetAllHoleScores
-playerMeta.SetHoleScore = Minigolf.SetHoleScore
-playerMeta.GetHoleScore = Minigolf.GetHoleScore
+playerMeta.ResetHoleScores = Minigolf.Player.ResetHoleScores
+playerMeta.GetAllHoleScores = Minigolf.Player.GetAllHoleScores
+playerMeta.SetHoleScore = Minigolf.Player.SetHoleScore
+playerMeta.GetHoleScore = Minigolf.Player.GetHoleScore
 
 --- Set whether the player is inputting force for the ball
 ---@param player Player
 ---@param ball Entity
-function Minigolf.SetBallGivingForce(player, ball)
+function Minigolf.Player.SetBallGivingForce(player, ball)
   player._BallGettingForce = ball
 
   return ball
@@ -191,9 +192,42 @@ end
 
 --- Get whether the player is inputting force for the ball
 ---@param player Player
-function Minigolf.GetBallGivingForce(player)
+function Minigolf.Player.GetBallGivingForce(player)
   return player._BallGettingForce
 end
 
-playerMeta.SetBallGivingForce = Minigolf.SetBallGivingForce
-playerMeta.GetBallGivingForce = Minigolf.GetBallGivingForce
+playerMeta.SetBallGivingForce = Minigolf.Player.SetBallGivingForce
+playerMeta.GetBallGivingForce = Minigolf.Player.GetBallGivingForce
+
+--- Set the amount of retries a player has left on this hole
+---@param player Player
+---@param start Entity|string The hole entity or name of the hole to get the score for
+---@param retries number The amount of retries to set for this hole
+function Minigolf.Player.SetAllowedRetries(player, start, retries)
+  local holeName = start
+
+  if(type(start) ~= "string")then
+    holeName = start:GetUniqueHoleName()
+  end
+
+  player._AllowedRetries[holeName] = retries
+
+  return retries
+end
+
+--- Get the amount of retries a player has left on this hole
+---@param player Player
+---@param start Entity|string The hole entity or name of the hole to get the score for
+---@return number The amount of retries left for this hole
+function Minigolf.Player.GetAllowedRetries(player, start)
+  local holeName = start
+
+  if(type(start) ~= "string")then
+    holeName = start:GetUniqueHoleName()
+  end
+
+  return player._AllowedRetries[holeName]
+end
+
+playerMeta.SetAllowedRetries = Minigolf.Player.SetAllowedRetries
+playerMeta.GetAllowedRetries = Minigolf.Player.GetAllowedRetries
