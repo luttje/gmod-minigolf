@@ -1,0 +1,44 @@
+//==============================================================================//
+// Defines entities and available keyvalues for the Garry's Mod Minigolf addon: //
+//										https://github.com/luttje/gmod-minigolf									  //
+//==============================================================================//
+@include "base.fgd"
+
+@PointClass base(Targetname, Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_hole_start : 
+	"Minigolf Hole Start\n"
+[
+	par(integer): "Par": 3 :"Average amount of strokes players should aim for"
+	hole(String): "Hole Name": "" : "Hole Name (Required)"
+	course(String): "Course Name": "" : "The name of the course this hole is on, for when there are multiple courses on one map"
+	order(integer): "Order" : : "an incrementing number, lower numbers appear sooner on the scoreboard (always grouped by course)"
+	limit(integer): "Time Limit": 60 : "How long players can take on the hole in seconds"
+	description(String): "Description": "": "Hole Description"
+	maxStrokes(integer): "Max Strokes" : 12 : "How many strokes are allowed before the game ends automatically"
+	maxPitch(integer): "Max Pitch": 0 : "How many degrees pitch a player can make a lob shot at, don't specify or set as 0 to indicate no lob shots allowed"
+	
+	maxRetriesAfterCompleting(integer) : "Allowed Retries on Success" : 0 : "How many times a player can retry this hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished"
+	maxRetriesAfterTimeLimit(integer) : "Allowed Retries after Time Limit" : 0 : "How many times a player can retry this hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished"
+	maxRetriesAfterMaxStrokes(integer) : "Allowed Retries after Max Strokes" : 0 : "How many times a player can retry this hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished"
+]
+
+@SolidClass base(Trigger) = minigolf_hole_end : 
+	"Minigolf Hole End\n"
+[
+    hole(String): "[deprecated] Hole Name": "" : "[Deprecated! Use start_hole (Start Hole) instead!] Hole Name (Required to match a minigolf_hole_start name)"
+    course(String): "[deprecated] Course Name": "" : "[Deprecated! Use start_hole (Start Hole) instead!] The name of the course this hole is on, for when there are multiple courses on one map"
+		start_hole(target_destination): "Start Hole": "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
+]
+
+@PointClass base(Origin, Angles) studioprop("models/props_c17/signpole001.mdl") = minigolf_hole_flag : 
+	"Minigolf Hole Flag\n" + 
+	"A Flag for the Minigolf Hold End. This needs to touch a minigolf_hole_end entity!"
+[
+
+]
+
+@SolidClass base(Trigger) = minigolf_trigger_oob : 
+	"Minigolf Out-Of-Bounds Trigger\n" + 
+	"When the ball touches this brush the ball is considered Out-Of-Bounds. The ball will be reset to the last valid position."
+[
+
+]

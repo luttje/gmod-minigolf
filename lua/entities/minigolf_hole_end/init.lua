@@ -24,6 +24,8 @@ function ENT:KeyValue(key, value)
 		self:SetHoleName(tostring(value):Trim())
 	elseif(key == "course")then
 		self:SetCourse(tostring(value):Trim())
+	elseif(key == "start_hole")then
+		print(self, key, value, type(value))
 	end
 end
 

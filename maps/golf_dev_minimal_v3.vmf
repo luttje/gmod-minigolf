@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "9351"
-	"mapversion" "445"
+	"mapversion" "453"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "445"
+	"mapversion" "453"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -799,15 +799,55 @@ world
 }
 entity
 {
+	"id" "37787"
+	"classname" "minigolf_hole_start"
+	"angles" "0 0 0"
+	"limit" "60"
+	"maxStrokes" "12"
+	"origin" "1223.48 -471.66 328"
+	"par" "3"
+	editor
+	{
+		"color" "0 188 233"
+		"groupid" "37786"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[1000 -2768]"
+	}
+}
+entity
+{
+	"id" "37789"
+	"classname" "minigolf_hole_start"
+	"angles" "0 0 0"
+	"hole" "Bridge"
+	"limit" "60"
+	"maxStrokes" "12"
+	"origin" "1024.68 -495.79 344"
+	"par" "4"
+	editor
+	{
+		"color" "0 188 233"
+		"groupid" "37786"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[1000 -2768]"
+	}
+}
+entity
+{
 	"id" "14036"
 	"classname" "minigolf_hole_start"
+	"angles" "0 0 0"
 	"hole" "Simpler"
+	"limit" "60"
 	"maxStrokes" "6"
 	"order" "1"
 	"origin" "892.79 -362.32 340"
+	"par" "3"
 	editor
 	{
-		"color" "0 255 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[1000 -2768]"
@@ -817,6 +857,7 @@ entity
 {
 	"id" "14417"
 	"classname" "minigolf_hole_flag"
+	"angles" "0 0 0"
 	"origin" "869 -164 324"
 	editor
 	{
@@ -1906,6 +1947,8 @@ entity
 {
 	"id" "19257"
 	"classname" "minigolf_trigger_oob"
+	"origin" "893 -260 361.5"
+	"spawnflags" "1"
 	solid
 	{
 		"id" "19249"
@@ -1977,7 +2020,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 189 130"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2053,7 +2096,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 169 110"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2129,7 +2172,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 249 226"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2205,7 +2248,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 177 170"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2281,14 +2324,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 141 186"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[3500 -2768]"
@@ -2298,6 +2341,8 @@ entity
 {
 	"id" "37146"
 	"classname" "minigolf_trigger_oob"
+	"origin" "896 -740 383"
+	"spawnflags" "1"
 	solid
 	{
 		"id" "37147"
@@ -2369,7 +2414,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 189 130"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2445,7 +2490,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 169 110"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2521,7 +2566,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 249 226"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2597,7 +2642,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 177 170"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -2673,14 +2718,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 141 186"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[3500 -2768]"
@@ -3842,14 +3887,17 @@ entity
 {
 	"id" "37169"
 	"classname" "minigolf_hole_start"
+	"angles" "0 0 0"
 	"hole" "Simpler 3"
+	"limit" "60"
 	"maxPitch" "90"
+	"maxStrokes" "12"
 	"order" "3"
-	"par" "1"
 	"origin" "896.21 -637.68 340"
+	"par" "1"
 	editor
 	{
-		"color" "0 255 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[1000 -2768]"
@@ -3873,6 +3921,8 @@ entity
 {
 	"id" "37301"
 	"classname" "minigolf_trigger_oob"
+	"origin" "672 -500 361.5"
+	"spawnflags" "1"
 	solid
 	{
 		"id" "37302"
@@ -3944,7 +3994,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 189 130"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -4020,7 +4070,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 169 110"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -4096,7 +4146,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 249 226"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -4172,7 +4222,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 177 170"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -4248,14 +4298,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 141 186"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[3500 -2768]"
@@ -5341,14 +5391,18 @@ entity
 {
 	"id" "37324"
 	"classname" "minigolf_hole_start"
+	"angles" "0 0 0"
 	"course" "EastWest"
 	"hole" "Simpler"
 	"limit" "15"
+	"maxStrokes" "12"
 	"order" "4"
 	"origin" "774.32 -500.21 340"
+	"par" "3"
+	"targetname" "start_simpler"
 	editor
 	{
-		"color" "0 255 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[1000 -2768]"
@@ -5372,7 +5426,7 @@ entity
 {
 	"id" "37365"
 	"classname" "info_player_start"
-	"angles" "0 90 0"
+	"angles" "0 180 0"
 	"origin" "896 -496 328"
 	editor
 	{
@@ -5409,6 +5463,10 @@ entity
 	"id" "37588"
 	"classname" "minigolf_hole_end"
 	"hole" "Simpler"
+	"hole_start" "Points to an entity this end belongs to."
+	"origin" "869 -164 330"
+	"spawnflags" "1"
+	"start_hole" "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
 	solid
 	{
 		"id" "37572"
@@ -5524,14 +5582,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 237 194"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 1500]"
@@ -5542,6 +5600,10 @@ entity
 	"id" "37692"
 	"classname" "minigolf_hole_end"
 	"hole" "Simpler 3"
+	"hole_start" "Points to an entity this end belongs to."
+	"origin" "920 -836 330"
+	"spawnflags" "1"
+	"start_hole" "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
 	solid
 	{
 		"id" "37689"
@@ -5657,14 +5719,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 237 114"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 2500]"
@@ -5674,8 +5736,9 @@ entity
 {
 	"id" "37737"
 	"classname" "minigolf_hole_end"
-	"course" "EastWest"
-	"hole" "Simpler"
+	"origin" "576 -524 330"
+	"spawnflags" "1"
+	"start_hole" "start_simpler"
 	solid
 	{
 		"id" "37733"
@@ -5791,14 +5854,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 161 106"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 3500]"
@@ -6075,39 +6138,13 @@ entity
 }
 entity
 {
-	"id" "37787"
-	"classname" "minigolf_hole_flag"
-	"origin" "1223.48 -471.66 328"
-	editor
-	{
-		"color" "0 188 233"
-		"groupid" "37786"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[1000 -2768]"
-	}
-}
-entity
-{
-	"id" "37789"
-	"classname" "minigolf_hole_start"
-	"hole" "Bridge"
-	"par" "4"
-	"origin" "1024.68 -495.79 344"
-	editor
-	{
-		"color" "0 188 233"
-		"groupid" "37786"
-		"visgroupshown" "1"
-		"visgroupautoshown" "1"
-		"logicalpos" "[1000 -2768]"
-	}
-}
-entity
-{
 	"id" "37791"
 	"classname" "minigolf_hole_end"
 	"hole" "Bridge"
+	"hole_start" "Points to an entity this end belongs to."
+	"origin" "1224 -472 331.5"
+	"spawnflags" "1"
+	"start_hole" "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
 	solid
 	{
 		"id" "37792"
@@ -6223,14 +6260,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 102 179"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 15500]"
@@ -6722,6 +6759,8 @@ entity
 {
 	"id" "38516"
 	"classname" "minigolf_trigger_oob"
+	"origin" "1128 -504 365.5"
+	"spawnflags" "1"
 	solid
 	{
 		"id" "37756"
@@ -6793,7 +6832,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 180 0"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -6869,7 +6908,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 180 0"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -6945,7 +6984,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 180 0"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -7021,7 +7060,7 @@ entity
 		}
 		editor
 		{
-			"color" "0 180 0"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
@@ -7097,14 +7136,14 @@ entity
 		}
 		editor
 		{
-			"color" "0 180 0"
+			"color" "220 30 220"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
 	}
 	editor
 	{
-		"color" "0 180 0"
+		"color" "220 30 220"
 		"visgroupshown" "1"
 		"visgroupautoshown" "1"
 		"logicalpos" "[0 7500]"
@@ -10402,8 +10441,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[1081.57 -506.701 387.206]"
-		"look" "[1163.39 -581.425 341.535]"
+		"position" "[586.466 -502.263 375.616]"
+		"look" "[470.458 -510.364 346.621]"
 	}
 }
 cordon
