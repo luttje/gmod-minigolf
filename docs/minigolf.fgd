@@ -26,7 +26,7 @@
 [
     hole(String): "[deprecated] Hole Name": "" : "[Deprecated! Use start_hole (Start Hole) instead!] Hole Name (Required to match a minigolf_hole_start name)"
     course(String): "[deprecated] Course Name": "" : "[Deprecated! Use start_hole (Start Hole) instead!] The name of the course this hole is on, for when there are multiple courses on one map"
-		start_hole(target_destination): "Start Hole": "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
+		start_hole(target_destination): "Start Hole": "" : "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
 ]
 
 @PointClass base(Origin, Angles) studioprop("models/props_c17/signpole001.mdl") = minigolf_hole_flag : 
