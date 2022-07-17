@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "9351"
-	"mapversion" "461"
+	"mapversion" "464"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "461"
+	"mapversion" "464"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -794,7 +794,8 @@ entity
 	"angles" "0 0 0"
 	"hole" "Simpler"
 	"limit" "60"
-	"maxRetriesAfterCompleting" "-1"
+	"maxRetriesAfterMaxStrokes" "2"
+	"maxRetriesAfterTimeLimit" "1"
 	"maxStrokes" "6"
 	"order" "1"
 	"origin" "892.79 -362.32 340"
@@ -10419,13 +10420,30 @@ entity
 		"logicalpos" "[1000 -2768]"
 	}
 }
+entity
+{
+	"id" "39066"
+	"classname" "minigolf_config"
+	"angles" "0 0 0"
+	"defaultMaxRetriesAfterCompleting" "-1"
+	"defaultMaxRetriesAfterMaxStrokes" "0"
+	"defaultMaxRetriesAfterTimeLimit" "0"
+	"origin" "930.42 -443.04 326.16"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
 cameras
 {
 	"activecamera" "0"
 	camera
 	{
-		"position" "[894.956 -394.439 369.184]"
-		"look" "[884.344 -277.69 344.266]"
+		"position" "[844.75 -418.15 413.278]"
+		"look" "[925.331 -461.008 335.601]"
 	}
 }
 cordon

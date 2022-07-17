@@ -13,8 +13,6 @@ function ENT:SpawnFunction( ply, tr, ClassName )
 end
 
 function ENT:Initialize()
-	if ( CLIENT ) then return end
-
 	self._MaxRetryRules = self._MaxRetryRules or {}
 	self:SetModel(self.Model)
 	self:SetMoveType(MOVETYPE_NONE)
@@ -208,7 +206,17 @@ function ENT:SetMaxRetries(rule, maxRetries)
 end
 
 function ENT:GetMaxRetries(rule)
-	return self._MaxRetryRules[rule] or 0
+	if(self._MaxRetryRules[rule] ~= nil)then
+		return self._MaxRetryRules[rule]
+	end
+
+	local globalConfig = ents.FindByClass("minigolf_config")[1]
+
+	if(not IsValid(globalConfig))then
+		return
+	end
+
+	return globalConfig:GetDefaultMaxRetries(rule)
 end
 
 function ENT:UpdateTransmitState()	

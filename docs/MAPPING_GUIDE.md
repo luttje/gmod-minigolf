@@ -30,11 +30,11 @@ Describes where players start to play on a minigolf track (by pressing `USE` on 
 
   * `maxPitch`: how many degrees pitch a player can make a lob shot at, don't specify or set as 0 to indicate no lob shots allowed (default: 0)
 
-  * `maxRetriesAfterCompleting`: how many times a player can retry this hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+  * `maxRetriesAfterCompleting`: how many times a player can retry this hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished
 
-  * `maxRetriesAfterTimeLimit`: how many times a player can retry this hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+  * `maxRetriesAfterTimeLimit`: how many times a player can retry this hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished
 
-  * `maxRetriesAfterMaxStrokes`: how many times a player can retry this hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+  * `maxRetriesAfterMaxStrokes`: how many times a player can retry this hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished
 
 #### Hammer Instructions:
   1. In hammer [spawn a new Point Entity](https://developer.valvesoftware.com/wiki/Entity_Creation) and select it
@@ -110,6 +110,17 @@ When the ball touches this brush the ball is considered Out-Of-Bounds. The ball 
   3. Now press [`Ctrl + T` to tie it to an entity](https://developer.valvesoftware.com/wiki/Hammer_Tools_Menu#Tie_to_Entity_.3CCtrl.2BT.3E)
 
   4. Choose `minigolf_trigger_oob` as the entity type by typing it into the class name (or selecting it if you are using the `minigolf.fgd`).
+
+
+### `minigolf_config`
+A point entity that dictates how the addon should behave. It can set default information for all holes. There should be only one of this entity on a map.
+
+#### Available Properties:
+  * `defaultMaxRetriesAfterCompleting`: How many times a player can retry any hole after completing it. The maxRetriesAfterCompleting property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+
+  * `defaultMaxRetriesAfterTimeLimit`: How many times a player can retry any hole after reaching the time limit. The maxRetriesAfterTimeLimit property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+
+  * `defaultMaxRetriesAfterMaxStrokes`: How many times a player can retry any hole after reaching the maximum amount of strokes. The maxRetriesAfterMaxStrokes property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
 
 
 ## Additional properties

@@ -81,16 +81,24 @@ function Minigolf.Holes.End(player, ball, start, goal)
 		-- Goal can be nil when we end because of a time limit
 		if(goal)then
 			customMessage = hook.Call("Minigolf.GetGoalMessage", Minigolf.GM(), player, goal, strokes, start)
-		else
-			strokes = Minigolf.HOLE_DISQUALIFIED
 		end
 
-		player:SetHoleScore(start, strokes)
-		player:SetAllowedRetries(start, start:GetMaxRetries(
-			(strokes >= start:GetMaxStrokes() and Minigolf.RETRY_RULE_AFTER_MAX_STROKES)
-			or (goal == nil and Minigolf.RETRY_RULE_AFTER_TIME_LIMIT)
-			or Minigolf.RETRY_RULE_AFTER_COMPLETING
-		))
+		player:SetHoleScore(start, goal ~= nil and strokes or Minigolf.HOLE_DISQUALIFIED)
+
+		local currentRetries = player:GetAllowedRetries(start)
+		local retries
+
+		if(currentRetries == nil)then
+			retries = start:GetMaxRetries(
+				(strokes >= start:GetMaxStrokes() and Minigolf.RETRY_RULE_AFTER_MAX_STROKES)
+				or (goal == nil and Minigolf.RETRY_RULE_AFTER_TIME_LIMIT)
+				or Minigolf.RETRY_RULE_AFTER_COMPLETING
+			)
+		elseif(currentRetries > 0)then
+			retries = currentRetries - 1
+		end
+
+		player:SetAllowedRetries(start, retries)
 
 		player:SetPlayerBall(nil)
 		player:SetActiveHole(nil)
@@ -100,7 +108,6 @@ function Minigolf.Holes.End(player, ball, start, goal)
 			Minigolf.Messages.Send(player, player:Nick() .. " made it to the hole '" .. start:GetHoleName() .. "' with " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes), "Ã")
 		end
 	else
-		--Minigolf.Messages.Send(player.GetAll(), "A player disconnected at hole '" .. start:GetHoleName() .. "!", "¡")
 		print("A player disconnected at hole '" .. start:GetHoleName() .. "!")
 	end
 

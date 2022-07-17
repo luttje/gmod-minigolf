@@ -4,6 +4,14 @@
 //==============================================================================//
 @include "base.fgd"
 
+@PointClass base(Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_config : 
+	"Minigolf Config\n"
+[
+	defaultMaxRetriesAfterCompleting(integer) : "Default Allowed Retries on Success" : 0 : "How many times a player can retry any hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished"
+	defaultMaxRetriesAfterTimeLimit(integer) : "Default Allowed Retries after Time Limit" : 0 : "How many times a player can retry any hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished"
+	defaultMaxRetriesAfterMaxStrokes(integer) : "Default Allowed Retries after Max Strokes" : 0 : "How many times a player can retry any hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished"
+]
+
 @PointClass base(Targetname, Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_hole_start : 
 	"Minigolf Hole Start\n"
 [

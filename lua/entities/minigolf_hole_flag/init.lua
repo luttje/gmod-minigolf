@@ -10,8 +10,6 @@ local RAISE_FLAG_BY = 50
 local DURATION = 1
 
 function ENT:Initialize()
-	if ( CLIENT ) then return end
-
 	self:SetModel(self.Model)
 	self:SetMoveType(MOVETYPE_NONE)
 	self:SetUseType(SIMPLE_USE)
