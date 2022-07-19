@@ -15,6 +15,6 @@ function ITEM:CanPlayerEquip(ply)
 	return CATEGORY:CanPlayerEquip(self, ply)
 end
 
-function ITEM:MiniGolfPreDrawPlayerBall(ply, modifiers, player, ball)
-	CATEGORY:MiniGolfPreDrawPlayerBall(self, ply, modifiers, player, ball)
+ITEM["Minigolf.PreDrawPlayerBall"] = function(self, ply, modifiers, player, ball)
+	CATEGORY["Minigolf.PreDrawPlayerBall"](self, ply, modifiers, player, ball)
 end

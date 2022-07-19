@@ -6,7 +6,7 @@ function CATEGORY:CanPlayerEquip(item, ply)
 	return engine.ActiveGamemode() == "gm_minigolf", "This item can only be equiped in the MiniGolf gamemode."
 end
 
-function CATEGORY:MiniGolfPreDrawPlayerBall(item, ply, modifiers, player, ball)
+CATEGORY["Minigolf.PreDrawPlayerBall"] = function(self, ply, modifiers, player, ball)
   if(ply == player)then
 		local width, height = item.BallEffectMaterial:Width(), item.BallEffectMaterial:Height()
 		
