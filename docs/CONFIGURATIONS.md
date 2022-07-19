@@ -27,11 +27,11 @@ Server owners can set these:
 
 ## How do I reward PointShop points for scoring in a hole?
 
-Copy the file at [`docs/examples/sv_pointshop_rewards.lua`](docs/examples/sv_pointshop_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
+Copy the file at [`docs/examples/sv_pointshop_rewards.lua`](https://github.com/luttje/gmod-minigolf/blob/main/docs/examples/sv_pointshop_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
 
 ## Can I add PointShop items that change the ball skins or something?
 
-Yes something: we've included examples in [`docs/examples/pointshop_items`](docs/examples/pointshop_items) where you can see how to have:
+Yes something: we've included examples in [`docs/examples/pointshop_items`](https://github.com/luttje/gmod-minigolf/blob/main/docs/examples/pointshop_items) where you can see how to have:
 * **Ball Area Effects:** A texture flat on the ground underneath the ball.
 * **Ball Trails:** Trails, but not for a player but their Minigolf ball.
 * **Balls:** A skin or completely different model for a players' ball.

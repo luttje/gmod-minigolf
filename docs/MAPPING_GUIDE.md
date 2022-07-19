@@ -83,7 +83,7 @@ Because of this design, in theory it's possible (untested) to have a hole with a
   5. Edit the `start_hole` (Start Hole) property using the eyedropper tool.
 
   6. Click the `minigolf_hole_start` that is associated with this end:
-  ![Using the eyedropper to select the associated start entity](assets/mapping/pick_start_entity.jpg)
+  ![Using the eyedropper to select the associated start entity](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/pick_start_entity.jpg)
   _You need to have made sure that the `minigolf_hole_start` has a name (`targetname` property)._
 
 ### `minigolf_hole_flag`
@@ -94,7 +94,7 @@ This entity adds a flag to a hole. When the player comes near the flag it will r
   
   2. Rotate the entity in the object properties menu to change the rotation of the flag relative to the top(x/y) view:
   
-      ![Showing the direction relative to the top view](assets/mapping/flag_direction.jpg)
+      ![Showing the direction relative to the top view](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/flag_direction.jpg)
   
   3. Make sure the entity is touching the related `minigolf_hole_end`
   
@@ -165,14 +165,14 @@ Source Engine is great at optimizing games for computers with non-ideal hardware
 
 1. Compile your map (`File > Run Map`)
 2. In Hammer, go to `Map > Load Portal File`
-  ![Loading a portal file](assets/mapping/load_portal_file.jpg)
+  ![Loading a portal file](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/load_portal_file.jpg)
 3. A simple healthy map looks like this:
-  ![Simple empty map](assets/mapping/portals_simple.jpg)
+  ![Simple empty map](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/portals_simple.jpg)
 4. Let's create a minigolf hole in it, compile and then reload our portal file:
-  ![Complex portals due to minigolf hole](assets/mapping/portals_complex.jpg)
+  ![Complex portals due to minigolf hole](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/portals_complex.jpg)
 5. To fix this we will tie the brushes that make up the minigolf track to a `func_detail` entity (select all those brushes and press `Ctrl + T`):
-  ![Complex portals due to minigolf hole](assets/mapping/tie_to_entity.jpg)
+  ![Complex portals due to minigolf hole](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/tie_to_entity.jpg)
 6. After we compile again and re-load our portal file we see that it has helped to reduce portals:
-  ![Simple portals again](assets/mapping/portals_fixed.jpg)
+  ![Simple portals again](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/portals_fixed.jpg)
 
 _[Click here to read more about how these portals optimize the game](https://developer.valvesoftware.com/wiki/Visibility_optimization), as well as to see why we don't need them around our minigolf tracks_
