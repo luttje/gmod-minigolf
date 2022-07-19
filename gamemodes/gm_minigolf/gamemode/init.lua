@@ -3,7 +3,7 @@ include("sh_init.lua")
 --[[
 	Commands
 --]]
-Minigolf.Commands.Register("team", function(player, arguments)
+Minigolf.Commands.Register("team", function(player)
 	net.Start("Minigolf.ShowGolfTeamMenu")
 	net.WriteBool(false)
 	net.Send(player)

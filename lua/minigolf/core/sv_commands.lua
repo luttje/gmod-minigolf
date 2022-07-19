@@ -9,7 +9,7 @@ hook.Add("PlayerSay", "Minigolf.ProcessCommands", function(player, text)
   end
 
   local firstSpace = string.find(text, " ", prefixLength + 1, true)
-  local command = string.Trim(string.sub(text, prefixLength + 1))
+  local command = string.Trim(string.sub(text, prefixLength + 1, firstSpace))
   local callback = Minigolf.Commands.GetCallback(command)
 
   if(not callback)then
@@ -25,7 +25,7 @@ hook.Add("PlayerSay", "Minigolf.ProcessCommands", function(player, text)
     arguments = string.Explode(" ", argumentsStart)
   end
 
-  callback(player, arguments)
+  callback(player, unpack(arguments))
   
   return ""
 end)

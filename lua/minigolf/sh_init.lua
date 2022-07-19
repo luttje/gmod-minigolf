@@ -47,6 +47,8 @@ Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "libraries/"), "l
 Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "core/"), "lua/")
 Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "vgui/"), "lua/")
 
+Minigolf.Items.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "items/"), "lua/")
+
 if(SERVER)then
 	AddCSLuaFile("cl_init.lua")
 	include("sv_init.lua")

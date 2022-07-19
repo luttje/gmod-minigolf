@@ -10,3 +10,7 @@ net.Receive("Minigolf.PlaySound", function(length)
   
   surface.PlaySound(soundFile)
 end)
+
+hook.Add("InitPostEntity", "Minigolf.SetupLocalPlayer", function()
+  LocalPlayer().MinigolfEquippedItems = {}
+end)
