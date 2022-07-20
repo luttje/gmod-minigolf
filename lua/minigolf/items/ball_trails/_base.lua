@@ -8,7 +8,6 @@ local function attachTrail(player, item, ball)
   ball.Trails[item] = util.SpriteTrail(ball, 0, Color(255, 255, 255), false, 15, 1, 4, 0.125, item.TrailPath)
 end
 
---- +equipitem Electric Ball Trail
 function ITEM:OnEquip(player)
   if(not SERVER)then
     return
@@ -23,7 +22,6 @@ function ITEM:OnEquip(player)
   equip(self, ball)
 end
 
---- +unequipitem Electric Ball Trail
 function ITEM:OnUnequip(player)
   if(not SERVER)then
     return
@@ -43,5 +41,5 @@ function ITEM:OnUnequip(player)
 end
 
 hook.Add("Minigolf.BallInit", "Minigolf.InitTrailOnBall", function(player, ball)
-  Minigolf.Items.RunCallbackForEquipedSubItems(player, ITEM, attachTrail, ball)
+  Minigolf.Items.RunCallbackForEquipedItems(player, ITEM, attachTrail, ball)
 end)

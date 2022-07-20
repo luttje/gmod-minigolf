@@ -25,16 +25,118 @@ Server owners can set these:
   * `50` by default
 
 
-## How do I reward PointShop points for scoring in a hole?
+## Integrations
 
-Copy the file at [`docs/examples/sv_pointshop_rewards.lua`](https://github.com/luttje/gmod-minigolf/blob/main/docs/examples/sv_pointshop_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
+### Reward points or money for certain scores
 
-## Can I add PointShop items that change the ball skins or something?
+Copy the file at [`docs/examples/sv_rewards.lua`](https://github.com/luttje/gmod-minigolf/blob/main/docs/examples/sv_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
 
-Yes something: we've included examples in [`docs/examples/pointshop_items`](https://github.com/luttje/gmod-minigolf/blob/main/docs/examples/pointshop_items) where you can see how to have:
+
+### Minigolf Items
+
+There are 3 different item types by default:
 * **Ball Area Effects:** A texture flat on the ground underneath the ball.
 * **Ball Trails:** Trails, but not for a player but their Minigolf ball.
 * **Balls:** A skin or completely different model for a players' ball.
 
 None of these items affect the performance of a ball. So even though a model is not perfectly spherical, it'll still roll as if it is (which is good).
 
+
+#### Equiping an item
+
+The following snippet equips an item. Making it's effect visible for everyone.
+```lua
+-- ball_skull is the UniqueID of an item that changes a players' balls to a skull
+local item = Minigolf.Items.Get("ball_skull")
+local receiver = player.GetByID(1)
+
+Minigolf.Items.Equip(item, receiver)
+-- Minigolf.Items.Unequip works the exact same way, but does the opposite
+```
+
+With that you can integrate these default items in any gamemode or addon. 
+
+
+#### Custom items
+
+You can also create your own variations of these items in your gamemode. You can find an example in the included `gm_minigolf` gamemode.
+
+Be sure to:
+1. Place items in a directory named `balls`, `ball_trails` or `ball_area_effects` (otherwise you'll have to make your own type)
+2. Include the `items` directory in your gamemode like so:
+```lua
+Minigolf.Items.IncludeDirectory(Minigolf.PathCombine("gamemodes/<your gamemode folder>/gamemode", "items/"))
+```
+
+For an example, checkout: ([gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua](gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua)) and ([gamemodes/gm_minigolf/gamemode/sh_init.lua](gamemodes/gm_minigolf/gamemode/sh_init.lua)).
+
+
+#### Examples
+
+##### PointShop 2 Item (untested):
+```lua
+ITEM.PrintName = "Skull Ball"
+ITEM.baseClass = "base_pointshop_item"
+ITEM._MinigolfID = "ball_skull"
+
+function ITEM:OnEquip( )
+  local item = Minigolf.Items.Get(self._MinigolfID)
+  local itemOwner = self:GetOwner()
+  Minigolf.Items.Equip(item, itemOwner)
+end
+
+function ITEM:OnHolster()
+  local item = Minigolf.Items.Get(self._MinigolfID)
+  local itemOwner = self:GetOwner()
+  Minigolf.Items.Unequip(item, itemOwner)
+end
+```
+
+
+##### PointShop 1 Item (untested):
+```lua
+ITEM.Name = "Minigolf Skull Ball"
+ITEM.Price = 50
+ITEM.Model = "models/gibs/hgibs.mdl";
+ITEM.NoPreview = true
+
+function ITEM:OnEquip(olayer, modifications
+  local item = Minigolf.Items.Get("ball_skull")
+  Minigolf.Items.Equip(item, olayer)
+end
+
+function ITEM:OnHolster(olayer)
+  local item = Minigolf.Items.Get("ball_skull")
+  Minigolf.Items.Unequip(item, olayer)
+end
+```
+
+
+##### Clockwork Schema Item (untested):
+```lua
+local ITEM = Clockwork.item:New();
+
+ITEM.name = "Minigolf Skull Ball";
+ITEM.uniqueID = "minigolf_ball_skull";
+ITEM.cost = 50;
+ITEM.model = "models/gibs/hgibs.mdl";
+ITEM.weight = 1;
+ITEM.category = "Minigolf Accessories"
+ITEM.business = true;
+ITEM.description = "A skull-shaped ball for golfing";
+ITEM.customFunctions = {"Equip", "Unequip"};
+
+if (SERVER) then
+	function ITEM:OnCustomFunction(player, name)
+    local item = Minigolf.Items.Get("ball_skull")
+
+		if (name == "Equip") then
+      Minigolf.Items.Equip(item, player)
+		elseif (name == "Equip") then
+      Minigolf.Items.Unequip(item, player)
+		end;
+	end;
+end;
+
+ITEM:Register();
+```

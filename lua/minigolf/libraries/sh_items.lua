@@ -22,6 +22,10 @@ function Minigolf.Items.GetAll()
   return Minigolf.Items.All
 end
 
+function Minigolf.Items.Get(uniqueID)
+  return Minigolf.Items.FindByProperty("UniqueID", uniqueID)
+end
+
 function Minigolf.Items.FindByProperty(property, value)
   for _, item in pairs(Minigolf.Items.All) do
     if item[property] == value then
@@ -111,12 +115,12 @@ function Minigolf.Items.Unequip(item, player)
   end
 end
 
---- Runs a function for each of the players' items which derives from the given base
-function Minigolf.Items.RunCallbackForEquipedSubItems(player, baseItem, callback, ...)
+--- Runs a function for each of the players' items which is or derives from the given base
+function Minigolf.Items.RunCallbackForEquipedItems(player, itemOrBase, callback, ...)
   local equipedItems = player:GetMinigolfData("EquippedItems")
   
   for item, _ in pairs(equipedItems) do
-    if(item.Base == baseItem)then
+    if(item == itemOrBase or item.Base == itemOrBase)then
       callback(player, item, ...)
     end
   end

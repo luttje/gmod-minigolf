@@ -44,7 +44,7 @@ local function changeBall(player, item, ball)
 end
 
 hook.Add("Minigolf.BallInit", "Minigolf.InitBallDecoration", function(player, ball)
-  Minigolf.Items.RunCallbackForEquipedSubItems(player, ITEM, changeBall, ball)
+  Minigolf.Items.RunCallbackForEquipedItems(player, ITEM, changeBall, ball)
 end)
 
 if(CLIENT)then
@@ -100,7 +100,7 @@ if(CLIENT)then
       return
     end
     
-    Minigolf.Items.RunCallbackForEquipedSubItems(player, ITEM, overrideBall, ball, overrideTable)
+    Minigolf.Items.RunCallbackForEquipedItems(player, ITEM, overrideBall, ball, overrideTable)
 	end)
 
 	hook.Add("Minigolf.ThinkPlayerBall", "Minigolf.ThinkUpdatePlayerBallOverride", function(player, ball)
@@ -108,6 +108,6 @@ if(CLIENT)then
       return
     end
     
-    Minigolf.Items.RunCallbackForEquipedSubItems(player, ITEM, thinkForOverrideBall, ball)
+    Minigolf.Items.RunCallbackForEquipedItems(player, ITEM, thinkForOverrideBall, ball)
 	end)
 end

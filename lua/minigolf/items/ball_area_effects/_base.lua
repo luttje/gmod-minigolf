@@ -16,5 +16,5 @@ local function drawAreaEffect(player, item, ball)
 end
 
 hook.Add("Minigolf.PreDrawPlayerBall", "Minigolf.DrawAreaEffectPrePlayerBall", function(player, ball)
-  Minigolf.Items.RunCallbackForEquipedSubItems(player, ITEM, drawAreaEffect, ball)
+  Minigolf.Items.RunCallbackForEquipedItems(player, ITEM, drawAreaEffect, ball)
 end)
