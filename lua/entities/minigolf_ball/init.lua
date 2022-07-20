@@ -29,7 +29,7 @@ util.AddNetworkString("Minigolf.GetBallForce")
 util.AddNetworkString("Minigolf.GetBallForceCancel")
 
 net.Receive("Minigolf.StartBallForce", function(len, player)
-	local ball = player:GetPlayerBall()
+	local ball = player:GetMinigolfBall()
 
 	if(IsValid(ball) and ball:GetUseable() and ball:GetStationary() and player:IsInDistanceOf(ball, DISTANCE_TO_BALL_MAX))then
 		ball:ShowForceMeter(not IsValid(player:GetBallGivingForce()))
@@ -261,6 +261,6 @@ net.Receive("Minigolf.SetBallForce", function(len, ply)
 	end
 end)
 
-function ENT:UpdateTransmitState()	
+function ENT:UpdateTransmitState()
 	return TRANSMIT_ALWAYS 
 end

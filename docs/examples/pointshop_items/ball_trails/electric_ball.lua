@@ -10,7 +10,7 @@ function ITEM:CanPlayerEquip(ply)
 end
 
 function ITEM:OnEquip(ply)
-	local ball = ply:GetPlayerBall()
+	local ball = ply:GetMinigolfBall()
 
 	SafeRemoveEntity(ply.ElectricBallTrail)
 	
@@ -23,13 +23,13 @@ function ITEM:OnHolster(ply)
 	SafeRemoveEntity(ply.ElectricBallTrail)
 end
 
-function ITEM:MiniGolfBallInit(ply, modifiers, player, ball)
+function ITEM:MinigolfBallInit(ply, modifiers, player, ball)
 	if(ply == player)then
 		self:OnEquip(ply)
 	end
 end
 
-function ITEM:MiniGolfBallRemove(ply, modifiers, player, ball)
+function ITEM:MinigolfBallRemove(ply, modifiers, player, ball)
 	if(ply == player)then
 		self:OnHolster(ply)
 	end

@@ -12,7 +12,7 @@ function ITEM:CanPlayerEquip(ply)
 end
 
 function ITEM:OnEquip(ply, modifications)
-	local ball = ply:GetPlayerBall()
+	local ball = ply:GetMinigolfBall()
 
 	CATEGORY:OnEquip(self, ply, modifications)
 	
@@ -25,7 +25,7 @@ function ITEM:OnHolster(ply, modifiers)
 	CATEGORY:OnHolster(self, ply, modifiers)
 end
 
-function ITEM:MiniGolfDrawPlayerBall(ply, modifiers, player, ball, overrideTable)
+function ITEM:MinigolfDrawPlayerBall(ply, modifiers, player, ball, overrideTable)
 	if(IsValid(ball) and ply == player)then
 		local halfOfSpectrum = 360 * .5
 		local hue = (math.sin(CurTime()) * halfOfSpectrum) + halfOfSpectrum
@@ -33,16 +33,16 @@ function ITEM:MiniGolfDrawPlayerBall(ply, modifiers, player, ball, overrideTable
 
 		ball:SetColor(newColor)
 	end
-	CATEGORY:MiniGolfDrawPlayerBall(self, ply, modifiers, player, ball, overrideTable)
+	CATEGORY:MinigolfDrawPlayerBall(self, ply, modifiers, player, ball, overrideTable)
 end
 
-function ITEM:MiniGolfBallInit(ply, modifiers, player, ball)
+function ITEM:MinigolfBallInit(ply, modifiers, player, ball)
 	if(ply == player)then
 		self:OnEquip(ply)
 	end
 end
 
-function ITEM:MiniGolfBallRemove(ply, modifiers, player, ball)
+function ITEM:MinigolfBallRemove(ply, modifiers, player, ball)
 	if(ply == player)then
 		self:OnHolster(ply)
 	end

@@ -7,7 +7,7 @@ function Minigolf.Player.GetBall(player)
   return player:GetNWEntity("PlayerBall")
 end
 
-playerMeta.GetPlayerBall = Minigolf.Player.GetBall
+playerMeta.GetMinigolfBall = Minigolf.Player.GetBall
 
 --- Sets the ball the player is inputting force for
 ---@param player Player

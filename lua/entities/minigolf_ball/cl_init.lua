@@ -22,6 +22,16 @@ function ENT:GetStrokes()
 	return self:GetNWInt("Strokes", 0)
 end
 
+function ENT:Think()
+	local player = self:GetPlayer()
+
+	if(not IsValid(player))then
+		return
+	end
+
+	hook.Call("Minigolf.ThinkPlayerBall", Minigolf.GM(), player, self)
+end
+
 function ENT:Draw()
 	local player = self:GetPlayer()
 
@@ -363,7 +373,7 @@ end)
 
 local lastBallInteraction = 0
 hook.Add("Think", "Minigolf.CancelIfNotNearBall", function()
-	local ball = LocalPlayer():GetPlayerBall()
+	local ball = LocalPlayer():GetMinigolfBall()
 
 	if(IsValid(ball))then
 		if(inputtingForceBall == ball and not LocalPlayer():IsInDistanceOf(ball, DISTANCE_TO_BALL_MAX))then

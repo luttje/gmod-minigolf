@@ -23,7 +23,7 @@ resource.AddFile("materials/minigolf/balls/regular_ball_normal.vtf")
 --]]
 Minigolf.Commands.Register("giveup", function(player)
 	local activeHole = player:GetActiveHole()
-	local ball = player:GetPlayerBall()
+	local ball = player:GetMinigolfBall()
 
 	if(IsValid(ball) and IsValid(activeHole))then
 		hook.Call("Minigolf.PlayerGivesUp", Minigolf.GM(), player, activeHole)

@@ -38,7 +38,7 @@ end)
 
 -- Ensures the players' ball decides what they can see
 hook.Add("SetupPlayerVisibility", "Minigolf.SyncPlayerPVSWithBall", function(player, viewEntity)
-	local ball = player:GetPlayerBall()
+	local ball = player:GetMinigolfBall()
 
 	if (IsValid(ball)) then
 		AddOriginToPVS(ball:GetPos())

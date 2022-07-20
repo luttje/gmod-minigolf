@@ -114,7 +114,7 @@ function Minigolf.Player.GetBall(player)
 end
 
 playerMeta.SetPlayerBall = Minigolf.Player.SetBall
-playerMeta.GetPlayerBall = Minigolf.Player.GetBall
+playerMeta.GetMinigolfBall = Minigolf.Player.GetBall
 
 --[[
   Getter and setter for the active hole this player is playing on

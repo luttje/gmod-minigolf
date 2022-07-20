@@ -19,8 +19,8 @@ function ITEM:OnHolster(ply, modifiers)
 	CATEGORY:OnHolster(self, ply, modifiers)
 end
 
-function ITEM:MiniGolfDrawPlayerBall(ply, modifiers, player, ball, overrideTable)
-	CATEGORY:MiniGolfDrawPlayerBall(self, ply, modifiers, player, ball, overrideTable)
+function ITEM:MinigolfDrawPlayerBall(ply, modifiers, player, ball, overrideTable)
+	CATEGORY:MinigolfDrawPlayerBall(self, ply, modifiers, player, ball, overrideTable)
 end
 
 function ITEM:ModifyClientsideModel(ply, model, pos, ang)

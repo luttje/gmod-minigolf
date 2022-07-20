@@ -17,20 +17,31 @@ entityMeta.IsInDistanceOf = Minigolf.Entity.IsInDistanceOf
 ---@param entity Entity
 ---@param key string The key to set the data to
 ---@param value any The value to set the data to
+---@return any
 function Minigolf.Entity.SetData(entity, key, value)
   if(not entity._Minigolf)then
     entity._Minigolf = {}
   end
 
   entity._Minigolf[key] = value
+
+  return entity._Minigolf[key]
 end
 
 --- Get Minigolf data for the given entity.
 ---@param entity Entity
 ---@param key string The key to get the data from
+---@param default any|nil A default value to set if nil was found
 ---@return any
-function Minigolf.Entity.GetData(entity, key)
-  return entity._Minigolf and entity._Minigolf[key] or nil
+function Minigolf.Entity.GetData(entity, key, default)
+  if(entity._Minigolf and entity._Minigolf[key] ~= nil)then
+    return entity._Minigolf[key]
+  end
+
+  entity._Minigolf = entity._Minigolf or {}
+  entity._Minigolf[key] = default
+
+  return default
 end
 
 entityMeta.SetMinigolfData = Minigolf.Entity.SetData

@@ -9,7 +9,7 @@ if(SERVER)then
 end
 
 function CATEGORY:CanPlayerEquip(item, ply)
-	return engine.ActiveGamemode() == "gm_minigolf", "This item can only be equiped in the MiniGolf gamemode."
+	return engine.ActiveGamemode() == "gm_minigolf", "This item can only be equiped in the Minigolf gamemode."
 end
 
 function CATEGORY:OnEquip(item, ply, modifications)
@@ -19,14 +19,14 @@ function CATEGORY:OnHolster(item, ply, modifiers)
 end
 
 function CATEGORY:OnEquipSkin(item, ply, modifications)
-	local ball = ply:GetPlayerBall()
+	local ball = ply:GetMinigolfBall()
 
 	ply._OldBallSkin = IsValid(ball) and ball:GetMaterial() or nil
 	ply._OldBallColor = IsValid(ball) and ball:GetColor() or nil
 end
 
 function CATEGORY:OnHolsterSkin(item, ply, modifiers)
-	local ball = ply:GetPlayerBall()
+	local ball = ply:GetMinigolfBall()
 
 	if(IsValid(ball))then
 		ball:SetMaterial(ply._OldBallSkin)
@@ -35,7 +35,7 @@ function CATEGORY:OnHolsterSkin(item, ply, modifiers)
 	end
 end
 
-function CATEGORY:MiniGolfBallInit(item, ply, modifiers, player, ball)
+function CATEGORY:MinigolfBallInit(item, ply, modifiers, player, ball)
 	if(IsValid(ball) and ply == player)then
 		ply._OldBallSkin = ball:GetMaterial()
     ply._OldBallColor = ball:GetColor()
@@ -54,7 +54,7 @@ if(CLIENT)then
 	local clientsideModelParents = {}
 
 	-- Remove model overrides of disappeared balls
-	hook.Add("Think", "MiniGolf.RemoveStaleBallOverrides", function()
+	hook.Add("Think", "Minigolf.RemoveStaleBallOverrides", function()
 			for model,parent in pairs(clientsideModelParents) do
 				if(not IsValid(parent))then
 					clientsideModelParents[model] = nil
@@ -63,7 +63,7 @@ if(CLIENT)then
 			end
 	end)
 
-	function CATEGORY:MiniGolfDrawPlayerBall(item, ply, modifiers, player, ball, overrideTable)
+	function CATEGORY:MinigolfDrawPlayerBall(item, ply, modifiers, player, ball, overrideTable)
 		if(IsValid(ball) and ply == player)then
 			if(not IsValid(ball.golfModelOverride))then
 				ball.golfModelOverride = ClientsideModel(item.Model)

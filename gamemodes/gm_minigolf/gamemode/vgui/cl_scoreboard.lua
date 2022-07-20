@@ -269,7 +269,7 @@ function PANEL:LayoutTeamInfo(w, h, rowY, teamID)
 			column:SetSize(HOLE_WIDTH, BAR_HEIGHT)
 			column:SetPos((i-1) * HOLE_WIDTH, rowY * BAR_HEIGHT)
 
-			local activeTeam = hole:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+			local activeTeam = hole:GetNWInt("Minigolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 			
 			if(activeTeam == teamPlayer:Team())then
 				column:SetHighlight(true)

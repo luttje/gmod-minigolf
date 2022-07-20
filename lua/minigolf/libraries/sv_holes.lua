@@ -61,7 +61,7 @@ function Minigolf.Holes.Start(player, ball, start)
 end
 
 function Minigolf.Holes.CreateTimeLimit(timeLimit, player, ball, start)
-	local ball = player:GetPlayerBall()
+	local ball = player:GetMinigolfBall()
 
 	timer.Create((player:AccountID() or player:UserID()) .. start:GetUniqueHoleName() .. "TimeLimit", timeLimit, 1, function()
 		if(IsValid(player) and IsValid(ball) and ball:GetStart() == start)then

@@ -10,7 +10,7 @@ Minigolf.HideDefaultHUDElements = {
 }
 
 hook.Add("Minigolf.GetAdjustedHoleFlagColor", "Minigolf.GetAdjustedHoleFlagColor", function(hole, flagColor)
-	local teamID = hole:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+	local teamID = hole:GetNWInt("Minigolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 	if(teamID > Minigolf.NO_TEAM_PLAYING)then
 		return team.GetColor(teamID)
 	end

@@ -14,7 +14,7 @@ function ITEM:OnEquip(player)
     return
   end
 
-  local ball = player:GetPlayerBall()
+  local ball = player:GetMinigolfBall()
 
   if(not IsValid(ball))then
     return
@@ -29,7 +29,7 @@ function ITEM:OnUnequip(player)
     return
   end
 
-  local ball = player:GetPlayerBall()
+  local ball = player:GetMinigolfBall()
 
   if(not IsValid(ball))then
     return

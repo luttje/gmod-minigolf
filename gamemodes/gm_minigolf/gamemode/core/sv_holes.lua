@@ -25,7 +25,7 @@ hook.Add("Minigolf.PlayerStarted", "Minigolf.ShowMessageOnHoleStart", function(p
 	local parMsg = start._HolePar and (" (Par: " .. start._HolePar .. ")") or ""
 	local teamPlayers = team.GetPlayers(player:Team())
 	
-	start:SetNWInt("MiniGolf.ActiveTeam", player:Team())
+	start:SetNWInt("Minigolf.ActiveTeam", player:Team())
 
 	Minigolf.Holes.EndSwapTimer(teamPlayers, start)
 	Minigolf.Messages.Send(teamPlayers, player:Nick() .. " has started at '" .. start:GetHoleName() .. "'" .. parMsg, "£")
@@ -96,7 +96,7 @@ function Minigolf.Holes.ProcessTeamEnd(teamID, start)
 	local teamPlayers = team.GetPlayers(teamID)
 	local teamName = team.GetName(teamID)
 
-	start:SetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+	start:SetNWInt("Minigolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 
   hook.Call("Minigolf.TeamFinishedHole", Minigolf.GM(), teamID, teamPlayers, start)
 
@@ -127,7 +127,7 @@ hook.Add("Minigolf.PlayerFinishedAllHoles", "Minigolf.ResetTeamWhenPlayerFinishe
 end)
 
 hook.Add("Minigolf.PlayerFinishedHole", "Minigolf.SwapTeamMemberOnFinishHole", function(player, ball, start, strokes)
-	local teamID = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+	local teamID = start:GetNWInt("Minigolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 	local teamPlayers = team.GetPlayers(teamID)
 
 	if(IsValid(ball))then

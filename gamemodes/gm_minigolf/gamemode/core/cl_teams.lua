@@ -92,7 +92,7 @@ hook.Add("Minigolf.PlayerJoinTeam", "Minigolf.MinigolfPlayerJoinTeamHideMenu", f
 end)
 
 hook.Add("Minigolf.ShouldDrawHolePanel", "Minigolf.DontDrawHolePanelWhilePlaying", function(start)
-	local activeTeam = start:GetNWInt("MiniGolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
+	local activeTeam = start:GetNWInt("Minigolf.ActiveTeam", Minigolf.NO_TEAM_PLAYING)
 
 	if(activeTeam == LocalPlayer():Team())then
 		return false

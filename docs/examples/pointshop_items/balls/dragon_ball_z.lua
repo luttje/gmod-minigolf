@@ -23,8 +23,8 @@ function ITEM:OnHolsterSkin(ply, modifiers)
 	CATEGORY:OnHolster(self, ply, modifiers)
 end
 
-function ITEM:MiniGolfBallInit(ply, modifiers, player, ball)
-	CATEGORY:MiniGolfBallInit(self, ply, modifiers, player, ball)	
+function ITEM:MinigolfBallInit(ply, modifiers, player, ball)
+	CATEGORY:MinigolfBallInit(self, ply, modifiers, player, ball)	
 end
 
 function ITEM:ModifyClientsideModel(ply, model, pos, ang)
