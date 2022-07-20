@@ -3,7 +3,7 @@ local ITEM = ITEM
 ITEM.Name = "Unnamed Ball Trail"
 ITEM.Icon = "rainbow"
 
-local equip = function(item, ball)
+local function attachTrail(player, item, ball)
   ball.Trails = ball.Trails or {}
   ball.Trails[item] = util.SpriteTrail(ball, 0, Color(255, 255, 255), false, 15, 1, 4, 0.125, item.TrailPath)
 end
@@ -43,12 +43,5 @@ function ITEM:OnUnequip(player)
 end
 
 hook.Add("Minigolf.BallInit", "Minigolf.InitTrailOnBall", function(player, ball)
-  local equipedItems = player:GetMinigolfData("EquippedItems")
-  
-  for item, _ in pairs(equipedItems) do
-    -- Does this player have a trail equiped?
-    if(item.Base == ITEM)then
-      equip(item, ball)
-    end
-  end
+  Minigolf.Items.RunCallbackForEquipedSubItems(player, ITEM, attachTrail, ball)
 end)

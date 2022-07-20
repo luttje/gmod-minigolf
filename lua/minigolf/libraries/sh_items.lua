@@ -110,3 +110,14 @@ function Minigolf.Items.Unequip(item, player)
     item:OnUnequip(player)
   end
 end
+
+--- Runs a function for each of the players' items which derives from the given base
+function Minigolf.Items.RunCallbackForEquipedSubItems(player, baseItem, callback, ...)
+  local equipedItems = player:GetMinigolfData("EquippedItems")
+  
+  for item, _ in pairs(equipedItems) do
+    if(item.Base == baseItem)then
+      callback(player, item, ...)
+    end
+  end
+end
