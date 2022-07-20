@@ -68,7 +68,7 @@ Be sure to:
 Minigolf.Items.IncludeDirectory(Minigolf.PathCombine("gamemodes/<your gamemode folder>/gamemode", "items/"))
 ```
 
-For an example, checkout: ([gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua](gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua)) and ([gamemodes/gm_minigolf/gamemode/sh_init.lua](gamemodes/gm_minigolf/gamemode/sh_init.lua)).
+For an example, checkout: ([gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua](https://github.com/luttje/gmod-minigolf/blob/main/gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua)) and ([gamemodes/gm_minigolf/gamemode/sh_init.lua](https://github.com/luttje/gmod-minigolf/blob/main/gamemodes/gm_minigolf/gamemode/sh_init.lua)).
 
 
 #### Examples
