@@ -107,15 +107,15 @@ ITEM.description = "A skull-shaped ball for golfing";
 ITEM.customFunctions = {"Equip", "Unequip"};
 
 if (SERVER) then
-	function ITEM:OnCustomFunction(player, name)
-    local item = Minigolf.Items.Get("ball_skull")
+  function ITEM:OnCustomFunction(player, name)
+    local item = Minigolf.Items.Get("ball_skull");
 
-		if (name == "Equip") then
-      Minigolf.Items.Equip(item, player)
-		elseif (name == "Equip") then
-      Minigolf.Items.Unequip(item, player)
-		end;
-	end;
+    if (name == "Equip") then
+      Minigolf.Items.Equip(item, player);
+    elseif (name == "Equip") then
+      Minigolf.Items.Unequip(item, player);
+    end;
+  end;
 end;
 
 ITEM:Register();
