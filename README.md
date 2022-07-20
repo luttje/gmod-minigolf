@@ -62,7 +62,7 @@ For your dedicated server you will want to add [a workshop collection like this]
 ## Configurations
 
 You can customize how this addon behaves in the map, using console variables (Convars) or with your own code. Read more about it here:
-* [Console Commands and PointShop rewards](docs/CONFIGURATIONS.md)
+* [Console Commands and Gamemode Integrations (PointShop/Clockwork/DarkRP)](docs/CONFIGURATIONS.md)
 * [Mapping Guide](docs/MAPPING_GUIDE.md)
 
 
