@@ -44,11 +44,13 @@ function Minigolf.IncludeDirectory(directory, baseFolder, recurse, preLoad, post
   local files, directories = file.Find(directory .. "/*", "LUA")
 
   if(recurse)then
-    for _,subDirectory in pairs(directories)do
+    for _, subDirectory in pairs(directories)do
       local subDirectoryPath = Minigolf.PathCombine(directory, subDirectory)
       
-      Minigolf.CurrentIncludeDirectory = subDirectoryPath
+      Minigolf.CurrentIncludeDirectory = subDirectory
+      Minigolf.CurrentIncludeDirectoryPath = subDirectoryPath
       Minigolf.IncludeDirectory(subDirectoryPath, baseFolder, recurse, preLoad, postLoad, loadHandler)
+      Minigolf.CurrentIncludeDirectoryPath = nil
       Minigolf.CurrentIncludeDirectory = nil
     end
   end

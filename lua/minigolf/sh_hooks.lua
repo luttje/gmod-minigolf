@@ -6,12 +6,12 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 	local isEnt1Ball = ent1:GetClass() == "minigolf_ball"
 	local isEnt2Ball = ent2:GetClass() == "minigolf_ball"
 
-	local mayEnt1CollideBallsExclusive = ent1._MinigolfCollide == "only_balls"
-	local mayEnt2CollideBallsExclusive = ent2._MinigolfCollide == "only_balls"
-	local mayEnt1CollideOthersExclusive = ent1._MinigolfCollide == "only_others"
-	local mayEnt2CollideOthersExclusive = ent2._MinigolfCollide == "only_others"
-	local mayEnt1CollideOthers = mayEnt1CollideOthersExclusive or ent1._MinigolfCollide == "balls_and_others"
-	local mayEnt2CollideOthers = mayEnt2CollideOthersExclusive or ent2._MinigolfCollide == "balls_and_others"
+	local mayEnt1CollideBallsExclusive = ent1:GetMinigolfData("CollideRule") == "only_balls"
+	local mayEnt2CollideBallsExclusive = ent2:GetMinigolfData("CollideRule") == "only_balls"
+	local mayEnt1CollideOthersExclusive = ent1:GetMinigolfData("CollideRule") == "only_others"
+	local mayEnt2CollideOthersExclusive = ent2:GetMinigolfData("CollideRule") == "only_others"
+	local mayEnt1CollideOthers = mayEnt1CollideOthersExclusive or ent1:GetMinigolfData("CollideRule") == "balls_and_others"
+	local mayEnt2CollideOthers = mayEnt2CollideOthersExclusive or ent2:GetMinigolfData("CollideRule") == "balls_and_others"
 
 	if((mayEnt1CollideOthersExclusive and not mayEnt2CollideOthers)
 	or (mayEnt2CollideOthersExclusive and not mayEnt1CollideOthers))then
@@ -44,14 +44,14 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 	end
 
 	-- Ensure players don't interact with objects part of a minigolf course
-	if(ent1._MinigolfCollide == "except_players" 
-	or ent2._MinigolfCollide == "except_players") then 
+	if(ent1:GetMinigolfData("CollideRule") == "except_players" 
+	or ent2:GetMinigolfData("CollideRule") == "except_players") then 
 		return false
 	end
 end)
 
 hook.Add("EntityKeyValue", "Minigolf.MarkEntitiesWithCollideRules", function(ent, key, value)
 	if(key:lower() == "minigolfcollide")then
-		ent._MinigolfCollide = value:lower()
+		ent:SetMinigolfData("CollideRule", value:lower())
 	end
 end)

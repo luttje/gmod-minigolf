@@ -43,7 +43,9 @@ function ITEM:OnUnequip(player)
 end
 
 hook.Add("Minigolf.BallInit", "Minigolf.InitTrailOnBall", function(player, ball)
-  for item, _ in pairs(player.MinigolfEquippedItems) do
+  local equipedItems = player:GetMinigolfData("EquippedItems")
+  
+  for item, _ in pairs(equipedItems) do
     -- Does this player have a trail equiped?
     if(item.Base == ITEM)then
       equip(item, ball)

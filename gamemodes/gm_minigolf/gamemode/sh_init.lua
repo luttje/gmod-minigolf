@@ -20,6 +20,8 @@ Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode",
 Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "core/"))
 Minigolf.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "vgui/"))
 
+Minigolf.Items.IncludeDirectory(Minigolf.PathCombine("gamemodes/gm_minigolf/gamemode", "items/"))
+
 if(SERVER)then
 	AddCSLuaFile("cl_hooks.lua")
 	AddCSLuaFile("cl_init.lua")

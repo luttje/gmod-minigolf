@@ -4,7 +4,7 @@ util.AddNetworkString("Minigolf.Items.Equip")
 util.AddNetworkString("Minigolf.Items.Unequip")
 
 function Minigolf.Items.IsEquiped(item, player)
-  return player.MinigolfEquippedItems[item] ~= nil
+  return player:GetMinigolfData("EquippedItems")[item] ~= nil
 end
 
 function Minigolf.Items.SyncItemEquipped(item, player, receiver)
@@ -28,8 +28,10 @@ end
 
 function Minigolf.Items.SyncAllEquippedItems(receiver)
   for _, player in ipairs(player.GetAll())do
-    if(player.MinigolfEquippedItems)then
-      for item, _ in pairs(player.MinigolfEquippedItems)do
+    local equipedItems = player:GetMinigolfData("EquippedItems")
+    
+    if(equipedItems)then
+      for item, _ in pairs(equipedItems)do
         Minigolf.Items.SyncEquippedItem(item, player, receiver)
       end
     end

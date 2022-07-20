@@ -35,7 +35,7 @@ Minigolf.Commands.Register("unequipitem", function(player, ...)
 end, "Equip a Minigolf item on yourself")
 
 hook.Add("PlayerInitialSpawn", "Minigolf.SyncAllPlayerItems", function(player)
-	player.MinigolfEquippedItems = {}
+	player:SetMinigolfData("EquippedItems", {})
 
 	Minigolf.Items.SyncAllEquippedItems(player)
 end)

@@ -2,6 +2,7 @@ local BASE_FILE_NAME = "_base.lua"
 
 Minigolf.Items = Minigolf.Items or {}
 Minigolf.Items.All = Minigolf.Items.All or {}
+Minigolf.Items.BaseItems = Minigolf.Items.BaseItems or {}
 
 local oldITEM
 
@@ -35,27 +36,42 @@ function Minigolf.Items.PrepareLoadItem(fileName, itemFilePath)
   oldITEM = ITEM
 
   ITEM = Minigolf.Items.CreateNew()
-  table.insert(Minigolf.Items.All, ITEM)
   ITEM.FilePath = itemFilePath
 
+  -- Check if this is in a directory and thus is based on a base item file
   if(Minigolf.CurrentIncludeDirectory == nil)then
     return
   end
 
-  local baseItemPath = Minigolf.PathCombine(Minigolf.CurrentIncludeDirectory, BASE_FILE_NAME)
+  local baseItem = Minigolf.Items.BaseItems[Minigolf.CurrentIncludeDirectory]
 
-  if(itemFilePath == baseItemPath)then
-    ITEM.IsBaseItem = true
-    return
+  if(baseItem == nil)then
+    if(fileName == BASE_FILE_NAME)then
+      ITEM.IsBaseItem = true
+    else
+      error("Base item file not found for item at " .. ITEM.FilePath)
+    end
   end
 
   -- If we are loading an item in a sub category, set it's base to the item reference
-  ITEM.Base = Minigolf.Items.FindByProperty("FilePath", baseItemPath)
+  ITEM.Base = baseItem
 
-  setmetatable(ITEM, {__index = ITEM.Base})
+  setmetatable(ITEM, {
+    __index = function(table, key)
+      if(baseItem and key ~= "IsBaseItem" and key ~= "Base")then
+        return baseItem[key]
+      end
+
+      return rawget(table, key)
+    end
+  })
 end
 
 function Minigolf.Items.FinishLoadItem(fileName, itemFilePath)
+  if(ITEM.IsBaseItem)then
+    Minigolf.Items.BaseItems[Minigolf.CurrentIncludeDirectory] = ITEM
+  end
+
   ITEM = oldITEM
 end
 
@@ -70,7 +86,8 @@ function Minigolf.Items.IncludeDirectory(directory, baseFolder)
 end
 
 function Minigolf.Items.Equip(item, player)
-  player.MinigolfEquippedItems[item] = true
+  local equipedItems = player:GetMinigolfData("EquippedItems")
+  equipedItems[item] = true
 
   if(SERVER)then
     Minigolf.Items.SyncItemEquipped(item, player)
@@ -82,7 +99,8 @@ function Minigolf.Items.Equip(item, player)
 end
 
 function Minigolf.Items.Unequip(item, player)
-  player.MinigolfEquippedItems[item] = nil
+  local equipedItems = player:GetMinigolfData("EquippedItems")
+  equipedItems[item] = nil
 
   if(SERVER)then
     Minigolf.Items.SyncItemUnequipped(item, player)

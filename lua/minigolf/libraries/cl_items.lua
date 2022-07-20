@@ -1,7 +1,8 @@
 Minigolf.Items = Minigolf.Items or {}
 
 function Minigolf.Items.Equip(item, player)
-  player.MinigolfEquippedItems[item] = true
+  local equipedItems = player:GetMinigolfData("EquippedItems")
+  equipedItems[item] = true
 
   Minigolf.Items.SyncItemEquipped(item, player)
 
@@ -11,7 +12,8 @@ function Minigolf.Items.Equip(item, player)
 end
 
 function Minigolf.Items.Unequip(item, player)
-  player.MinigolfEquippedItems[item] = nil
+  local equipedItems = player:GetMinigolfData("EquippedItems")
+  equipedItems[item] = nil
 
   Minigolf.Items.SyncItemUnequipped(item, player)
   

@@ -12,5 +12,5 @@ net.Receive("Minigolf.PlaySound", function(length)
 end)
 
 hook.Add("InitPostEntity", "Minigolf.SetupLocalPlayer", function()
-  LocalPlayer().MinigolfEquippedItems = {}
+  LocalPlayer():SetMinigolfData("EquippedItems", {})
 end)
