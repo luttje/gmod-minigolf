@@ -73,26 +73,6 @@ For an example, checkout: ([gamemodes/gm_minigolf/gamemode/items/ball_trails/lov
 
 #### Examples
 
-##### PointShop 2 Item (untested):
-```lua
-ITEM.PrintName = "Skull Ball"
-ITEM.baseClass = "base_pointshop_item"
-ITEM._MinigolfID = "ball_skull"
-
-function ITEM:OnEquip( )
-  local item = Minigolf.Items.Get(self._MinigolfID)
-  local itemOwner = self:GetOwner()
-  Minigolf.Items.Equip(item, itemOwner)
-end
-
-function ITEM:OnHolster()
-  local item = Minigolf.Items.Get(self._MinigolfID)
-  local itemOwner = self:GetOwner()
-  Minigolf.Items.Unequip(item, itemOwner)
-end
-```
-
-
 ##### PointShop 1 Item (untested):
 ```lua
 ITEM.Name = "Minigolf Skull Ball"
