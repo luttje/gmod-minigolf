@@ -71,7 +71,9 @@ function ENT:GetStart()
 	end
 	
 	for _, otherEntity in pairs(ents.FindByClass("minigolf_hole_start")) do
-		if(otherEntity:GetUniqueHoleName() == self:GetUniqueHoleName())then
+		if(otherEntity:GetUniqueHoleName() == self:GetUniqueHoleName()
+		-- WORKAROUND: golf_rocket_hub_alpha2 didn't correctly specify the course name on the end holes.
+		or otherEntity:GetHoleName() == self:GetHoleName())then
 			self._Start = otherEntity
 
 			return self._Start
