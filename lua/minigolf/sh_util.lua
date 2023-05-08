@@ -4,7 +4,7 @@ local STACK_CALLING_FUNCTION = 2
 --- Returns the gamemode object
 ---@return GM
 function Minigolf.GM()
-  return GM or GAMEMODE or gmod.GetGamemode() or gamemode.Get()
+  return GM or GAMEMODE or gmod.GetGamemode()
 end
 
 function Minigolf.PathCombine(...)
