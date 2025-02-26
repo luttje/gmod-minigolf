@@ -68,9 +68,9 @@ You can customize how this addon behaves in the map, using console variables (Co
 
 ## Additional tools for development
 
-You can have your editor show you helpful information on the code through EmmyLua ([this extension for VSCode](https://github.com/EmmyLua/VSCode-EmmyLua) or this [extension for Rider](https://plugins.jetbrains.com/plugin/9768-emmylua/versions)).
+You can have your editor show you helpful information on the code through **Lua Language Server (LuaLS)** ([this extension for VSCode](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) or [this extension for NeoVim](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#lua_ls)).
 
-We try to develop the code with helpful EmmyLua annotations. At the same time you may be interested in EmmyLua information on all the Garry's Mod Lua definitions. You can find those [in this repo](https://github.com/luttje/glua-api-snippets). When symlinking or copying that directory into this gamemode, ensure you place it in the `.glua/` directory. This directory has been gitignored so the definitions don't get pushed online.
+We try to develop the code with helpful LuaLS annotations. At the same time you may be interested in LuaLS information on all the Garry's Mod Lua definitions. You can find those [in the `luttje/glua-api-snippets` repo](https://github.com/luttje/glua-api-snippets).
 
 
 # ❤ Contributing
