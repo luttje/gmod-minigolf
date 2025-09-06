@@ -5,6 +5,7 @@ include("shared.lua")
 local ENT = ENT
 
 local MAX_BORDER_HEIGHT = 2048
+local BORDER_HEIGHT_STEP = 8
 
 -- Network strings
 util.AddNetworkString("MinigolfDesigner_OpenMenu")
@@ -206,6 +207,9 @@ function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
     -- Handle border height changes
     local newHeight = math.max(8, math.min(MAX_BORDER_HEIGHT, newPos.z - part.position.z))
 
+    -- Snap to step increments
+    newHeight = math.Round(newHeight / BORDER_HEIGHT_STEP) * BORDER_HEIGHT_STEP
+
     if math.abs(part.borderHeight - newHeight) > 1 then
       part.borderHeight = newHeight
       -- self:UpdateBorderControls(part) -- causes glitching
@@ -376,34 +380,34 @@ function ENT:CreateCustomTrackMesh(part, vertices, boxConfig)
   -- Create the track surface using the vertex positions
   local thickness = 2 -- Track thickness
 
-  -- Create the top surface (the playable track surface)
-  -- The top surface should be AT the vertex height, not above it
-  local topVerts = {}
-  for i = 1, 4 do
-    topVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z)
-  end
-
-  -- Create the bottom surface (thickness below the top surface)
+  -- Create the bottom surface
+  -- The bottom surface should be AT the vertex height
   local bottomVerts = {}
   for i = 1, 4 do
-    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z - thickness)
+    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z)
+  end
+
+  -- Create the top surface (the playable track surface)
+  local topVerts = {}
+  for i = 1, 4 do
+    topVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z + thickness)
   end
 
   -- Create the top surface (counter-clockwise winding)
-  self:CreateQuadSurface(vertices, topVerts[1], topVerts[2], topVerts[3], topVerts[4], Vector(0, 0, 1))
+  self:CreateQuadSurface(vertices, bottomVerts[1], bottomVerts[2], bottomVerts[3], bottomVerts[4], Vector(0, 0, 1))
 
   -- Create the bottom surface (clockwise winding for proper normals)
-  self:CreateQuadSurface(vertices, bottomVerts[4], bottomVerts[3], bottomVerts[2], bottomVerts[1], Vector(0, 0, -1))
+  self:CreateQuadSurface(vertices, topVerts[4], topVerts[3], topVerts[2], topVerts[1], Vector(0, 0, -1))
 
   -- Create the side surfaces connecting top to bottom
-  self:CreateQuadSurface(vertices, bottomVerts[1], bottomVerts[2], topVerts[2], topVerts[1],
-    self:CalculateNormal(bottomVerts[1], bottomVerts[2], topVerts[2])) -- Front
-  self:CreateQuadSurface(vertices, bottomVerts[2], bottomVerts[3], topVerts[3], topVerts[2],
-    self:CalculateNormal(bottomVerts[2], bottomVerts[3], topVerts[3])) -- Right
-  self:CreateQuadSurface(vertices, bottomVerts[3], bottomVerts[4], topVerts[4], topVerts[3],
-    self:CalculateNormal(bottomVerts[3], bottomVerts[4], topVerts[4])) -- Back
-  self:CreateQuadSurface(vertices, bottomVerts[4], bottomVerts[1], topVerts[1], topVerts[4],
-    self:CalculateNormal(bottomVerts[4], bottomVerts[1], topVerts[1])) -- Left
+  self:CreateQuadSurface(vertices, topVerts[1], topVerts[2], bottomVerts[2], bottomVerts[1],
+    self:CalculateNormal(topVerts[1], topVerts[2], bottomVerts[2])) -- Front
+  self:CreateQuadSurface(vertices, topVerts[2], topVerts[3], bottomVerts[3], bottomVerts[2],
+    self:CalculateNormal(topVerts[2], topVerts[3], bottomVerts[3])) -- Right
+  self:CreateQuadSurface(vertices, topVerts[3], topVerts[4], bottomVerts[4], bottomVerts[3],
+    self:CalculateNormal(topVerts[3], topVerts[4], bottomVerts[4])) -- Back
+  self:CreateQuadSurface(vertices, topVerts[4], topVerts[1], bottomVerts[1], bottomVerts[4],
+    self:CalculateNormal(topVerts[4], topVerts[1], bottomVerts[1])) -- Left
 end
 
 function ENT:GetDefaultVertexPosition(part, vertexIndex)
