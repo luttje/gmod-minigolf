@@ -193,9 +193,14 @@ function ENT:CreateBorderControls(part)
   end
 end
 
+-- Flag to prevent feedback loops
+ENT.isUpdatingConnections = false
+
 function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
   local part = self:GetPartByID(partID)
   if not part then return end
+
+  if self.isUpdatingConnections then return end
 
   if vertexType == "border" then
     -- Handle border height changes
@@ -221,6 +226,8 @@ function ENT:UpdateTrackVertexDirect(part, vertexIndex, newPos)
   -- Update connected neighboring vertices for path continuity
   self:UpdateConnectedNeighbors(part, vertexIndex, newPos)
 
+  self.isUpdatingConnections = false
+
   -- Regenerate mesh with new vertex positions
   self:UpdatePartMesh(part.id)
 end
@@ -242,16 +249,16 @@ function ENT:UpdateConnectedNeighbors(part, movedVertexIndex, movedPos)
   -- Vertex 1 (bottom-left) and 2 (bottom-right) connect to the PREVIOUS part's vertices 3,4
   -- Vertex 3 (top-right) and 4 (top-left) connect to the NEXT part's vertices 1,2
 
-  local heightChange = 0
+  -- Get the original position to calculate the change
   local originalPos = self:GetDefaultVertexPosition(part, movedVertexIndex)
-  heightChange = movedPos.z - originalPos.z
+  local deltaPos = movedPos - originalPos
 
   -- Update previous part connection
   if partIndex > 1 and (movedVertexIndex == 1 or movedVertexIndex == 2) then
     local prevPart = self.trackParts[partIndex - 1]
     local connectVertexIndex = (movedVertexIndex == 1) and 4 or 3 -- 1->4, 2->3
 
-    self:UpdateConnectedVertex(prevPart, connectVertexIndex, heightChange)
+    self:UpdateConnectedVertex(prevPart, connectVertexIndex, deltaPos)
   end
 
   -- Update next part connection
@@ -259,23 +266,34 @@ function ENT:UpdateConnectedNeighbors(part, movedVertexIndex, movedPos)
     local nextPart = self.trackParts[partIndex + 1]
     local connectVertexIndex = (movedVertexIndex == 4) and 1 or 2 -- 4->1, 3->2
 
-    self:UpdateConnectedVertex(nextPart, connectVertexIndex, heightChange)
+    self:UpdateConnectedVertex(nextPart, connectVertexIndex, deltaPos)
   end
 end
 
-function ENT:UpdateConnectedVertex(targetPart, vertexIndex, heightChange)
-  -- Get the current position of the target vertex
-  local currentPos = targetPart.vertexEntities[vertexIndex]:GetPos()
-  local newPos = Vector(currentPos.x, currentPos.y, currentPos.z + heightChange)
+function ENT:UpdateConnectedVertex(targetPart, vertexIndex, deltaPos)
+  -- Get the current default position of the target vertex
+  local defaultPos = self:GetDefaultVertexPosition(targetPart, vertexIndex)
 
-  -- Update the vertex entity position directly (bypassing OnVertexMoved to prevent loops)
-  targetPart.vertexEntities[vertexIndex]:SetPos(newPos)
+  -- Calculate the new position based on the delta
+  local newPos = defaultPos + deltaPos
 
-  -- Store the custom vertex position
+  -- Store the custom vertex position (don't move the entity directly)
   if not targetPart.customVertices then
     targetPart.customVertices = {}
   end
   targetPart.customVertices[vertexIndex] = newPos
+
+  -- Update the vertex entity position WITHOUT triggering events
+  if targetPart.vertexEntities[vertexIndex] and IsValid(targetPart.vertexEntities[vertexIndex]) then
+    -- Use a safe method to update position that doesn't trigger movement events
+    targetPart.vertexEntities[vertexIndex]:SetPos(newPos)
+
+    -- If the vertex entity has a method to update position without triggering events, use that
+    -- You might need to add a flag to the vertex entity to ignore position updates
+    if targetPart.vertexEntities[vertexIndex].SetPositionSilent then
+      targetPart.vertexEntities[vertexIndex]:SetPositionSilent(newPos)
+    end
+  end
 
   -- Update the mesh for this part
   self:UpdatePartMesh(targetPart.id)

@@ -49,7 +49,7 @@ function ENT:Think()
     self.lastKnownPos = currentPos
 
     -- Notify parent designer of position change
-    if IsValid(self.parentDesigner) and self.parentDesigner.OnVertexMoved then
+    if IsValid(self.parentDesigner) then
       self.parentDesigner:OnVertexMoved(self.partID, self.vertexIndex, self.vertexType, currentPos)
     end
   end
@@ -60,7 +60,7 @@ end
 
 function ENT:OnRemove()
   -- Notify parent designer
-  if IsValid(self.parentDesigner) and self.parentDesigner.OnVertexRemoved then
+  if IsValid(self.parentDesigner) then
     self.parentDesigner:OnVertexRemoved(self.partID, self.vertexIndex, self.vertexType)
   end
 end
