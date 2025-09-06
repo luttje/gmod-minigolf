@@ -113,12 +113,17 @@ function ENT:CreateTrackPart(partTypeId, position, connectionSide)
     id = self.nextPartID,
     type = partTypeId,
     position = position or Vector(0, 0, 0),
-    connectionSide = connectionSide,
+    connectedSides = {}, -- Use a table to track multiple connected sides
     vertexEntities = {},
     meshData = {},
     entities = {},
     borderHeight = self.BORDER_HEIGHT,
   }
+
+  -- Add the initial connection if provided
+  if connectionSide then
+    part.connectedSides[connectionSide] = true
+  end
 
   self.nextPartID = self.nextPartID + 1
 
@@ -174,7 +179,8 @@ function ENT:CreateBorderControls(part)
   }
 
   for _, borderData in ipairs(borderPositions) do
-    if not (part.connectionSide == borderData.name) then
+    -- Check if this side is connected
+    if not part.connectedSides[borderData.name] then
       local borderControl = ents.Create("minigolf_track_designer_vertex")
       borderControl:SetPos(borderData.pos)
       borderControl:Spawn()
@@ -282,7 +288,8 @@ function ENT:GenerateBorderMeshData(part, meshData)
   }
 
   for _, border in ipairs(borders) do
-    if not (part.connectionSide == border.name) then
+    -- Check if this side is connected
+    if not part.connectedSides[border.name] then
       local borderMeshData = {
         vertices = {},
         materialKey = "border",
@@ -420,10 +427,20 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
   local lastPart = self.trackParts[#self.trackParts]
   local connectionPoint = lastPart.position + Vector(0, self.TRACK_LENGTH, 0)
 
-  local newPart = self:CreateTrackPart(partTypeId, connectionPoint, connectionSide)
+  -- Mark the last part as connected on the back side
+  lastPart.connectedSides["back"] = true
+  -- Remove the back border control entity if it exists
+  local backControlKey = "border_back"
+  if lastPart.vertexEntities[backControlKey] and IsValid(lastPart.vertexEntities[backControlKey]) then
+    lastPart.vertexEntities[backControlKey]:Remove()
+    lastPart.vertexEntities[backControlKey] = nil
+  end
+  self:SyncMeshToClients(lastPart)
+
+  -- Create the new part with front side connected
+  local newPart = self:CreateTrackPart(partTypeId, connectionPoint, "front")
   table.insert(self.trackParts, newPart)
 
-  self:RemoveBorderConnection(lastPart, "back")
   self:BuildPhysicsFromCurrentParts()
 
   return newPart
@@ -436,6 +453,8 @@ function ENT:RemoveBorderConnection(part, side)
     part.vertexEntities[controlKey]:Remove()
     part.vertexEntities[controlKey] = nil
   end
+
+  part.connectionSide = side
 
   self:SyncMeshToClients(part)
   self:BuildPhysicsFromCurrentParts()
@@ -501,8 +520,8 @@ net.Receive("MinigolfDesigner_AddPart", function(len, ply)
   local designerEnt = net.ReadEntity()
   local partType = net.ReadString()
 
-  if IsValid(designerEnt) and designerEnt.AddPartToTrack then
-    designerEnt:AddPartToTrack(partType, "back")
+  if IsValid(designerEnt) and designerEnt:GetClass() == "minigolf_track_designer" then
+    designerEnt:AddPartToTrack(partType, "front")
   end
 end)
 
@@ -510,7 +529,7 @@ net.Receive("MinigolfDesigner_ToggleEditMode", function(len, ply)
   local designerEnt = net.ReadEntity()
   local enable = net.ReadBool()
 
-  if IsValid(designerEnt) and designerEnt.ToggleEditMode then
+  if IsValid(designerEnt) and designerEnt:GetClass() == "minigolf_track_designer" then
     designerEnt:ToggleEditMode(enable)
   end
 end)

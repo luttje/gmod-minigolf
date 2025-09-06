@@ -209,7 +209,7 @@ net.Receive("MinigolfDesigner_OpenMenu", function()
   -- Instructions
   local instructions = vgui.Create("DLabel", frame)
   instructions:SetText(
-    "Instructions:\n• Enable Edit Mode to see vertex handles\n• Use the Physgun to drag red watermelons to reshape the track\n• Use the Physgun to drag brown cans up/down to adjust border height\n• Add new parts to extend your course")
+    "Instructions:\n• Enable Edit Mode to see vertex handles\n• Use the Physgun to drag and reshape the track or change the border height\n• Add new parts to extend your course")
   instructions:SetPos(20, 70)
   instructions:SetSize(460, 80)
   instructions:SetWrap(true)
