@@ -173,12 +173,12 @@ function ENT:CreateBorderControls(part)
   local l = self.TRACK_LENGTH / 2
   local bh = part.borderHeight
 
-  -- Create border height controls on each side
+  -- Create border height controls on each side at the TOP of the border
   local borderPositions = {
-    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh / 2) },
-    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh / 2) },
-    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh / 2) },
-    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh / 2) }
+    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh) },
+    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh) },
+    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh) },
+    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh) }
   }
 
   for _, borderData in ipairs(borderPositions) do
@@ -309,11 +309,12 @@ function ENT:UpdateBorderControls(part)
   local l = self.TRACK_LENGTH / 2
   local bh = part.borderHeight
 
+  -- Position border controls at the TOP of the border, not the middle
   local borderPositions = {
-    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh / 2) },
-    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh / 2) },
-    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh / 2) },
-    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh / 2) }
+    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh) }, -- Changed from bh/2 to bh
+    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh) },  -- Changed from bh/2 to bh
+    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh) }, -- Changed from bh/2 to bh
+    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh) }   -- Changed from bh/2 to bh
   }
 
   for _, borderData in ipairs(borderPositions) do
@@ -647,8 +648,44 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
 
   -- Create the new part with front side connected
   local newPart = self:CreateTrackPart(partTypeId, connectionPoint, "front")
+
+  -- NEW: Inherit vertex heights from the last part's back vertices
+  if lastPart.customVertices then
+    if not newPart.customVertices then
+      newPart.customVertices = {}
+    end
+
+    -- Get the back vertices from the last part (vertices 3 and 4)
+    -- and apply them to the front vertices of the new part (vertices 1 and 2)
+    if lastPart.customVertices[3] then                           -- top-right of last part
+      newPart.customVertices[2] = Vector(newPart.customVertices[2] or self:GetDefaultVertexPosition(newPart, 2))
+      newPart.customVertices[2].z = lastPart.customVertices[3].z -- inherit Z height
+    end
+
+    if lastPart.customVertices[4] then                           -- top-left of last part
+      newPart.customVertices[1] = Vector(newPart.customVertices[1] or self:GetDefaultVertexPosition(newPart, 1))
+      newPart.customVertices[1].z = lastPart.customVertices[4].z -- inherit Z height
+    end
+
+    -- Update the vertex entity positions to match the inherited heights
+    if newPart.vertexEntities[1] and IsValid(newPart.vertexEntities[1]) and newPart.customVertices[1] then
+      newPart.vertexEntities[1]:SetPos(newPart.customVertices[1])
+    end
+    if newPart.vertexEntities[2] and IsValid(newPart.vertexEntities[2]) and newPart.customVertices[2] then
+      newPart.vertexEntities[2]:SetPos(newPart.customVertices[2])
+    end
+  end
+
+  -- Also inherit border height from the last part
+  newPart.borderHeight = lastPart.borderHeight
+
+  -- Update border control positions with the inherited height
+  self:UpdateBorderControls(newPart)
+
   table.insert(self.trackParts, newPart)
 
+  -- Resync the new part's mesh with the updated vertex positions
+  self:SyncMeshToClients(newPart)
   self:BuildPhysicsFromCurrentParts()
 
   return newPart
