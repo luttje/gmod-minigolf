@@ -139,6 +139,7 @@ function ENT:CreateTrackPart(partTypeId, position, connectionSide)
 end
 
 function ENT:CreateVertexEntities(part)
+  local config = self:GetPartTypeConfig(part.type)
   local pos = part.position
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
@@ -152,15 +153,18 @@ function ENT:CreateVertexEntities(part)
     pos + Vector(-w, l, trackHeight),  -- Top left at track surface
   }
 
-  -- Create vertex entities
-  for i, vertexPos in ipairs(vertexPositions) do
-    local vertexEnt = ents.Create("minigolf_track_designer_vertex")
-    vertexEnt:SetPos(vertexPos)
-    vertexEnt:SetAngles(Angle(0, 0, 0))
-    vertexEnt:Spawn()
-    vertexEnt:SetVertexData(self, part.id, i, "track", "")
+  -- Create vertex entities only if vertex manipulation is not blocked
+  if not config.blockVertexManipulation then
+    for i, vertexPos in ipairs(vertexPositions) do
+      local vertexEnt = ents.Create("minigolf_track_designer_vertex")
+      vertexEnt:SetPos(vertexPos)
+      vertexEnt:SetAngles(Angle(0, 0, 0))
+      vertexEnt:Spawn()
+      vertexEnt:SetVertexData(self, part.id, i, "track", "")
+      vertexEnt:SetNoDraw(not self.editMode)
 
-    part.vertexEntities[i] = vertexEnt
+      part.vertexEntities[i] = vertexEnt
+    end
   end
 
   -- Create border height control entities
@@ -201,6 +205,18 @@ function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
   local part = self:GetPartByID(partID)
   if not part then return end
 
+  -- Check if vertex manipulation is blocked for this part type
+  local config = self:GetPartTypeConfig(part.type)
+  if config and config.blockVertexManipulation and vertexType == "track" then
+    -- Don't allow track vertex manipulation for parts with blockVertexManipulation = true
+    return
+  end
+
+  if vertexType == "track" and self:IsVertexConnectedToBlockedPart(part, vertexIndex) then
+    -- Don't allow manipulation of vertices connected to blocked parts
+    return
+  end
+
   if self.isUpdatingConnections then return end
 
   if vertexType == "border" then
@@ -237,6 +253,12 @@ function ENT:UpdateTrackVertexDirect(part, vertexIndex, newPos)
 end
 
 function ENT:UpdateConnectedNeighbors(part, movedVertexIndex, movedPos)
+  -- Check if the source part has blocked vertex manipulation
+  local sourceConfig = self:GetPartTypeConfig(part.type)
+  if sourceConfig and sourceConfig.blockVertexManipulation then
+    return -- Don't propagate changes from blocked parts
+  end
+
   -- Find the part index in the track
   local partIndex = nil
   for i, trackPart in ipairs(self.trackParts) do
@@ -260,17 +282,25 @@ function ENT:UpdateConnectedNeighbors(part, movedVertexIndex, movedPos)
   -- Update previous part connection
   if partIndex > 1 and (movedVertexIndex == 1 or movedVertexIndex == 2) then
     local prevPart = self.trackParts[partIndex - 1]
-    local connectVertexIndex = (movedVertexIndex == 1) and 4 or 3 -- 1->4, 2->3
+    local prevConfig = self:GetPartTypeConfig(prevPart.type)
 
-    self:UpdateConnectedVertex(prevPart, connectVertexIndex, deltaPos)
+    -- Only update if the target part allows vertex manipulation
+    if not prevConfig or not prevConfig.blockVertexManipulation then
+      local connectVertexIndex = (movedVertexIndex == 1) and 4 or 3 -- 1->4, 2->3
+      self:UpdateConnectedVertex(prevPart, connectVertexIndex, deltaPos)
+    end
   end
 
   -- Update next part connection
   if partIndex < #self.trackParts and (movedVertexIndex == 3 or movedVertexIndex == 4) then
     local nextPart = self.trackParts[partIndex + 1]
-    local connectVertexIndex = (movedVertexIndex == 4) and 1 or 2 -- 4->1, 3->2
+    local nextConfig = self:GetPartTypeConfig(nextPart.type)
 
-    self:UpdateConnectedVertex(nextPart, connectVertexIndex, deltaPos)
+    -- Only update if the target part allows vertex manipulation
+    if not nextConfig or not nextConfig.blockVertexManipulation then
+      local connectVertexIndex = (movedVertexIndex == 4) and 1 or 2 -- 4->1, 3->2
+      self:UpdateConnectedVertex(nextPart, connectVertexIndex, deltaPos)
+    end
   end
 end
 
@@ -649,7 +679,7 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
   -- Create the new part with front side connected
   local newPart = self:CreateTrackPart(partTypeId, connectionPoint, "front")
 
-  -- NEW: Inherit vertex heights from the last part's back vertices
+  -- Inherit vertex heights from the last part's back vertices
   if lastPart.customVertices then
     if not newPart.customVertices then
       newPart.customVertices = {}
@@ -727,18 +757,83 @@ function ENT:ToggleEditMode(enable)
 
   -- Show/hide vertex entities
   for _, part in ipairs(self.trackParts) do
-    for _, vertexEnt in pairs(part.vertexEntities) do
+    local config = self:GetPartTypeConfig(part.type)
+
+    for vertexKey, vertexEnt in pairs(part.vertexEntities) do
       if IsValid(vertexEnt) then
         if enable then
-          vertexEnt:SetNoDraw(false)
-          vertexEnt:GetPhysicsObject():Wake()
+          local shouldShow = true
+
+          -- Check if this is a track vertex (numeric keys 1,2,3,4)
+          local vertexIndex = tonumber(vertexKey)
+          if vertexIndex then
+            -- This is a track vertex
+            if config and config.blockVertexManipulation then
+              -- Hide all track vertices for blocked parts
+              shouldShow = false
+            elseif self:IsVertexConnectedToBlockedPart(part, vertexIndex) then
+              -- Hide vertices connected to blocked parts
+              shouldShow = false
+            end
+          end
+          -- Border controls (non-numeric keys like "border_left") are always shown
+
+          vertexEnt:SetNoDraw(not shouldShow)
+          if shouldShow then
+            local phys = vertexEnt:GetPhysicsObject()
+            if IsValid(phys) then
+              phys:Wake()
+            end
+          else
+            local phys = vertexEnt:GetPhysicsObject()
+            if IsValid(phys) then
+              phys:Sleep()
+            end
+          end
         else
           vertexEnt:SetNoDraw(true)
-          vertexEnt:GetPhysicsObject():Sleep()
+          local phys = vertexEnt:GetPhysicsObject()
+          if IsValid(phys) then
+            phys:Sleep()
+          end
         end
       end
     end
   end
+end
+
+-- Helper function to check if a vertex is connected to a blocked part
+function ENT:IsVertexConnectedToBlockedPart(part, vertexIndex)
+  -- Find the part index in the track
+  local partIndex = nil
+  for i, trackPart in ipairs(self.trackParts) do
+    if trackPart.id == part.id then
+      partIndex = i
+      break
+    end
+  end
+
+  if not partIndex then return false end
+
+  -- Check if this vertex connects to previous part (vertices 1,2 connect to previous part's vertices 3,4)
+  if partIndex > 1 and (vertexIndex == 1 or vertexIndex == 2) then
+    local prevPart = self.trackParts[partIndex - 1]
+    local prevConfig = self:GetPartTypeConfig(prevPart.type)
+    if prevConfig and prevConfig.blockVertexManipulation then
+      return true -- Connected to a blocked part
+    end
+  end
+
+  -- Check if this vertex connects to next part (vertices 3,4 connect to next part's vertices 1,2)
+  if partIndex < #self.trackParts and (vertexIndex == 3 or vertexIndex == 4) then
+    local nextPart = self.trackParts[partIndex + 1]
+    local nextConfig = self:GetPartTypeConfig(nextPart.type)
+    if nextConfig and nextConfig.blockVertexManipulation then
+      return true -- Connected to a blocked part
+    end
+  end
+
+  return false
 end
 
 function ENT:OnRemove()

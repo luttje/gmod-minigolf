@@ -73,6 +73,7 @@ end
 ENT:RegisterPartType("start", {
   name = "Start Part",
   material = ENT.MATERIALS.RED_CARPET,
+  blockVertexManipulation = true, -- Prevent vertex editing for start parts
   boxes = {
     -- Main track floor - split into red and green sections
     {
