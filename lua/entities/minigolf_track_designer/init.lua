@@ -7,6 +7,8 @@ local ENT = ENT
 local MAX_BORDER_HEIGHT = 2048
 local BORDER_HEIGHT_STEP = 8
 
+resource.AddFile("materials/entities/minigolf_track_designer.png")
+
 -- Network strings
 util.AddNetworkString("MinigolfDesigner_OpenMenu")
 util.AddNetworkString("MinigolfDesigner_AddPart")
