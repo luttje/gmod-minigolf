@@ -15,7 +15,7 @@ function Minigolf.Chatbox.SetOpen(isOpen)
 end
 
 --- Returns wether the chatbox was just closed
----@param justInSeconds number How many seconds ago is "just"? Defaults to 1 second
+---@param justInSeconds? number How many seconds ago is "just"? Defaults to 1 second
 function Minigolf.Chatbox.WasJustClosed(justInSeconds)
   if(not Minigolf.Chatbox._LastClosed)then
     return false

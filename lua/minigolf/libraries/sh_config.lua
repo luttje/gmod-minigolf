@@ -13,7 +13,7 @@ end
 
 ---
 ---@param key string
----@param value Color
+---@param color Color
 function Minigolf.Colors.Set(key, color)
   Minigolf.Config.Set("Color" .. key, color)
 end
@@ -28,7 +28,7 @@ end
 
 ---
 ---@param key string
----@param defaultColor Color
+---@param defaultColor? Color
 ---@return Color
 function Minigolf.Colors.Get(key, defaultColor)
   return Minigolf.Config.Get("Color" .. key, defaultColor or Color(255, 255, 255))

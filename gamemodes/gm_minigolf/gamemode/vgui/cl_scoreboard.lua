@@ -18,6 +18,7 @@ local logoMaterial = Material("minigolf/logo_compact.png")
 
 Minigolf.Menus.Scoreboard = Minigolf.Menus.Scoreboard
 
+---@class Minigolf.ScoreBoardColumn : Panel
 local PANEL = {}
 
 AccessorFunc(PANEL, "text", "Text")
@@ -68,7 +69,7 @@ end
 
 vgui.Register("Minigolf.ScoreBoardColumn", PANEL, "Panel")
 
-
+---@class Minigolf.ScoreBoard : EditablePanel
 local PANEL = {}
 
 function PANEL:Init()

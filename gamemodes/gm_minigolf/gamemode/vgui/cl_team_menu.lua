@@ -1,4 +1,6 @@
 local scrW, scrH = ScrW(), ScrH()
+
+---@class Minigolf.TeamMenu : Panel
 local PANEL = {}
 
 function PANEL:BuildTeamMenu(isEditting)

@@ -1,4 +1,4 @@
-
+---@class Minigolf.HolePanel : Panel
 local PANEL = {}
 local panelWidth = 512
 

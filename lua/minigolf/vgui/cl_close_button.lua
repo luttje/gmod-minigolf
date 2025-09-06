@@ -1,3 +1,4 @@
+---@class MinigolfCloseButton : DButton
 local PANEL = {}
 
 function PANEL:Init()
