@@ -10,7 +10,10 @@ function ENT:Initialize()
   self:SetMoveType(MOVETYPE_NONE)
   self:SetSolid(SOLID_VPHYSICS)
 
-  self:SetModelScale(0.3, 0)
+  -- Slightly bigger for easier grabbing
+  self:SetModelScale(2, 0)
+  self:Activate()
+
   self:SetColor(Color(255, 100, 100, 200))
   self:SetRenderMode(RENDERMODE_TRANSALPHA)
 

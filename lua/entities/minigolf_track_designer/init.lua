@@ -4,6 +4,8 @@ include("shared.lua")
 
 local ENT = ENT
 
+local MAX_BORDER_HEIGHT = 2048
+
 -- Network strings
 util.AddNetworkString("MinigolfDesigner_OpenMenu")
 util.AddNetworkString("MinigolfDesigner_AddPart")
@@ -139,14 +141,14 @@ function ENT:CreateVertexEntities(part)
   local pos = part.position
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
+  local trackHeight = 2 -- Match the track surface height
 
-  -- Create simple rectangular vertex entities for now
-  -- This could be made more complex based on part type configuration
+  -- Create vertex entities at the track surface level
   local vertexPositions = {
-    pos + Vector(-w, -l, 0), -- Bottom left
-    pos + Vector(w, -l, 0),  -- Bottom right
-    pos + Vector(w, l, 0),   -- Top right
-    pos + Vector(-w, l, 0),  -- Top left
+    pos + Vector(-w, -l, trackHeight), -- Bottom left at track surface
+    pos + Vector(w, -l, trackHeight),  -- Bottom right at track surface
+    pos + Vector(w, l, trackHeight),   -- Top right at track surface
+    pos + Vector(-w, l, trackHeight),  -- Top left at track surface
   }
 
   -- Create vertex entities
@@ -197,14 +199,106 @@ function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
 
   if vertexType == "border" then
     -- Handle border height changes
-    local newHeight = math.max(8, math.min(64, newPos.z - part.position.z))
+    local newHeight = math.max(8, math.min(MAX_BORDER_HEIGHT, newPos.z - part.position.z))
+
     if math.abs(part.borderHeight - newHeight) > 1 then
       part.borderHeight = newHeight
+      -- self:UpdateBorderControls(part) -- causes glitching
       self:UpdatePartMesh(partID)
     end
   else
-    -- Handle track vertex changes
-    self:UpdatePartMesh(partID)
+    self:UpdateTrackVertexDirect(part, vertexIndex, newPos)
+  end
+end
+
+function ENT:UpdateTrackVertexDirect(part, vertexIndex, newPos)
+  if not part.customVertices then
+    part.customVertices = {}
+  end
+
+  part.customVertices[vertexIndex] = newPos
+
+  -- Update connected neighboring vertices for path continuity
+  self:UpdateConnectedNeighbors(part, vertexIndex, newPos)
+
+  -- Regenerate mesh with new vertex positions
+  self:UpdatePartMesh(part.id)
+end
+
+function ENT:UpdateConnectedNeighbors(part, movedVertexIndex, movedPos)
+  -- Find the part index in the track
+  local partIndex = nil
+  for i, trackPart in ipairs(self.trackParts) do
+    if trackPart.id == part.id then
+      partIndex = i
+      break
+    end
+  end
+
+  if not partIndex then return end
+
+  -- Define which vertices connect between parts to form a continuous path
+  -- For a rectangular track part:
+  -- Vertex 1 (bottom-left) and 2 (bottom-right) connect to the PREVIOUS part's vertices 3,4
+  -- Vertex 3 (top-right) and 4 (top-left) connect to the NEXT part's vertices 1,2
+
+  local heightChange = 0
+  local originalPos = self:GetDefaultVertexPosition(part, movedVertexIndex)
+  heightChange = movedPos.z - originalPos.z
+
+  -- Update previous part connection
+  if partIndex > 1 and (movedVertexIndex == 1 or movedVertexIndex == 2) then
+    local prevPart = self.trackParts[partIndex - 1]
+    local connectVertexIndex = (movedVertexIndex == 1) and 4 or 3 -- 1->4, 2->3
+
+    self:UpdateConnectedVertex(prevPart, connectVertexIndex, heightChange)
+  end
+
+  -- Update next part connection
+  if partIndex < #self.trackParts and (movedVertexIndex == 3 or movedVertexIndex == 4) then
+    local nextPart = self.trackParts[partIndex + 1]
+    local connectVertexIndex = (movedVertexIndex == 4) and 1 or 2 -- 4->1, 3->2
+
+    self:UpdateConnectedVertex(nextPart, connectVertexIndex, heightChange)
+  end
+end
+
+function ENT:UpdateConnectedVertex(targetPart, vertexIndex, heightChange)
+  -- Get the current position of the target vertex
+  local currentPos = targetPart.vertexEntities[vertexIndex]:GetPos()
+  local newPos = Vector(currentPos.x, currentPos.y, currentPos.z + heightChange)
+
+  -- Update the vertex entity position directly (bypassing OnVertexMoved to prevent loops)
+  targetPart.vertexEntities[vertexIndex]:SetPos(newPos)
+
+  -- Store the custom vertex position
+  if not targetPart.customVertices then
+    targetPart.customVertices = {}
+  end
+  targetPart.customVertices[vertexIndex] = newPos
+
+  -- Update the mesh for this part
+  self:UpdatePartMesh(targetPart.id)
+end
+
+function ENT:UpdateBorderControls(part)
+  local pos = part.position
+  local w = self.TRACK_WIDTH / 2
+  local l = self.TRACK_LENGTH / 2
+  local bh = part.borderHeight
+
+  local borderPositions = {
+    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh / 2) },
+    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh / 2) },
+    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh / 2) },
+    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh / 2) }
+  }
+
+  for _, borderData in ipairs(borderPositions) do
+    local controlKey = "border_" .. borderData.name
+    if part.vertexEntities[controlKey] and IsValid(part.vertexEntities[controlKey]) then
+      part.vertexEntities[controlKey]:SetPos(borderData.pos)
+    end
   end
 end
 
@@ -219,7 +313,7 @@ function ENT:GenerateMeshData(part)
     borderHeight = part.borderHeight
   }
 
-  -- Generate floor boxes from part type configuration
+  -- Generate floor boxes from part type configuration with custom vertices
   local config = self:GetPartTypeConfig(part.type)
   if config and config.boxes then
     for i, boxConfig in ipairs(config.boxes) do
@@ -229,20 +323,112 @@ function ENT:GenerateMeshData(part)
         boxType = boxConfig.type
       }
 
-      -- Use CreateBoxMesh to generate vertices
-      local adjustedMin = part.position + boxConfig.min
-      local adjustedMax = part.position + boxConfig.max
-
-      self:CreateBoxMesh(boxMeshData.vertices, adjustedMin, adjustedMax)
+      -- Use custom vertex positions if available for floor elements
+      if part.customVertices and boxConfig.type == "floor" then
+        self:CreateCustomTrackMesh(part, boxMeshData.vertices, boxConfig)
+      else
+        -- Use standard box mesh for non-track elements
+        local adjustedMin = part.position + boxConfig.min
+        local adjustedMax = part.position + boxConfig.max
+        self:CreateBoxMesh(boxMeshData.vertices, adjustedMin, adjustedMax)
+      end
 
       table.insert(meshData.boxes, boxMeshData)
     end
   end
 
-  -- Generate border boxes
+  -- Generate border boxes (these remain at original height for now)
   self:GenerateBorderMeshData(part, meshData)
 
   return meshData
+end
+
+function ENT:CreateCustomTrackMesh(part, vertices, boxConfig)
+  -- Get vertex positions (custom or default)
+  local vertexPositions = {}
+
+  for i = 1, 4 do
+    if part.customVertices and part.customVertices[i] then
+      vertexPositions[i] = part.customVertices[i]
+    else
+      vertexPositions[i] = self:GetDefaultVertexPosition(part, i)
+    end
+  end
+
+  -- Create the track surface using the vertex positions
+  local thickness = 2 -- Track thickness
+
+  -- Create the top surface (the playable track surface)
+  -- The top surface should be AT the vertex height, not above it
+  local topVerts = {}
+  for i = 1, 4 do
+    topVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z)
+  end
+
+  -- Create the bottom surface (thickness below the top surface)
+  local bottomVerts = {}
+  for i = 1, 4 do
+    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z - thickness)
+  end
+
+  -- Create the top surface (counter-clockwise winding)
+  self:CreateQuadSurface(vertices, topVerts[1], topVerts[2], topVerts[3], topVerts[4], Vector(0, 0, 1))
+
+  -- Create the bottom surface (clockwise winding for proper normals)
+  self:CreateQuadSurface(vertices, bottomVerts[4], bottomVerts[3], bottomVerts[2], bottomVerts[1], Vector(0, 0, -1))
+
+  -- Create the side surfaces connecting top to bottom
+  self:CreateQuadSurface(vertices, bottomVerts[1], bottomVerts[2], topVerts[2], topVerts[1],
+    self:CalculateNormal(bottomVerts[1], bottomVerts[2], topVerts[2])) -- Front
+  self:CreateQuadSurface(vertices, bottomVerts[2], bottomVerts[3], topVerts[3], topVerts[2],
+    self:CalculateNormal(bottomVerts[2], bottomVerts[3], topVerts[3])) -- Right
+  self:CreateQuadSurface(vertices, bottomVerts[3], bottomVerts[4], topVerts[4], topVerts[3],
+    self:CalculateNormal(bottomVerts[3], bottomVerts[4], topVerts[4])) -- Back
+  self:CreateQuadSurface(vertices, bottomVerts[4], bottomVerts[1], topVerts[1], topVerts[4],
+    self:CalculateNormal(bottomVerts[4], bottomVerts[1], topVerts[1])) -- Left
+end
+
+function ENT:GetDefaultVertexPosition(part, vertexIndex)
+  local pos = part.position
+  local w = self.TRACK_WIDTH / 2
+  local l = self.TRACK_LENGTH / 2
+  local trackHeight = 2 -- Match the thickness used in track generation
+
+  local positions = {
+    pos + Vector(-w, -l, trackHeight), -- 1: Bottom left (front-left) at track surface level
+    pos + Vector(w, -l, trackHeight),  -- 2: Bottom right (front-right) at track surface level
+    pos + Vector(w, l, trackHeight),   -- 3: Top right (back-right) at track surface level
+    pos + Vector(-w, l, trackHeight),  -- 4: Top left (back-left) at track surface level
+  }
+
+  return positions[vertexIndex]
+end
+
+function ENT:CalculateNormal(p1, p2, p3)
+  local v1 = p2 - p1
+  local v2 = p3 - p1
+  local normal = v1:Cross(v2)
+  normal:Normalize()
+  return normal
+end
+
+function ENT:CreateQuadSurface(vertices, p1, p2, p3, p4, normal)
+  -- Calculate UV coordinates based on world position
+  local texScale = 64
+  local u1, v1 = p1.x / texScale, p1.y / texScale
+  local u2, v2 = p2.x / texScale, p2.y / texScale
+  local u3, v3 = p3.x / texScale, p3.y / texScale
+  local u4, v4 = p4.x / texScale, p4.y / texScale
+
+  -- First triangle (p1, p2, p3) - counter-clockwise
+  table.insert(vertices, { pos = p1, u = u1, v = v1, normal = normal })
+  table.insert(vertices, { pos = p2, u = u2, v = v2, normal = normal })
+  table.insert(vertices, { pos = p3, u = u3, v = v3, normal = normal })
+
+  -- Second triangle (p1, p3, p4) - counter-clockwise
+  table.insert(vertices, { pos = p1, u = u1, v = v1, normal = normal })
+  table.insert(vertices, { pos = p3, u = u3, v = v3, normal = normal })
+  table.insert(vertices, { pos = p4, u = u4, v = v4, normal = normal })
 end
 
 function ENT:GetMaterialKeyForBox(boxConfig)
