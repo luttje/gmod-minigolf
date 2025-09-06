@@ -8,3 +8,9 @@ ENT.PrintName = "Minigolf Track Designer Vertex"
 ENT.Category = "Minigolf"
 ENT.Spawnable = false
 ENT.AdminOnly = false
+
+hook.Add("PhysgunPickup", "MinigolfDesignerVertex.PreventPhysgunPickup", function(ply, entity)
+  if (entity:GetClass() == "minigolf_track_designer_vertex" and entity:GetNoDraw()) then
+    return false
+  end
+end)

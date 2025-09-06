@@ -53,33 +53,40 @@ function ENT:CreateMeshFromData(partID, meshData)
   local meshPart = {
     partID = partID,
     partType = meshData.partType,
-    meshes = {}
+    meshes = {},
+    localTris = {}
   }
 
-  -- Create meshes for each box
   if meshData.boxes then
     for i, boxData in ipairs(meshData.boxes) do
       if boxData.vertices and #boxData.vertices > 0 and #boxData.vertices % 3 == 0 then
         local material = self.materials[boxData.materialKey] or self.materials.border
         local mesh = Mesh(material)
 
-        -- Validate vertices before building mesh
         local validVertices = {}
         for j, vertex in ipairs(boxData.vertices) do
           if vertex.pos and vertex.normal and vertex.u and vertex.v then
-            table.insert(validVertices, {
+            validVertices[#validVertices + 1] = {
               pos = vertex.pos,
               normal = vertex.normal,
               u = vertex.u,
               v = vertex.v
-            })
-          else
-            print("Warning: Invalid vertex at box " .. i .. " vertex " .. j)
+            }
           end
         end
 
         if #validVertices > 0 and #validVertices % 3 == 0 then
           mesh:BuildFromTriangles(validVertices)
+
+          -- collect local-space triangles for PhysicsFromMesh
+          for k = 1, #validVertices, 3 do
+            local p1 = self:WorldToLocal(validVertices[k].pos)
+            local p2 = self:WorldToLocal(validVertices[k + 1].pos)
+            local p3 = self:WorldToLocal(validVertices[k + 2].pos)
+            meshPart.localTris[#meshPart.localTris + 1] = { pos = p1 }
+            meshPart.localTris[#meshPart.localTris + 1] = { pos = p2 }
+            meshPart.localTris[#meshPart.localTris + 1] = { pos = p3 }
+          end
 
           table.insert(meshPart.meshes, {
             mesh = mesh,
@@ -93,8 +100,26 @@ function ENT:CreateMeshFromData(partID, meshData)
 
   self.meshParts[partID] = meshPart
 
-  -- Update render bounds after adding new mesh part
   self:UpdateRenderBounds()
+  self:BuildPhysicsFromCurrentParts()
+end
+
+function ENT:BuildPhysicsFromCurrentParts()
+  if not self.meshParts then return end
+
+  local tris = {}
+  for _, mp in pairs(self.meshParts) do
+    if mp.localTris and #mp.localTris > 0 then
+      for i = 1, #mp.localTris do
+        tris[#tris + 1] = { pos = mp.localTris[i].pos }
+      end
+    end
+  end
+
+  if #tris == 0 then return end
+
+  self:PhysicsFromMesh(tris)
+  self:EnableCustomCollisions()
 end
 
 function ENT:UpdateMeshPart(partID, meshData)
@@ -107,7 +132,6 @@ function ENT:UpdateMeshPart(partID, meshData)
     end
   end
 
-  -- Create new mesh
   self:CreateMeshFromData(partID, meshData)
 end
 

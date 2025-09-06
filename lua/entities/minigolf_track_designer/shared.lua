@@ -111,3 +111,17 @@ end
 function ENT:GetPartTypeList()
   return self.PART_TYPE_LIST
 end
+
+function ENT:CanTool(player, trace, toolName, tool, button)
+  return false
+end
+
+function ENT:CanProperty(player, property)
+  return false
+end
+
+hook.Add("PhysgunPickup", "MinigolfTrackDesigner.PreventPhysgunPickup", function(player, entity)
+  if entity:GetClass() == "minigolf_track_designer" then
+    return false
+  end
+end)

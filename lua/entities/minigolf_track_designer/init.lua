@@ -12,6 +12,19 @@ util.AddNetworkString("MinigolfDesigner_SetBorderHeight")
 util.AddNetworkString("MinigolfDesigner_ToggleEditMode")
 util.AddNetworkString("MinigolfDesigner_SyncMesh")
 
+--- Spawns the track designer flush with the ground
+function ENT:SpawnFunction(player, trace, className)
+  if not IsValid(player) or not trace.Hit then return end
+
+  local spawnPos = trace.HitPos
+  local entity = ents.Create(className)
+  entity:SetPos(spawnPos)
+  entity:Spawn()
+  entity:Activate()
+
+  return entity
+end
+
 function ENT:Initialize()
   self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
   self:PhysicsInit(SOLID_VPHYSICS)
@@ -33,6 +46,42 @@ function ENT:Initialize()
 
   -- Create the starting piece
   self:CreateStartPart()
+  self:BuildPhysicsFromCurrentParts()
+
+  self:ToggleEditMode(false)
+end
+
+function ENT:BuildPhysicsFromCurrentParts()
+  local tris = {}
+
+  for _, part in ipairs(self.trackParts) do
+    local md = self:GenerateMeshData(part)
+    if md and md.boxes then
+      for _, box in ipairs(md.boxes) do
+        local v = box.vertices or {}
+        for i = 1, #v, 3 do
+          local p1 = self:WorldToLocal(v[i].pos)
+          local p2 = self:WorldToLocal(v[i + 1].pos)
+          local p3 = self:WorldToLocal(v[i + 2].pos)
+          tris[#tris + 1] = { pos = p1 }
+          tris[#tris + 1] = { pos = p2 }
+          tris[#tris + 1] = { pos = p3 }
+        end
+      end
+    end
+  end
+
+  if #tris > 0 then
+    self:PhysicsFromMesh(tris)
+    self:SetSolid(SOLID_VPHYSICS)
+    self:SetMoveType(MOVETYPE_NONE)
+    self:EnableCustomCollisions(true)
+    local phys = self:GetPhysicsObject()
+    if IsValid(phys) then
+      phys:Wake()
+      phys:EnableMotion(false)
+    end
+  end
 end
 
 function ENT:Use(activator, caller)
@@ -70,14 +119,10 @@ function ENT:CreateTrackPart(partTypeId, position, connectionSide)
 
   self.nextPartID = self.nextPartID + 1
 
-  -- Create vertex entities for manipulation
   self:CreateVertexEntities(part)
-
-  -- Create game entities (hole start/end, triggers)
   self:CreatePartEntities(part)
-
-  -- Send mesh data to clients
   self:SyncMeshToClients(part)
+  self:BuildPhysicsFromCurrentParts()
 
   return part
 end
@@ -375,8 +420,8 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
   local newPart = self:CreateTrackPart(partTypeId, connectionPoint, connectionSide)
   table.insert(self.trackParts, newPart)
 
-  -- Remove border from connection side of previous part
   self:RemoveBorderConnection(lastPart, "back")
+  self:BuildPhysicsFromCurrentParts()
 
   return newPart
 end
@@ -389,16 +434,16 @@ function ENT:RemoveBorderConnection(part, side)
     part.vertexEntities[controlKey] = nil
   end
 
-  -- Resync mesh data
   self:SyncMeshToClients(part)
+  self:BuildPhysicsFromCurrentParts()
 end
 
 function ENT:UpdatePartMesh(partID)
   local part = self:GetPartByID(partID)
   if not part then return end
 
-  -- Sync new mesh data to clients
   self:SyncMeshToClients(part)
+  self:BuildPhysicsFromCurrentParts()
 end
 
 function ENT:GetPartByID(id)
