@@ -2,6 +2,8 @@ include("shared.lua")
 
 local ENT = ENT
 
+ENT.RenderGroup = RENDERGROUP_OTHER
+
 function ENT:Initialize()
   self.GripMaterial = Material("sprites/grip")
   self.GripMaterialHover = Material("sprites/grip_hover")

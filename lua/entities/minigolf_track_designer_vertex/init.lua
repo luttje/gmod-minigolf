@@ -45,6 +45,15 @@ end
 function ENT:Think()
   local currentPos = self:GetPos()
 
+  -- Constrain movement based on vertex type
+  local constrainedPos = self:ConstrainMovement(currentPos)
+
+  -- If position needed to be constrained, update it
+  if constrainedPos ~= currentPos then
+    self:SetPos(constrainedPos)
+    currentPos = constrainedPos
+  end
+
   if self.lastKnownPos:Distance(currentPos) > 1 then
     self.lastKnownPos = currentPos
 
@@ -56,6 +65,65 @@ function ENT:Think()
 
   self:NextThink(CurTime() + 0.1)
   return true
+end
+
+function ENT:ConstrainMovement(newPos)
+  if not IsValid(self.parentDesigner) then
+    return newPos
+  end
+
+  -- Get the part this vertex belongs to
+  local part = self.parentDesigner:GetPartByID(self.partID)
+  if not part then
+    return newPos
+  end
+
+  local constrainedPos = Vector(newPos.x, newPos.y, newPos.z)
+
+  if self.vertexType == "border" then
+    -- Border vertices can only move up/down (Z axis)
+    -- Keep them fixed to their border position
+    local pos = part.position
+    local w = self.parentDesigner.TRACK_WIDTH / 2
+    local l = self.parentDesigner.TRACK_LENGTH / 2
+    local bw = self.parentDesigner.BORDER_WIDTH
+
+    if self.borderSide == "left" then
+      constrainedPos.x = pos.x - w - bw
+      constrainedPos.y = pos.y
+    elseif self.borderSide == "right" then
+      constrainedPos.x = pos.x + w + bw
+      constrainedPos.y = pos.y
+    elseif self.borderSide == "front" then
+      constrainedPos.x = pos.x
+      constrainedPos.y = pos.y - l - bw
+    elseif self.borderSide == "back" then
+      constrainedPos.x = pos.x
+      constrainedPos.y = pos.y + l + bw
+    end
+  elseif self.vertexType == "track" then
+    -- Track vertices can move along their edge and up/down
+    local pos = part.position
+    local w = self.parentDesigner.TRACK_WIDTH / 2
+    local l = self.parentDesigner.TRACK_LENGTH / 2
+
+    -- Determine which edge this vertex is on and constrain accordingly
+    if self.vertexIndex == 1 then -- Bottom left (front-left)
+      constrainedPos.x = pos.x - w
+      constrainedPos.y = pos.y - l
+    elseif self.vertexIndex == 2 then -- Bottom right (front-right)
+      constrainedPos.x = pos.x + w
+      constrainedPos.y = pos.y - l
+    elseif self.vertexIndex == 3 then -- Top right (back-right)
+      constrainedPos.x = pos.x + w
+      constrainedPos.y = pos.y + l
+    elseif self.vertexIndex == 4 then -- Top left (back-left)
+      constrainedPos.x = pos.x - w
+      constrainedPos.y = pos.y + l
+    end
+  end
+
+  return constrainedPos
 end
 
 function ENT:OnRemove()
