@@ -382,16 +382,16 @@ function ENT:CreateCustomTrackMesh(part, vertices, boxConfig)
   local thickness = 2 -- Track thickness
 
   -- Create the bottom surface
-  -- The bottom surface should be AT the vertex height
+  -- For some reason these are at -thickness, otherwise the normals are inverted
   local bottomVerts = {}
   for i = 1, 4 do
-    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z)
+    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z - thickness)
   end
 
   -- Create the top surface (the playable track surface)
   local topVerts = {}
   for i = 1, 4 do
-    topVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z + thickness)
+    topVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z)
   end
 
   -- Create the top surface (counter-clockwise winding)
