@@ -10,7 +10,7 @@ function ENT:Initialize()
 
   -- Initialize materials for all registered part types
   for partTypeId, config in pairs(self.PART_TYPES) do
-    self.materials[partTypeId] = Material(config.material)
+    self.materials[partTypeId] = type(config.material) == "string" and Material(config.material) or config.material
   end
 
   -- Border material is unlit generic to avoid lighting issues (cant receive flashlight + we have a bug causing black triangles)

@@ -9,13 +9,49 @@ ENT.Category = "Minigolf"
 ENT.Spawnable = true
 ENT.AdminOnly = true
 
--- Materials
 ENT.MATERIALS = {
   RED_CARPET = "props/carpetfloor001a",
   GREEN_CARPET = "props/carpetfloor003a",
   WOOD_BORDER = "wood/woodfloor008a",
   HOLE_INTERIOR = "halflife/black"
 }
+
+if (CLIENT) then
+  ENT.MATERIALS = {
+    RED_CARPET = CreateMaterial(
+      "minigolf_red_carpet_unlit",
+      "UnlitGeneric",
+      {
+        ["$basetexture"] = ENT.MATERIALS.RED_CARPET,
+        ["$vertexcolor"] = 1,
+      }
+    ),
+    GREEN_CARPET = CreateMaterial(
+      "minigolf_green_carpet_unlit",
+      "UnlitGeneric",
+      {
+        ["$basetexture"] = ENT.MATERIALS.GREEN_CARPET,
+        ["$vertexcolor"] = 1,
+      }
+    ),
+    WOOD_BORDER = CreateMaterial(
+      "minigolf_wood_border_unlit",
+      "UnlitGeneric",
+      {
+        ["$basetexture"] = ENT.MATERIALS.WOOD_BORDER,
+        ["$vertexcolor"] = 1,
+      }
+    ),
+    HOLE_INTERIOR = CreateMaterial(
+      "minigolf_hole_interior_unlit",
+      "UnlitGeneric",
+      {
+        ["$basetexture"] = ENT.MATERIALS.HOLE_INTERIOR,
+        ["$vertexcolor"] = 1,
+      }
+    )
+  }
+end
 
 -- Default dimensions
 ENT.TRACK_WIDTH = 128

@@ -17,8 +17,11 @@ function ENT:SpawnFunction(player, trace, className)
   if not IsValid(player) or not trace.Hit then return end
 
   local spawnPos = trace.HitPos
+  local spawnAngles = player:EyeAngles()
+  spawnAngles.pitch = 0
   local entity = ents.Create(className)
   entity:SetPos(spawnPos)
+  entity:SetAngles(spawnAngles)
   entity:Spawn()
   entity:Activate()
 
