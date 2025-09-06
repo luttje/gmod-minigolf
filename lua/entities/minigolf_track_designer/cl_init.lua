@@ -13,8 +13,15 @@ function ENT:Initialize()
     self.materials[partTypeId] = Material(config.material)
   end
 
-  -- Border material
-  self.materials.border = Material(self.MATERIALS.WOOD_BORDER)
+  -- Border material is unlit generic to avoid lighting issues (cant receive flashlight + we have a bug causing black triangles)
+  self.materials.border = CreateMaterial(
+    "minigolf_border_unlit",
+    "UnlitGeneric",
+    {
+      ["$basetexture"] = self.MATERIALS.WOOD_BORDER,
+      ["$vertexcolor"] = 1,
+    }
+  )
 
   -- Set initial render bounds to prevent culling
   self:SetRenderBounds(Vector(-1000, -1000, -1000), Vector(1000, 1000, 1000))
