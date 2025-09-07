@@ -26,16 +26,20 @@ Minigolf.Commands.Register("unequipitem", function(player, ...)
 		return
 	end
 
-	local itemName = table.concat({ ... }, " ")
-	local item = Minigolf.Items.FindByProperty("Name", itemName)
+	local itemNameOrID = table.concat({ ... }, " ")
+	local item = Minigolf.Items.Get(itemNameOrID)
 
 	if (not item) then
-		Minigolf.Messages.Send(player, itemName .. " is not a valid item!", nil, Minigolf.TEXT_EFFECT_DANGER)
-		return
+		item = Minigolf.Items.FindByProperty("Name", itemNameOrID)
+
+		if (not item) then
+			Minigolf.Messages.Send(player, itemNameOrID .. " is not a valid item!", nil, Minigolf.TEXT_EFFECT_DANGER)
+			return
+		end
 	end
 
 	Minigolf.Items.Unequip(item, player)
-	Minigolf.Messages.Send(player, "You unequipped " .. itemName .. "!", nil, Minigolf.TEXT_EFFECT_SUCCESS)
+	Minigolf.Messages.Send(player, "You unequipped " .. itemNameOrID .. "!", nil, Minigolf.TEXT_EFFECT_SUCCESS)
 end, "Equip a Minigolf item on yourself")
 
 hook.Add("PlayerInitialSpawn", "Minigolf.SyncAllPlayerItems", function(player)

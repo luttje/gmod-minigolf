@@ -68,6 +68,7 @@ if (CLIENT) then
 		modelOverride:SetPos(ball:GetPos())
 		modelOverride:SetAngles(ball:GetAngles())
 		modelOverride:SetRenderMode(ball:GetRenderMode())
+		modelOverride:SetMaterial(ball:GetMaterial())
 		modelOverride:DrawModel()
 
 		overrideTable.hasHandled = true

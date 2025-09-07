@@ -1,6 +1,6 @@
 ITEM.Name = "Dragon Ball Z Ball"
 ITEM.Model = "models/billiards/ball.mdl"
-ITEM.Material = Material("minigolf/balls/dragon_ball_z/dragon_ball_1")
+ITEM.Material = "minigolf/balls/dragon_ball_z/dragon_ball_1"
 ITEM.ModulateColor = Color(255, 255, 255, 150)
 ITEM.UniqueID = "ball_dragon_ball_z"
 

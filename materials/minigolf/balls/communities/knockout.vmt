@@ -1,7 +1,7 @@
 
 "VertexLitGeneric"
 {
-	"$basetexture" "minigolf/balls/communities/facepunch"
+	"$basetexture" "minigolf/balls/communities/knockout"
 	"$surfaceprop" "plastic"
 
 	"$model" 1
