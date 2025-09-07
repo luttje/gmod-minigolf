@@ -219,6 +219,10 @@ net.Receive("MinigolfDesigner_OpenMenu", function()
   for i, partTypeId in ipairs(designerEnt:GetPartTypeList()) do
     local config = designerEnt:GetPartTypeConfig(partTypeId)
 
+    if (isbool(config.canAdd) and not config.canAdd) or (isfunction(config.canAdd) and not config.canAdd(designerEnt)) then
+      continue
+    end
+
     local addBtn = vgui.Create("DButton", frame)
     addBtn:SetText("Add " .. config.name)
     addBtn:SetPos(x, y)
