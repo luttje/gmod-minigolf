@@ -102,12 +102,12 @@ function ENT:Use(activator, caller)
 end
 
 function ENT:CreateStartPart()
-  local startPart = self:CreateTrackPart("start", self:GetPos())
+  local startPart = self:CreateTrackPart("start", self:GetPos(), self:GetAngles())
   self.trackParts[1] = startPart
   return startPart
 end
 
-function ENT:CreateTrackPart(partTypeId, position, connectionSide)
+function ENT:CreateTrackPart(partTypeId, position, angles, connectionSide)
   local config = self:GetPartTypeConfig(partTypeId)
   if not config then
     print("Error: Unknown part type: " .. tostring(partTypeId))
@@ -118,6 +118,7 @@ function ENT:CreateTrackPart(partTypeId, position, connectionSide)
     id = self.nextPartID,
     type = partTypeId,
     position = position or Vector(0, 0, 0),
+    angles = angles or Angle(0, 0, 0),
     connectedSides = {}, -- Use a table to track multiple connected sides
     vertexEntities = {},
     meshData = {},
@@ -143,24 +144,33 @@ end
 function ENT:CreateVertexEntities(part)
   local config = self:GetPartTypeConfig(part.type)
   local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local trackHeight = 2 -- Match the track surface height
 
-  -- Create vertex entities at the track surface level
-  local vertexPositions = {
-    pos + Vector(-w, -l, trackHeight), -- Bottom left at track surface
-    pos + Vector(w, -l, trackHeight),  -- Bottom right at track surface
-    pos + Vector(w, l, trackHeight),   -- Top right at track surface
-    pos + Vector(-w, l, trackHeight),  -- Top left at track surface
+  -- Create vertex positions relative to part center, then rotate them
+  local relativePositions = {
+    Vector(-w, -l, trackHeight), -- Bottom left at track surface
+    Vector(w, -l, trackHeight),  -- Bottom right at track surface
+    Vector(w, l, trackHeight),   -- Top right at track surface
+    Vector(-w, l, trackHeight),  -- Top left at track surface
   }
+
+  -- Rotate each relative position by the part's angles and add to world position
+  local vertexPositions = {}
+  for i, relativePos in ipairs(relativePositions) do
+    local rotatedPos = Vector(relativePos)
+    rotatedPos:Rotate(angles)
+    vertexPositions[i] = pos + rotatedPos
+  end
 
   -- Create vertex entities only if vertex manipulation is not blocked
   if not config.blockVertexManipulation then
     for i, vertexPos in ipairs(vertexPositions) do
       local vertexEnt = ents.Create("minigolf_track_designer_vertex")
       vertexEnt:SetPos(vertexPos)
-      vertexEnt:SetAngles(Angle(0, 0, 0))
+      vertexEnt:SetAngles(angles) -- Set the vertex entity's angles to match the part
       vertexEnt:Spawn()
       vertexEnt:SetVertexData(self, part.id, i, "track", "")
       vertexEnt:SetNoDraw(not self.editMode)
@@ -175,23 +185,31 @@ end
 
 function ENT:CreateBorderControls(part)
   local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local bh = part.borderHeight
 
   -- Create border height controls on each side at the TOP of the border
-  local borderPositions = {
-    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh) },
-    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh) },
-    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh) },
-    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh) }
+  -- Define relative positions first, then rotate them
+  local relativeBorderPositions = {
+    { name = "left",  pos = Vector(-w - self.BORDER_WIDTH, 0, bh) },
+    { name = "right", pos = Vector(w + self.BORDER_WIDTH, 0, bh) },
+    { name = "front", pos = Vector(0, -l - self.BORDER_WIDTH, bh) },
+    { name = "back",  pos = Vector(0, l + self.BORDER_WIDTH, bh) }
   }
 
-  for _, borderData in ipairs(borderPositions) do
+  for _, borderData in ipairs(relativeBorderPositions) do
     -- Check if this side is connected
     if not part.connectedSides[borderData.name] then
+      -- Rotate the relative position and add to world position
+      local rotatedPos = Vector(borderData.pos)
+      rotatedPos:Rotate(angles)
+      local worldPos = pos + rotatedPos
+
       local borderControl = ents.Create("minigolf_track_designer_vertex")
-      borderControl:SetPos(borderData.pos)
+      borderControl:SetPos(worldPos)
+      borderControl:SetAngles(angles) -- Set angles to match the part
       borderControl:Spawn()
       borderControl:SetVertexData(self, part.id, borderData.name, "border", borderData.name)
 
@@ -337,22 +355,29 @@ end
 
 function ENT:UpdateBorderControls(part)
   local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local bh = part.borderHeight
 
   -- Position border controls at the TOP of the border, not the middle
-  local borderPositions = {
-    { name = "left",  pos = pos + Vector(-w - self.BORDER_WIDTH, 0, bh) }, -- Changed from bh/2 to bh
-    { name = "right", pos = pos + Vector(w + self.BORDER_WIDTH, 0, bh) },  -- Changed from bh/2 to bh
-    { name = "front", pos = pos + Vector(0, -l - self.BORDER_WIDTH, bh) }, -- Changed from bh/2 to bh
-    { name = "back",  pos = pos + Vector(0, l + self.BORDER_WIDTH, bh) }   -- Changed from bh/2 to bh
+  local relativeBorderPositions = {
+    { name = "left",  pos = Vector(-w - self.BORDER_WIDTH, 0, bh) },
+    { name = "right", pos = Vector(w + self.BORDER_WIDTH, 0, bh) },
+    { name = "front", pos = Vector(0, -l - self.BORDER_WIDTH, bh) },
+    { name = "back",  pos = Vector(0, l + self.BORDER_WIDTH, bh) }
   }
 
-  for _, borderData in ipairs(borderPositions) do
+  for _, borderData in ipairs(relativeBorderPositions) do
     local controlKey = "border_" .. borderData.name
     if part.vertexEntities[controlKey] and IsValid(part.vertexEntities[controlKey]) then
-      part.vertexEntities[controlKey]:SetPos(borderData.pos)
+      -- Rotate the relative position and add to world position
+      local rotatedPos = Vector(borderData.pos)
+      rotatedPos:Rotate(angles)
+      local worldPos = pos + rotatedPos
+
+      part.vertexEntities[controlKey]:SetPos(worldPos)
+      part.vertexEntities[controlKey]:SetAngles(angles) -- Update angles too
     end
   end
 end
@@ -381,11 +406,11 @@ function ENT:GenerateMeshData(part)
       -- Use custom vertex positions if available for floor elements
       if part.customVertices and boxConfig.type == "floor" then
         self:CreateCustomTrackMesh(part, boxMeshData.vertices, boxConfig)
+      elseif boxConfig.type == "floor" then
+        -- Use oriented box mesh for floor elements that need rotation support
+        self:CreateOrientedFloorMesh(part, boxMeshData.vertices, boxConfig)
       else
-        -- Use standard box mesh for non-track elements
-        local adjustedMin = part.position + boxConfig.min
-        local adjustedMax = part.position + boxConfig.max
-        self:CreateBoxMesh(boxMeshData.vertices, adjustedMin, adjustedMax)
+        ErrorNoHalt("Warning: Unsupported box type in part config: " .. tostring(boxConfig.type) .. "\n")
       end
 
       table.insert(meshData.boxes, boxMeshData)
@@ -396,6 +421,38 @@ function ENT:GenerateMeshData(part)
   self:GenerateBorderMeshData(part, meshData)
 
   return meshData
+end
+
+function ENT:CreateOrientedFloorMesh(part, vertices, boxConfig)
+  local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
+
+  -- Get the relative min/max from the box config
+  local relativeMin = boxConfig.min
+  local relativeMax = boxConfig.max
+
+  -- Create the 8 corners of the box in local space
+  local localCorners = {
+    Vector(relativeMin.x, relativeMin.y, relativeMin.z), -- 1: min corner
+    Vector(relativeMax.x, relativeMin.y, relativeMin.z), -- 2: +X from min
+    Vector(relativeMax.x, relativeMax.y, relativeMin.z), -- 3: +X+Y from min
+    Vector(relativeMin.x, relativeMax.y, relativeMin.z), -- 4: +Y from min
+    Vector(relativeMin.x, relativeMin.y, relativeMax.z), -- 5: +Z from min
+    Vector(relativeMax.x, relativeMin.y, relativeMax.z), -- 6: +X+Z from min
+    Vector(relativeMax.x, relativeMax.y, relativeMax.z), -- 7: max corner
+    Vector(relativeMin.x, relativeMax.y, relativeMax.z)  -- 8: +Y+Z from min
+  }
+
+  -- Rotate all corners and convert to world coordinates
+  local worldCorners = {}
+  for i, corner in ipairs(localCorners) do
+    local rotatedCorner = Vector(corner)
+    rotatedCorner:Rotate(angles)
+    worldCorners[i] = pos + rotatedCorner
+  end
+
+  -- Use the existing CreateOrientedBoxMesh function
+  self:CreateOrientedBoxMesh(vertices, worldCorners)
 end
 
 function ENT:CreateCustomTrackMesh(part, vertices, boxConfig)
@@ -445,18 +502,23 @@ end
 
 function ENT:GetDefaultVertexPosition(part, vertexIndex)
   local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local trackHeight = 2 -- Match the thickness used in track generation
 
-  local positions = {
-    pos + Vector(-w, -l, trackHeight), -- 1: Bottom left (front-left) at track surface level
-    pos + Vector(w, -l, trackHeight),  -- 2: Bottom right (front-right) at track surface level
-    pos + Vector(w, l, trackHeight),   -- 3: Top right (back-right) at track surface level
-    pos + Vector(-w, l, trackHeight),  -- 4: Top left (back-left) at track surface level
+  -- Define relative positions first
+  local relativePositions = {
+    Vector(-w, -l, trackHeight), -- 1: Bottom left (front-left) at track surface level
+    Vector(w, -l, trackHeight),  -- 2: Bottom right (front-right) at track surface level
+    Vector(w, l, trackHeight),   -- 3: Top right (back-right) at track surface level
+    Vector(-w, l, trackHeight),  -- 4: Top left (back-left) at track surface level
   }
 
-  return positions[vertexIndex]
+  -- Rotate the relative position by the part's angles and add to world position
+  local relativePos = Vector(relativePositions[vertexIndex])
+  relativePos:Rotate(angles)
+  return pos + relativePos
 end
 
 function ENT:CalculateNormal(p1, p2, p3)
@@ -498,98 +560,136 @@ function ENT:GetMaterialKeyForBox(boxConfig)
   end
 end
 
+-- Replace the GenerateBorderMeshData function with this version
 function ENT:GenerateBorderMeshData(part, meshData)
   local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local bw = self.BORDER_WIDTH
   local bh = part.borderHeight
 
+  -- Define border data with 8 corner points for each border
   local borders = {
     {
       name = "left",
-      min = pos + Vector(-w - bw, -l, 0),
-      max = pos + Vector(-w, l, bh)
+      corners = {
+        Vector(-w - bw, -l, 0),  -- 1: bottom-front-left
+        Vector(-w, -l, 0),       -- 2: bottom-front-right
+        Vector(-w, l, 0),        -- 3: bottom-back-right
+        Vector(-w - bw, l, 0),   -- 4: bottom-back-left
+        Vector(-w - bw, -l, bh), -- 5: top-front-left
+        Vector(-w, -l, bh),      -- 6: top-front-right
+        Vector(-w, l, bh),       -- 7: top-back-right
+        Vector(-w - bw, l, bh),  -- 8: top-back-left
+      }
     },
     {
       name = "right",
-      min = pos + Vector(w, -l, 0),
-      max = pos + Vector(w + bw, l, bh)
+      corners = {
+        Vector(w, -l, 0),       -- 1: bottom-front-left
+        Vector(w + bw, -l, 0),  -- 2: bottom-front-right
+        Vector(w + bw, l, 0),   -- 3: bottom-back-right
+        Vector(w, l, 0),        -- 4: bottom-back-left
+        Vector(w, -l, bh),      -- 5: top-front-left
+        Vector(w + bw, -l, bh), -- 6: top-front-right
+        Vector(w + bw, l, bh),  -- 7: top-back-right
+        Vector(w, l, bh),       -- 8: top-back-left
+      }
     },
     {
       name = "front",
-      min = pos + Vector(-w, -l - bw, 0),
-      max = pos + Vector(w, -l, bh)
+      corners = {
+        Vector(-w, -l - bw, 0),  -- 1: bottom-front-left
+        Vector(w, -l - bw, 0),   -- 2: bottom-front-right
+        Vector(w, -l, 0),        -- 3: bottom-back-right
+        Vector(-w, -l, 0),       -- 4: bottom-back-left
+        Vector(-w, -l - bw, bh), -- 5: top-front-left
+        Vector(w, -l - bw, bh),  -- 6: top-front-right
+        Vector(w, -l, bh),       -- 7: top-back-right
+        Vector(-w, -l, bh),      -- 8: top-back-left
+      }
     },
     {
       name = "back",
-      min = pos + Vector(-w, l, 0),
-      max = pos + Vector(w, l + bw, bh)
+      corners = {
+        Vector(-w, l, 0),       -- 1: bottom-front-left
+        Vector(w, l, 0),        -- 2: bottom-front-right
+        Vector(w, l + bw, 0),   -- 3: bottom-back-right
+        Vector(-w, l + bw, 0),  -- 4: bottom-back-left
+        Vector(-w, l, bh),      -- 5: top-front-left
+        Vector(w, l, bh),       -- 6: top-front-right
+        Vector(w, l + bw, bh),  -- 7: top-back-right
+        Vector(-w, l + bw, bh), -- 8: top-back-left
+      }
     }
   }
 
   for _, border in ipairs(borders) do
     -- Check if this side is connected
     if not part.connectedSides[border.name] then
+      -- Rotate all corner points and convert to world coordinates
+      local worldCorners = {}
+      for i, corner in ipairs(border.corners) do
+        local rotatedCorner = Vector(corner)
+        rotatedCorner:Rotate(angles)
+        worldCorners[i] = pos + rotatedCorner
+      end
+
       local borderMeshData = {
         vertices = {},
         materialKey = "border",
         boxType = "border"
       }
 
-      self:CreateBoxMesh(borderMeshData.vertices, border.min, border.max)
+      -- Create the oriented box mesh directly from the 8 corners
+      self:CreateOrientedBoxMesh(borderMeshData.vertices, worldCorners)
       table.insert(meshData.boxes, borderMeshData)
     end
   end
 end
 
-function ENT:CreateBoxMesh(vertices, minPos, maxPos)
-  -- Validate that we have a proper box
-  local size = maxPos - minPos
-  if size.x <= 0 or size.y <= 0 or size.z <= 0 then
-    print("Warning: Invalid box dimensions", size)
+-- New function to create a box mesh from 8 oriented corner points
+function ENT:CreateOrientedBoxMesh(vertices, corners)
+  -- Validate that we have 8 corners
+  if #corners ~= 8 then
+    print("Warning: CreateOrientedBoxMesh requires exactly 8 corners")
     return
   end
 
-  -- Define the 8 corners of the box
-  local corners = {
-    minPos,                               -- 1: min corner
-    Vector(maxPos.x, minPos.y, minPos.z), -- 2: +X from min
-    Vector(maxPos.x, maxPos.y, minPos.z), -- 3: +X+Y from min
-    Vector(minPos.x, maxPos.y, minPos.z), -- 4: +Y from min
-    Vector(minPos.x, minPos.y, maxPos.z), -- 5: +Z from min
-    Vector(maxPos.x, minPos.y, maxPos.z), -- 6: +X+Z from min
-    maxPos,                               -- 7: max corner
-    Vector(minPos.x, maxPos.y, maxPos.z)  -- 8: +Y+Z from min
-  }
-
-  -- Define the 6 faces of the box with correct winding order (counter-clockwise when viewed from outside)
+  -- Define the 6 faces of the box using the corner indices
+  -- corners[1-4] are bottom face, corners[5-8] are top face
   local faces = {
-    -- Bottom face (looking up at it from below) - Z down
+    -- Bottom face (1,2,3,4) - looking up from below
     { corners[1], corners[2], corners[3], corners[4], normal = Vector(0, 0, -1) },
-    -- Top face (looking down at it from above) - Z up
+    -- Top face (5,8,7,6) - looking down from above (reversed winding)
     { corners[5], corners[8], corners[7], corners[6], normal = Vector(0, 0, 1) },
-    -- Front face (-Y) - looking at it from negative Y direction
+    -- Front face (1,5,6,2) - looking from front
     { corners[1], corners[5], corners[6], corners[2], normal = Vector(0, -1, 0) },
-    -- Back face (+Y) - looking at it from positive Y direction
+    -- Back face (3,7,8,4) - looking from back
     { corners[3], corners[7], corners[8], corners[4], normal = Vector(0, 1, 0) },
-    -- Left face (-X) - looking at it from negative X direction
+    -- Left face (4,8,5,1) - looking from left
     { corners[4], corners[8], corners[5], corners[1], normal = Vector(-1, 0, 0) },
-    -- Right face (+X) - looking at it from positive X direction
+    -- Right face (2,6,7,3) - looking from right
     { corners[2], corners[6], corners[7], corners[3], normal = Vector(1, 0, 0) }
   }
 
-  -- Convert each quad face into two triangles with improved UV mapping
+  -- Convert each quad face into two triangles
   for _, face in ipairs(faces) do
     local p1, p2, p3, p4 = face[1], face[2], face[3], face[4]
-    local normal = face.normal
+
+    -- Calculate the actual normal from the face geometry
+    local v1 = p2 - p1
+    local v2 = p3 - p1
+    local normal = v1:Cross(v2)
+    normal:Normalize()
 
     -- Calculate UV coordinates based on face orientation
     local u1, v1, u2, v2, u3, v3, u4, v4
 
     if math.abs(normal.z) > 0.9 then
-      -- Top/bottom face - use X,Y for UV with improved scaling
-      local texScale = 64 -- Texture units per world unit
+      -- Top/bottom face - use X,Y for UV
+      local texScale = 64
       u1, v1 = p1.x / texScale, p1.y / texScale
       u2, v2 = p2.x / texScale, p2.y / texScale
       u3, v3 = p3.x / texScale, p3.y / texScale
@@ -611,12 +711,12 @@ function ENT:CreateBoxMesh(vertices, minPos, maxPos)
     end
 
     -- Create triangles with consistent counter-clockwise winding order
-    -- First triangle (p1, p2, p3) - counter-clockwise when viewed from outside
+    -- First triangle (p1, p2, p3)
     table.insert(vertices, { pos = p1, u = u1, v = v1, normal = normal })
     table.insert(vertices, { pos = p2, u = u2, v = v2, normal = normal })
     table.insert(vertices, { pos = p3, u = u3, v = v3, normal = normal })
 
-    -- Second triangle (p1, p3, p4) - counter-clockwise when viewed from outside
+    -- Second triangle (p1, p3, p4)
     table.insert(vertices, { pos = p1, u = u1, v = v1, normal = normal })
     table.insert(vertices, { pos = p3, u = u3, v = v3, normal = normal })
     table.insert(vertices, { pos = p4, u = u4, v = v4, normal = normal })
@@ -638,9 +738,16 @@ function ENT:CreatePartEntities(part)
   local config = self:GetPartTypeConfig(part.type)
   if not config or not config.entities then return end
 
+  local angles = part.angles or Angle(0, 0, 0)
+
   for _, entityConfig in ipairs(config.entities) do
     local entity = ents.Create(entityConfig.type)
-    entity:SetPos(part.position + entityConfig.offset)
+
+    -- Rotate the offset by the part's angles before adding to position
+    local rotatedOffset = Vector(entityConfig.offset)
+    rotatedOffset:Rotate(angles)
+    entity:SetPos(part.position + rotatedOffset)
+    entity:SetAngles(angles) -- Set the entity's angles to match the part
 
     -- Apply keyvalues with string formatting support
     for key, value in pairs(entityConfig.keyvalues) do
@@ -652,9 +759,13 @@ function ENT:CreatePartEntities(part)
     part.entities[entityConfig.type] = entity
   end
 
-  -- Create OOB trigger above borders
+  -- Create OOB trigger above borders with rotation support
   local oobTrigger = ents.Create("minigolf_trigger_oob")
-  oobTrigger:SetPos(part.position + Vector(0, 0, self.BORDER_HEIGHT + 32))
+  local triggerOffset = Vector(0, 0, self.BORDER_HEIGHT + 32)
+  triggerOffset:Rotate(angles)
+  oobTrigger:SetPos(part.position + triggerOffset)
+  oobTrigger:SetAngles(angles) -- Set trigger angles to match the part
+
   oobTrigger:SetKeyValue("mins",
     string.format("%d %d %d", -self.TRACK_WIDTH / 2 - self.BORDER_WIDTH, -self.TRACK_LENGTH / 2 - self.BORDER_WIDTH, 0))
   oobTrigger:SetKeyValue("maxs",
@@ -666,7 +777,11 @@ end
 
 function ENT:AddPartToTrack(partTypeId, connectionSide)
   local lastPart = self.trackParts[#self.trackParts]
-  local connectionPoint = lastPart.position + Vector(0, self.TRACK_LENGTH, 0)
+  local lastAngles = lastPart.angles or Angle(0, 0, 0)
+
+  -- Calculate connection point based on the last part's forward direction
+  local forwardVector = lastAngles:Forward()
+  local connectionPoint = lastPart.position + forwardVector * self.TRACK_LENGTH
 
   -- Mark the last part as connected on the back side
   lastPart.connectedSides["back"] = true
@@ -678,8 +793,8 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
   end
   self:SyncMeshToClients(lastPart)
 
-  -- Create the new part with front side connected
-  local newPart = self:CreateTrackPart(partTypeId, connectionPoint, "front")
+  -- Create the new part with front side connected, inheriting angles from the last part
+  local newPart = self:CreateTrackPart(partTypeId, connectionPoint, lastAngles, "front")
 
   -- Inherit vertex heights from the last part's back vertices
   if lastPart.customVertices then
