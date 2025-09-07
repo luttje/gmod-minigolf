@@ -1,4 +1,3 @@
-util.AddNetworkString("Minigolf.SetupTeamForMinigolf")
 util.AddNetworkString("Minigolf.PlayerJoinedTeam")
 
 util.AddNetworkString("Minigolf.UpdateGolfTeamMenu")
@@ -159,7 +158,7 @@ net.Receive("Minigolf.TryUpdateTeam", function(len, player)
 	local teamName = net.ReadString()
 	local teamColor = net.ReadColor()
 	local teamPassword = net.ReadString()
-	local targetTeam = Minigolf.Teams.All[player:Team()]
+	local targetTeam = Minigolf.Teams.FindByID(player:Team())
 
 	if (utf8.len(teamName) == 0) then
 		Minigolf.Messages.Send(player, "Can not change a team to have an empty name")
@@ -180,6 +179,11 @@ net.Receive("Minigolf.TryUpdateTeam", function(len, player)
 
 	if (utf8.len(teamName) < Minigolf.TEAM_NAME_LENGTH_MIN) then
 		Minigolf.Messages.Print(player, Minigolf.TEAM_NAME_LENGTH_MIN, nil, Minigolf.TEXT_EFFECT_DANGER)
+		return
+	end
+
+	if (teamName == "Spectators") then
+		Minigolf.Messages.Send(player, "Can not create a team with the reserved name: Spectators")
 		return
 	end
 
@@ -235,6 +239,11 @@ net.Receive("Minigolf.TryCreateTeam", function(len, player)
 		return
 	end
 
+	if (teamName == "Spectators") then
+		Minigolf.Messages.Send(player, "Can not create a team with the reserved name: Spectators")
+		return
+	end
+
 	if (teamName:find("\"", 1, true)) then
 		Minigolf.Messages.Send(player, "Can not create team because of invalid character: \"")
 		return
@@ -259,7 +268,7 @@ end)
 -- Set the team of the player to the spectator team
 hook.Add("PlayerSpawn", "Minigolf.SetInitialTeam", function(player)
 	-- Don't let players be in a team that is not created in this gamemode.
-	if (not Minigolf.Teams.All[player:Team()]) then
+	if (not Minigolf.Teams.FindByID(player:Team())) then
 		player:SetTeam(TEAM_MINIGOLF_SPECTATORS)
 
 		-- Create and join a team on spawn automatically

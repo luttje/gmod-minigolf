@@ -36,6 +36,3 @@ elseif (CLIENT) then
 end
 
 include("sh_hooks.lua")
-
--- Create the no-team team
-TEAM_MINIGOLF_SPECTATORS = TEAM_MINIGOLF_SPECTATORS or Minigolf.Teams.Update(nil, "Spectators", Color(193, 180, 180))

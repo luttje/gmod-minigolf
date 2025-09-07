@@ -1,6 +1,9 @@
+util.AddNetworkString("Minigolf.ShowScoreCard")
+
 --[[
 	Common Resources
 --]]
+
 --resource.AddWorkshop("2313854259")
 
 resource.AddFile("resource/fonts/sansation_regular.ttf")
@@ -21,6 +24,7 @@ resource.AddFile("materials/minigolf/balls/regular_ball_normal.vtf")
 --[[
 	 Commands
 --]]
+
 Minigolf.Commands.Register("giveup", function(player)
 	local activeHole = player:GetActiveHole()
 	local ball = player:GetMinigolfBall()
@@ -64,3 +68,8 @@ Minigolf.Commands.Register("disableautopower", function(player)
 	player:SetNWBool("Minigolf.AutoPowerMode", false)
 	Minigolf.Messages.Send(player, "Automatic power mode disabled!", nil, Minigolf.TEXT_EFFECT_NORMAL)
 end, "Disables automatic power mode")
+
+Minigolf.Commands.Register("showscores", function(player)
+	net.Start("Minigolf.ShowScoreCard")
+	net.Send(player)
+end, "Shows the score card")

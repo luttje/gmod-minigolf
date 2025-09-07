@@ -2,13 +2,15 @@ local playerLibrary = player
 
 ---@param player Player
 hook.Add("PlayerInitialSpawn", "Minigolf.NetworkTeams", function(player)
-	-- Network all teams with the late joiners (calls team.SetUp on the client)
-	for teamID, team in pairs(Minigolf.Teams.All) do
-		Minigolf.Teams.NetworkForGame(teamID, team.Name, team.Color)
-	end
-
 	-- Send the team info to the player joining for the first time
 	Minigolf.Teams.NetworkAll(player)
+end)
+
+hook.Add("PlayerSetModel", "Minigolf.ForceDefaultPlayerModel", function(player)
+	local playerModel = player:GetInfo("cl_playermodel")
+
+	playerModel = player_manager.TranslatePlayerModel(playerModel)
+	player:SetModel(playerModel)
 end)
 
 ---@param player Player

@@ -256,7 +256,8 @@ function PANEL:BuildTeamMenu(isEditting)
 		joinButton.DoClick = function()
 			local joinMenu = DermaMenu()
 
-			for teamID, team in pairs(Minigolf.Teams.All) do
+			for i, team in ipairs(Minigolf.Teams.All) do
+				local teamID = team.ID
 				local details = team.Password and " (passworded)" or ""
 
 				joinMenu:AddOption(team.Name .. details, function()

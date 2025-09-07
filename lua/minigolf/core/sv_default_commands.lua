@@ -4,10 +4,10 @@ end, "Kill your character to respawn and get unstuck")
 
 Minigolf.Commands.Register("gmcredits", function(player)
 	local creators = {
-		"Luttje (Lead Dev & Mapper)",
+		"luttje (Lead Dev & Mapper)",
 		"Elkinda (Mapper)",
-		"Tori (Idea Guy & Petite Dev)",
-		"Syff (Graphics & Web Dev)"
+		"Tori (Idea Guy & Junior Dev)",
+		"Syff (Logo Design & Web Dev)"
 	}
 
 	player:ChatPrint(

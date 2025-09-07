@@ -1,19 +1,9 @@
--- Called when a team should be created
-net.Receive("Minigolf.SetupTeamForMinigolf", function()
-	local teamIndex = net.ReadUInt(8)
-	local name = net.ReadString()
-	local color = net.ReadColor()
-
-	team.SetUp(teamIndex, name, color)
-end)
-
 net.Receive("Minigolf.PlayerJoinedTeam", function()
 	local player = net.ReadEntity()
 
 	hook.Call("Minigolf.PlayerJoinTeam", Minigolf.GM(), player)
 end)
 
-local hasOpenedFirstTime = false
 local TEAM_OPEN_INTERVAL = 1.5
 local lastOpen = 0
 
@@ -27,16 +17,16 @@ local function showMenu(justLeftOtherTeam)
 		hideMenu()
 	end
 
-	local team = IsValid(LocalPlayer()) and LocalPlayer():Team() or nil
+	local teamID = IsValid(LocalPlayer()) and LocalPlayer():Team() or nil
 
 	-- Open the creation menu when we: just left a different team
 	if (justLeftOtherTeam
 			-- Have just joined the server
 			or not IsValid(LocalPlayer())
 			-- Are in the spectator team
-			or team == TEAM_MINIGOLF_SPECTATORS
+			or teamID == TEAM_MINIGOLF_SPECTATORS
 			-- Are in a gmod default team like the Joining/Connecting or (wrong) Spectators team
-			or not Minigolf.Teams.All[team]) then
+			or not Minigolf.Teams.FindByID(teamID)) then
 		Minigolf.Menus.Team = vgui.Create("Minigolf.TeamMenu")
 		Minigolf.Menus.Team:BuildTeamMenu()
 		Minigolf.Menus.Team:MakePopup()
@@ -58,10 +48,7 @@ net.Receive("Minigolf.UpdateGolfTeamMenu", function()
 	Minigolf.Teams.All = {}
 
 	for teamID, teamInfo in pairs(golfTeams) do
-		Minigolf.Teams.All[teamID] = {
-			Name = teamInfo.n,
-			Password = teamInfo.p,
-		}
+		Minigolf.Teams.Update(nil, teamInfo.n, teamInfo.c, teamInfo.p, teamID)
 	end
 end)
 

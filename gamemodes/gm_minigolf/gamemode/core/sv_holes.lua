@@ -86,7 +86,6 @@ function Minigolf.Holes.CreateTimeLimitSwap(timeLimit, player, teamID, start, st
 			end
 
 			if (disqualifiedPlayer ~= nil) then
-				print(disqualifiedPlayer:Nick() .. " took too long to take their turn and got disqualified")
 				Minigolf.Messages.Send(Minigolf.Teams.GetOtherPlayersOnTeam(disqualifiedPlayer),
 					disqualifiedPlayer:Nick() .. " took too long to take their turn and got disqualified")
 			end

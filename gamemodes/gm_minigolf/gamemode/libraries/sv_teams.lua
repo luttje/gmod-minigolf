@@ -5,27 +5,17 @@ local playerLibrary = player
 function Minigolf.Teams.GetCompactInfo()
 	local info = {}
 
-	for teamID, team in pairs(Minigolf.Teams.All) do
+	for i, team in ipairs(Minigolf.Teams.All) do
+		local teamID = team.ID
+
 		info[teamID] = {
 			n = team.Name,
-			p = team.Password or false
+			p = team.Password and true or false,
+			c = team.Color,
 		}
 	end
 
 	return info
-end
-
-function Minigolf.Teams.NetworkForGame(teamID, name, color, receiver)
-	net.Start("Minigolf.SetupTeamForMinigolf")
-	net.WriteUInt(teamID, 8)
-	net.WriteString(name)
-	net.WriteColor(color)
-
-	if (not receiver) then
-		net.Broadcast()
-	else
-		net.Send(receiver)
-	end
 end
 
 -- Send all teams to someone or everyone
@@ -38,10 +28,10 @@ function Minigolf.Teams.NetworkAll(player)
 end
 
 function Minigolf.Teams.Join(player, teamID, password)
-	local targetTeam = Minigolf.Teams.All[teamID]
+	local targetTeam = Minigolf.Teams.FindByID(teamID)
 
 	if (targetTeam.Password) then
-		if (targetTeam.Password ~= password) then
+		if (tostring(targetTeam.Password) ~= tostring(password)) then
 			return false
 		end
 	end
@@ -73,7 +63,7 @@ end
 
 function Minigolf.Teams.Leave(player)
 	local teamID = player:Team()
-	local targetTeam = Minigolf.Teams.All[teamID]
+	local targetTeam = Minigolf.Teams.FindByID(teamID)
 
 	if (not targetTeam or teamID == TEAM_MINIGOLF_SPECTATORS) then
 		return false
@@ -100,7 +90,7 @@ end
 function Minigolf.Teams.LeaveByNetworkID(networkId)
 	local targetTeam
 
-	for teamID, team in pairs(Minigolf.Teams.All) do
+	for i, team in ipairs(Minigolf.Teams.All) do
 		if (team.MemberNetworkIds[networkId] == true) then
 			targetTeam = team
 			break
