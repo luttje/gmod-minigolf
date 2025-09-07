@@ -6,12 +6,12 @@ local ENT = ENT
 
 function ENT:Initialize()
   self:SetModel("models/props_junk/watermelon01.mdl")
-  self:PhysicsInit(SOLID_VPHYSICS)
+
   self:SetMoveType(MOVETYPE_NONE)
-  self:SetSolid(SOLID_VPHYSICS)
+  self:SetSolid(SOLID_BBOX)
 
   -- Slightly bigger for easier grabbing
-  self:SetModelScale(2, 0)
+  self:SetModelScale(3, 0)
   self:Activate()
 
   self:SetColor(Color(255, 100, 100, 200))

@@ -176,12 +176,38 @@ end
 
 function ENT:UpdateVerticesForPart(part)
   if not self.editMode then return end
+  if not self.vertexEntities[part.id] then return end
 
-  -- Remove old vertices for this part
-  self:RemoveVerticesForPart(part.id)
+  local vertices = self.vertexEntities[part.id]
+  local vertexIndex = 1
 
-  -- Spawn new vertices
-  self:SpawnVerticesForPart(part)
+  -- Update track surface vertices (4 corner vertices)
+  for i = 1, 4 do
+    if vertices[vertexIndex] and IsValid(vertices[vertexIndex]) then
+      local vertexPos = self:GetDefaultVertexPosition(part, i)
+
+      -- Use custom vertex position if available
+      if part.customVertices and part.customVertices[i] then
+        vertexPos = part.customVertices[i]
+      end
+
+      vertices[vertexIndex]:SetPos(vertexPos)
+    end
+    vertexIndex = vertexIndex + 1
+  end
+
+  -- Update border height vertices (one per border side)
+  local borderSides = { "left", "right", "front", "back" }
+  for _, side in ipairs(borderSides) do
+    -- Only update border vertex if this side is not connected
+    if not part.connectedSides[side] then
+      if vertices[vertexIndex] and IsValid(vertices[vertexIndex]) then
+        local borderPos = self:GetBorderVertexPosition(part, side)
+        vertices[vertexIndex]:SetPos(borderPos)
+      end
+      vertexIndex = vertexIndex + 1
+    end
+  end
 end
 
 function ENT:BuildPhysicsFromCurrentParts()
