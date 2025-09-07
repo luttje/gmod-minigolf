@@ -118,6 +118,7 @@ net.Receive("Minigolf.HoleConfigStart", function()
 	local limit = entity:GetLimit()
 	local description = entity:GetDescription()
 	local maxStrokes = entity:GetMaxStrokes()
+	local maxPitch = entity:GetMaxPitch()
 
 	-- Create the configuration window
 	local frame = vgui.Create("DFrame")
