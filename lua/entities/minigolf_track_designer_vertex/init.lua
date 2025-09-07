@@ -72,7 +72,12 @@ function ENT:Think()
 
     -- Notify parent designer of position change
     if IsValid(self.parentDesigner) then
-      self.parentDesigner:OnVertexMoved(self.partID, self.vertexIndex, self.vertexType, currentPos)
+      -- Pass borderSide parameter for border vertices
+      if self.vertexType == "border" then
+        self.parentDesigner:OnVertexMoved(self.partID, self.vertexIndex, self.vertexType, currentPos, self.borderSide)
+      else
+        self.parentDesigner:OnVertexMoved(self.partID, self.vertexIndex, self.vertexType, currentPos)
+      end
     end
   end
 

@@ -35,9 +35,9 @@ end
 
 function ENT:Initialize()
   self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
-  self:PhysicsInit(SOLID_VPHYSICS)
+
   self:SetMoveType(MOVETYPE_NONE)
-  self:SetSolid(SOLID_VPHYSICS)
+  self:SetSolid(SOLID_BBOX)
   self:SetUseType(SIMPLE_USE)
 
   local phys = self:GetPhysicsObject()
@@ -97,14 +97,12 @@ function ENT:SpawnVerticesForPart(part)
     end
 
     local vertex = ents.Create("minigolf_track_designer_vertex")
-    if IsValid(vertex) then
-      vertex:SetPos(vertexPos)
-      vertex:Spawn()
-      vertex:Activate()
-      vertex:SetVertexData(self, part.id, i, "track")
+    vertex:SetPos(vertexPos)
+    vertex:Spawn()
+    vertex:Activate()
+    vertex:SetVertexData(self, part.id, i, "track")
 
-      table.insert(partVertices, vertex)
-    end
+    table.insert(partVertices, vertex)
   end
 
   -- Spawn border height vertices (one per border side)
@@ -115,14 +113,12 @@ function ENT:SpawnVerticesForPart(part)
       local borderPos = self:GetBorderVertexPosition(part, side)
 
       local vertex = ents.Create("minigolf_track_designer_vertex")
-      if IsValid(vertex) then
-        vertex:SetPos(borderPos)
-        vertex:Spawn()
-        vertex:Activate()
-        vertex:SetVertexData(self, part.id, 0, "border", side)
+      vertex:SetPos(borderPos)
+      vertex:Spawn()
+      vertex:Activate()
+      vertex:SetVertexData(self, part.id, 0, "border", side)
 
-        table.insert(partVertices, vertex)
-      end
+      table.insert(partVertices, vertex)
     end
   end
 
@@ -135,7 +131,7 @@ function ENT:GetBorderVertexPosition(part, side)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local bw = self.BORDER_WIDTH
-  local bh = part.borderHeight
+  local bh = part.borderHeights[side] or self.BORDER_HEIGHT -- Use individual height for this side
 
   local relativePos
 
@@ -251,7 +247,12 @@ function ENT:CreateTrackPart(partTypeId, position, angles, connectionSide)
     connectedSides = {}, -- Use a table to track multiple connected sides
     meshData = {},
     entities = {},
-    borderHeight = self.BORDER_HEIGHT,
+    borderHeights = { -- Individual heights for each border side
+      left = self.BORDER_HEIGHT,
+      right = self.BORDER_HEIGHT,
+      front = self.BORDER_HEIGHT,
+      back = self.BORDER_HEIGHT
+    },
   }
 
   -- Add the initial connection if provided
@@ -276,7 +277,7 @@ end
 -- Flag to prevent feedback loops
 ENT.isUpdatingConnections = false
 
-function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
+function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos, borderSide)
   local part = self:GetPartByID(partID)
   if not part then return end
 
@@ -294,18 +295,18 @@ function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
 
   if self.isUpdatingConnections then return end
 
-  if vertexType == "border" then
-    -- Handle border height changes
+  if vertexType == "border" and borderSide then
+    -- Handle border height changes for specific side
     local newHeight = math.max(8, math.min(MAX_BORDER_HEIGHT, newPos.z - part.position.z))
 
     -- Snap to step increments
     newHeight = math.Round(newHeight / BORDER_HEIGHT_STEP) * BORDER_HEIGHT_STEP
 
-    if math.abs(part.borderHeight - newHeight) > 1 then
-      part.borderHeight = newHeight
+    if math.abs(part.borderHeights[borderSide] - newHeight) > 1 then
+      part.borderHeights[borderSide] = newHeight
       self:UpdatePartMesh(partID)
 
-      -- Update all border vertices for this part
+      -- Update vertices for this part (specifically the border vertex for this side)
       if self.editMode then
         self:UpdateVerticesForPart(part)
       end
@@ -418,7 +419,7 @@ function ENT:GenerateMeshData(part)
   local meshData = {
     boxes = {},
     partType = part.type,
-    borderHeight = part.borderHeight
+    borderHeights = part.borderHeights -- Pass individual border heights
   }
 
   -- Generate floor boxes from part type configuration with custom vertices
@@ -445,7 +446,7 @@ function ENT:GenerateMeshData(part)
     end
   end
 
-  -- Generate border boxes (these remain at original height for now)
+  -- Generate border boxes with individual heights
   self:GenerateBorderMeshData(part, meshData)
 
   return meshData
@@ -495,14 +496,10 @@ function ENT:CreateCustomTrackMesh(part, vertices, boxConfig)
     end
   end
 
-  -- Create the track surface using the vertex positions
-  local thickness = 2 -- Track thickness
-
   -- Create the bottom surface
-  -- For some reason these are at -thickness, otherwise the normals are inverted
   local bottomVerts = {}
   for i = 1, 4 do
-    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, vertexPositions[i].z - thickness)
+    bottomVerts[i] = Vector(vertexPositions[i].x, vertexPositions[i].y, self:GetPos().z)
   end
 
   -- Create the top surface (the playable track surface)
@@ -588,67 +585,70 @@ function ENT:GetMaterialKeyForBox(boxConfig)
   end
 end
 
--- Replace the GenerateBorderMeshData function with this version
+-- Updated GenerateBorderMeshData function with individual border heights
 function ENT:GenerateBorderMeshData(part, meshData)
   local pos = part.position
   local angles = part.angles or Angle(0, 0, 0)
   local w = self.TRACK_WIDTH / 2
   local l = self.TRACK_LENGTH / 2
   local bw = self.BORDER_WIDTH
-  local bh = part.borderHeight
 
-  -- Define border data with 8 corner points for each border
+  -- Define border data with 8 corner points for each border, using individual heights
   local borders = {
     {
       name = "left",
+      height = part.borderHeights.left,
       corners = {
-        Vector(-w - bw, -l, 0),  -- 1: bottom-front-left
-        Vector(-w, -l, 0),       -- 2: bottom-front-right
-        Vector(-w, l, 0),        -- 3: bottom-back-right
-        Vector(-w - bw, l, 0),   -- 4: bottom-back-left
-        Vector(-w - bw, -l, bh), -- 5: top-front-left
-        Vector(-w, -l, bh),      -- 6: top-front-right
-        Vector(-w, l, bh),       -- 7: top-back-right
-        Vector(-w - bw, l, bh),  -- 8: top-back-left
+        Vector(-w - bw, -l, 0),                       -- 1: bottom-front-left
+        Vector(-w, -l, 0),                            -- 2: bottom-front-right
+        Vector(-w, l, 0),                             -- 3: bottom-back-right
+        Vector(-w - bw, l, 0),                        -- 4: bottom-back-left
+        Vector(-w - bw, -l, part.borderHeights.left), -- 5: top-front-left
+        Vector(-w, -l, part.borderHeights.left),      -- 6: top-front-right
+        Vector(-w, l, part.borderHeights.left),       -- 7: top-back-right
+        Vector(-w - bw, l, part.borderHeights.left),  -- 8: top-back-left
       }
     },
     {
       name = "right",
+      height = part.borderHeights.right,
       corners = {
-        Vector(w, -l, 0),       -- 1: bottom-front-left
-        Vector(w + bw, -l, 0),  -- 2: bottom-front-right
-        Vector(w + bw, l, 0),   -- 3: bottom-back-right
-        Vector(w, l, 0),        -- 4: bottom-back-left
-        Vector(w, -l, bh),      -- 5: top-front-left
-        Vector(w + bw, -l, bh), -- 6: top-front-right
-        Vector(w + bw, l, bh),  -- 7: top-back-right
-        Vector(w, l, bh),       -- 8: top-back-left
+        Vector(w, -l, 0),                             -- 1: bottom-front-left
+        Vector(w + bw, -l, 0),                        -- 2: bottom-front-right
+        Vector(w + bw, l, 0),                         -- 3: bottom-back-right
+        Vector(w, l, 0),                              -- 4: bottom-back-left
+        Vector(w, -l, part.borderHeights.right),      -- 5: top-front-left
+        Vector(w + bw, -l, part.borderHeights.right), -- 6: top-front-right
+        Vector(w + bw, l, part.borderHeights.right),  -- 7: top-back-right
+        Vector(w, l, part.borderHeights.right),       -- 8: top-back-left
       }
     },
     {
       name = "front",
+      height = part.borderHeights.front,
       corners = {
-        Vector(-w, -l - bw, 0),  -- 1: bottom-front-left
-        Vector(w, -l - bw, 0),   -- 2: bottom-front-right
-        Vector(w, -l, 0),        -- 3: bottom-back-right
-        Vector(-w, -l, 0),       -- 4: bottom-back-left
-        Vector(-w, -l - bw, bh), -- 5: top-front-left
-        Vector(w, -l - bw, bh),  -- 6: top-front-right
-        Vector(w, -l, bh),       -- 7: top-back-right
-        Vector(-w, -l, bh),      -- 8: top-back-left
+        Vector(-w, -l - bw, 0),                        -- 1: bottom-front-left
+        Vector(w, -l - bw, 0),                         -- 2: bottom-front-right
+        Vector(w, -l, 0),                              -- 3: bottom-back-right
+        Vector(-w, -l, 0),                             -- 4: bottom-back-left
+        Vector(-w, -l - bw, part.borderHeights.front), -- 5: top-front-left
+        Vector(w, -l - bw, part.borderHeights.front),  -- 6: top-front-right
+        Vector(w, -l, part.borderHeights.front),       -- 7: top-back-right
+        Vector(-w, -l, part.borderHeights.front),      -- 8: top-back-left
       }
     },
     {
       name = "back",
+      height = part.borderHeights.back,
       corners = {
-        Vector(-w, l, 0),       -- 1: bottom-front-left
-        Vector(w, l, 0),        -- 2: bottom-front-right
-        Vector(w, l + bw, 0),   -- 3: bottom-back-right
-        Vector(-w, l + bw, 0),  -- 4: bottom-back-left
-        Vector(-w, l, bh),      -- 5: top-front-left
-        Vector(w, l, bh),       -- 6: top-front-right
-        Vector(w, l + bw, bh),  -- 7: top-back-right
-        Vector(-w, l + bw, bh), -- 8: top-back-left
+        Vector(-w, l, 0),                            -- 1: bottom-front-left
+        Vector(w, l, 0),                             -- 2: bottom-front-right
+        Vector(w, l + bw, 0),                        -- 3: bottom-back-right
+        Vector(-w, l + bw, 0),                       -- 4: bottom-back-left
+        Vector(-w, l, part.borderHeights.back),      -- 5: top-front-left
+        Vector(w, l, part.borderHeights.back),       -- 6: top-front-right
+        Vector(w, l + bw, part.borderHeights.back),  -- 7: top-back-right
+        Vector(-w, l + bw, part.borderHeights.back), -- 8: top-back-left
       }
     }
   }
@@ -823,8 +823,13 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
     end
   end
 
-  -- Also inherit border height from the last part
-  newPart.borderHeight = lastPart.borderHeight
+  -- Inherit border heights from the last part
+  newPart.borderHeights = {
+    left = lastPart.borderHeights.left,
+    right = lastPart.borderHeights.right,
+    front = lastPart.borderHeights.front,
+    back = lastPart.borderHeights.back
+  }
 
   table.insert(self.trackParts, newPart)
 
