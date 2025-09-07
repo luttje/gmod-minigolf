@@ -42,10 +42,10 @@ luac.out
 # Ignore visual studio code
 /.vscode
 
-# Ignore (Symlinked) directory with GLua definitions
-.glua
-
 # Ignore map compilation files
 maps/*.log
 maps/*.prt
 maps/*.vmx
+
+# Ignore the built gma
+minigolf.gma
