@@ -652,6 +652,7 @@ function ENT:GenerateBorderMeshData(part, meshData)
     {
       name = "front",
       height = part.borderHeights.front,
+      rotateHorizontalUV = true,
       corners = {
         Vector(-w, -l - bw, 0),                        -- 1: bottom-front-left
         Vector(w, -l - bw, 0),                         -- 2: bottom-front-right
@@ -666,6 +667,7 @@ function ENT:GenerateBorderMeshData(part, meshData)
     {
       name = "back",
       height = part.borderHeights.back,
+      rotateHorizontalUV = true,
       corners = {
         Vector(-w, l, 0),                            -- 1: bottom-front-left
         Vector(w, l, 0),                             -- 2: bottom-front-right
@@ -697,14 +699,13 @@ function ENT:GenerateBorderMeshData(part, meshData)
       }
 
       -- Create the oriented box mesh directly from the 8 corners
-      self:CreateOrientedBoxMesh(borderMeshData.vertices, worldCorners)
+      self:CreateOrientedBoxMesh(borderMeshData.vertices, worldCorners, border.rotateHorizontalUV)
       table.insert(meshData.boxes, borderMeshData)
     end
   end
 end
 
--- New function to create a box mesh from 8 oriented corner points
-function ENT:CreateOrientedBoxMesh(vertices, corners)
+function ENT:CreateOrientedBoxMesh(vertices, corners, rotateHorizontalUV)
   -- Validate that we have 8 corners
   if #corners ~= 8 then
     print("Warning: CreateOrientedBoxMesh requires exactly 8 corners")
@@ -715,17 +716,17 @@ function ENT:CreateOrientedBoxMesh(vertices, corners)
   -- corners[1-4] are bottom face, corners[5-8] are top face
   local faces = {
     -- Bottom face (1,2,3,4) - looking up from below
-    { corners[1], corners[2], corners[3], corners[4], normal = Vector(0, 0, -1) },
+    { corners[1], corners[2], corners[3], corners[4], normal = Vector(0, 0, -1), name = "bottom" },
     -- Top face (5,8,7,6) - looking down from above (reversed winding)
-    { corners[5], corners[8], corners[7], corners[6], normal = Vector(0, 0, 1) },
+    { corners[5], corners[8], corners[7], corners[6], normal = Vector(0, 0, 1),  name = "top" },
     -- Front face (1,5,6,2) - looking from front
-    { corners[1], corners[5], corners[6], corners[2], normal = Vector(0, -1, 0) },
+    { corners[1], corners[5], corners[6], corners[2], normal = Vector(0, -1, 0), name = "front" },
     -- Back face (3,7,8,4) - looking from back
-    { corners[3], corners[7], corners[8], corners[4], normal = Vector(0, 1, 0) },
+    { corners[3], corners[7], corners[8], corners[4], normal = Vector(0, 1, 0),  name = "back" },
     -- Left face (4,8,5,1) - looking from left
-    { corners[4], corners[8], corners[5], corners[1], normal = Vector(-1, 0, 0) },
+    { corners[4], corners[8], corners[5], corners[1], normal = Vector(-1, 0, 0), name = "left" },
     -- Right face (2,6,7,3) - looking from right
-    { corners[2], corners[6], corners[7], corners[3], normal = Vector(1, 0, 0) }
+    { corners[2], corners[6], corners[7], corners[3], normal = Vector(1, 0, 0),  name = "right" }
   }
 
   -- Convert each quad face into two triangles
@@ -738,30 +739,60 @@ function ENT:CreateOrientedBoxMesh(vertices, corners)
     local normal = v1:Cross(v2)
     normal:Normalize()
 
-    -- Calculate UV coordinates based on face orientation
+    -- Calculate UV coordinates with proper orientation for each face type
     local u1, v1, u2, v2, u3, v3, u4, v4
+    local texScale = 64
 
-    if math.abs(normal.z) > 0.9 then
-      -- Top/bottom face - use X,Y for UV
-      local texScale = 64
-      u1, v1 = p1.x / texScale, p1.y / texScale
-      u2, v2 = p2.x / texScale, p2.y / texScale
-      u3, v3 = p3.x / texScale, p3.y / texScale
-      u4, v4 = p4.x / texScale, p4.y / texScale
-    elseif math.abs(normal.x) > 0.9 then
-      -- Left/right face - use Y,Z for UV
-      local texScale = 64
-      u1, v1 = p1.y / texScale, p1.z / texScale
-      u2, v2 = p2.y / texScale, p2.z / texScale
-      u3, v3 = p3.y / texScale, p3.z / texScale
-      u4, v4 = p4.y / texScale, p4.z / texScale
+    if face.name == "top" or face.name == "bottom" then
+      -- For horizontal faces, we need to project the 3D coordinates to 2D properly
+      -- Calculate the face's local coordinate system
+      local edge1 = (p2 - p1):GetNormalized()
+      local edge2 = (p4 - p1):GetNormalized()
+
+      -- Project each point onto the face's local 2D coordinate system
+      local base_u1, base_v1 = 0, 0
+      local base_u2, base_v2 = (p2 - p1):Dot(edge1) / texScale, (p2 - p1):Dot(edge2) / texScale
+      local base_u3, base_v3 = (p3 - p1):Dot(edge1) / texScale, (p3 - p1):Dot(edge2) / texScale
+      local base_u4, base_v4 = (p4 - p1):Dot(edge1) / texScale, (p4 - p1):Dot(edge2) / texScale
+
+      -- Apply 90-degree rotation if requested (swap U and V, negate new U)
+      if rotateHorizontalUV then
+        u1, v1 = -base_v1, base_u1
+        u2, v2 = -base_v2, base_u2
+        u3, v3 = -base_v3, base_u3
+        u4, v4 = -base_v4, base_u4
+      else
+        u1, v1 = base_u1, base_v1
+        u2, v2 = base_u2, base_v2
+        u3, v3 = base_u3, base_v3
+        u4, v4 = base_u4, base_v4
+      end
+    elseif face.name == "left" or face.name == "right" then
+      -- Left/right faces - use Y,Z coordinates but maintain proper orientation
+      local minY = math.min(p1.y, p2.y, p3.y, p4.y)
+      local minZ = math.min(p1.z, p2.z, p3.z, p4.z)
+
+      u1 = (p1.y - minY) / texScale
+      v1 = (p1.z - minZ) / texScale
+      u2 = (p2.y - minY) / texScale
+      v2 = (p2.z - minZ) / texScale
+      u3 = (p3.y - minY) / texScale
+      v3 = (p3.z - minZ) / texScale
+      u4 = (p4.y - minY) / texScale
+      v4 = (p4.z - minZ) / texScale
     else
-      -- Front/back face - use X,Z for UV
-      local texScale = 64
-      u1, v1 = p1.x / texScale, p1.z / texScale
-      u2, v2 = p2.x / texScale, p2.z / texScale
-      u3, v3 = p3.x / texScale, p3.z / texScale
-      u4, v4 = p4.x / texScale, p4.z / texScale
+      -- Front/back faces - use X,Z coordinates but maintain proper orientation
+      local minX = math.min(p1.x, p2.x, p3.x, p4.x)
+      local minZ = math.min(p1.z, p2.z, p3.z, p4.z)
+
+      u1 = (p1.x - minX) / texScale
+      v1 = (p1.z - minZ) / texScale
+      u2 = (p2.x - minX) / texScale
+      v2 = (p2.z - minZ) / texScale
+      u3 = (p3.x - minX) / texScale
+      v3 = (p3.z - minZ) / texScale
+      u4 = (p4.x - minX) / texScale
+      v4 = (p4.z - minZ) / texScale
     end
 
     -- Create triangles with consistent counter-clockwise winding order
