@@ -14,7 +14,6 @@ util.AddNetworkString("MinigolfDesigner_OpenMenu")
 util.AddNetworkString("MinigolfDesigner_AddPart")
 util.AddNetworkString("MinigolfDesigner_UpdateMesh")
 util.AddNetworkString("MinigolfDesigner_SetBorderHeight")
-util.AddNetworkString("MinigolfDesigner_ToggleEditMode")
 util.AddNetworkString("MinigolfDesigner_SyncMesh")
 
 --- Spawns the track designer flush with the ground
@@ -55,8 +54,6 @@ function ENT:Initialize()
   -- Create the starting piece
   self:CreateStartPart()
   self:BuildPhysicsFromCurrentParts()
-
-  self:ToggleEditMode(false)
 end
 
 function ENT:BuildPhysicsFromCurrentParts()
@@ -120,7 +117,6 @@ function ENT:CreateTrackPart(partTypeId, position, angles, connectionSide)
     position = position or Vector(0, 0, 0),
     angles = angles or Angle(0, 0, 0),
     connectedSides = {}, -- Use a table to track multiple connected sides
-    vertexEntities = {},
     meshData = {},
     entities = {},
     borderHeight = self.BORDER_HEIGHT,
@@ -133,89 +129,11 @@ function ENT:CreateTrackPart(partTypeId, position, angles, connectionSide)
 
   self.nextPartID = self.nextPartID + 1
 
-  self:CreateVertexEntities(part)
   self:CreatePartEntities(part)
   self:SyncMeshToClients(part)
   self:BuildPhysicsFromCurrentParts()
 
   return part
-end
-
-function ENT:CreateVertexEntities(part)
-  local config = self:GetPartTypeConfig(part.type)
-  local pos = part.position
-  local angles = part.angles or Angle(0, 0, 0)
-  local w = self.TRACK_WIDTH / 2
-  local l = self.TRACK_LENGTH / 2
-  local trackHeight = 2 -- Match the track surface height
-
-  -- Create vertex positions relative to part center, then rotate them
-  local relativePositions = {
-    Vector(-w, -l, trackHeight), -- Bottom left at track surface
-    Vector(w, -l, trackHeight),  -- Bottom right at track surface
-    Vector(w, l, trackHeight),   -- Top right at track surface
-    Vector(-w, l, trackHeight),  -- Top left at track surface
-  }
-
-  -- Rotate each relative position by the part's angles and add to world position
-  local vertexPositions = {}
-  for i, relativePos in ipairs(relativePositions) do
-    local rotatedPos = Vector(relativePos)
-    rotatedPos:Rotate(angles)
-    vertexPositions[i] = pos + rotatedPos
-  end
-
-  -- Create vertex entities only if vertex manipulation is not blocked
-  if not config.blockVertexManipulation then
-    for i, vertexPos in ipairs(vertexPositions) do
-      local vertexEnt = ents.Create("minigolf_track_designer_vertex")
-      vertexEnt:SetPos(vertexPos)
-      vertexEnt:SetAngles(angles) -- Set the vertex entity's angles to match the part
-      vertexEnt:Spawn()
-      vertexEnt:SetVertexData(self, part.id, i, "track", "")
-      vertexEnt:SetNoDraw(not self.editMode)
-
-      part.vertexEntities[i] = vertexEnt
-    end
-  end
-
-  -- Create border height control entities
-  self:CreateBorderControls(part)
-end
-
-function ENT:CreateBorderControls(part)
-  local pos = part.position
-  local angles = part.angles or Angle(0, 0, 0)
-  local w = self.TRACK_WIDTH / 2
-  local l = self.TRACK_LENGTH / 2
-  local bh = part.borderHeight
-
-  -- Create border height controls on each side at the TOP of the border
-  -- Define relative positions first, then rotate them
-  local relativeBorderPositions = {
-    { name = "left",  pos = Vector(-w - self.BORDER_WIDTH, 0, bh) },
-    { name = "right", pos = Vector(w + self.BORDER_WIDTH, 0, bh) },
-    { name = "front", pos = Vector(0, -l - self.BORDER_WIDTH, bh) },
-    { name = "back",  pos = Vector(0, l + self.BORDER_WIDTH, bh) }
-  }
-
-  for _, borderData in ipairs(relativeBorderPositions) do
-    -- Check if this side is connected
-    if not part.connectedSides[borderData.name] then
-      -- Rotate the relative position and add to world position
-      local rotatedPos = Vector(borderData.pos)
-      rotatedPos:Rotate(angles)
-      local worldPos = pos + rotatedPos
-
-      local borderControl = ents.Create("minigolf_track_designer_vertex")
-      borderControl:SetPos(worldPos)
-      borderControl:SetAngles(angles) -- Set angles to match the part
-      borderControl:Spawn()
-      borderControl:SetVertexData(self, part.id, borderData.name, "border", borderData.name)
-
-      part.vertexEntities["border_" .. borderData.name] = borderControl
-    end
-  end
 end
 
 -- Flag to prevent feedback loops
@@ -248,7 +166,6 @@ function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
 
     if math.abs(part.borderHeight - newHeight) > 1 then
       part.borderHeight = newHeight
-      -- self:UpdateBorderControls(part) -- causes glitching
       self:UpdatePartMesh(partID)
     end
   else
@@ -337,49 +254,8 @@ function ENT:UpdateConnectedVertex(targetPart, vertexIndex, deltaPos)
   end
   targetPart.customVertices[vertexIndex] = newPos
 
-  -- Update the vertex entity position WITHOUT triggering events
-  if targetPart.vertexEntities[vertexIndex] and IsValid(targetPart.vertexEntities[vertexIndex]) then
-    -- Use a safe method to update position that doesn't trigger movement events
-    targetPart.vertexEntities[vertexIndex]:SetPos(newPos)
-
-    -- If the vertex entity has a method to update position without triggering events, use that
-    -- You might need to add a flag to the vertex entity to ignore position updates
-    if targetPart.vertexEntities[vertexIndex].SetPositionSilent then
-      targetPart.vertexEntities[vertexIndex]:SetPositionSilent(newPos)
-    end
-  end
-
   -- Update the mesh for this part
   self:UpdatePartMesh(targetPart.id)
-end
-
-function ENT:UpdateBorderControls(part)
-  local pos = part.position
-  local angles = part.angles or Angle(0, 0, 0)
-  local w = self.TRACK_WIDTH / 2
-  local l = self.TRACK_LENGTH / 2
-  local bh = part.borderHeight
-
-  -- Position border controls at the TOP of the border, not the middle
-  local relativeBorderPositions = {
-    { name = "left",  pos = Vector(-w - self.BORDER_WIDTH, 0, bh) },
-    { name = "right", pos = Vector(w + self.BORDER_WIDTH, 0, bh) },
-    { name = "front", pos = Vector(0, -l - self.BORDER_WIDTH, bh) },
-    { name = "back",  pos = Vector(0, l + self.BORDER_WIDTH, bh) }
-  }
-
-  for _, borderData in ipairs(relativeBorderPositions) do
-    local controlKey = "border_" .. borderData.name
-    if part.vertexEntities[controlKey] and IsValid(part.vertexEntities[controlKey]) then
-      -- Rotate the relative position and add to world position
-      local rotatedPos = Vector(borderData.pos)
-      rotatedPos:Rotate(angles)
-      local worldPos = pos + rotatedPos
-
-      part.vertexEntities[controlKey]:SetPos(worldPos)
-      part.vertexEntities[controlKey]:SetAngles(angles) -- Update angles too
-    end
-  end
 end
 
 function ENT:OnVertexRemoved(partID, vertexIndex, vertexType)
@@ -758,21 +634,6 @@ function ENT:CreatePartEntities(part)
     entity:Spawn()
     part.entities[entityConfig.type] = entity
   end
-
-  -- Create OOB trigger above borders with rotation support
-  local oobTrigger = ents.Create("minigolf_trigger_oob")
-  local triggerOffset = Vector(0, 0, self.BORDER_HEIGHT + 32)
-  triggerOffset:Rotate(angles)
-  oobTrigger:SetPos(part.position + triggerOffset)
-  oobTrigger:SetAngles(angles) -- Set trigger angles to match the part
-
-  oobTrigger:SetKeyValue("mins",
-    string.format("%d %d %d", -self.TRACK_WIDTH / 2 - self.BORDER_WIDTH, -self.TRACK_LENGTH / 2 - self.BORDER_WIDTH, 0))
-  oobTrigger:SetKeyValue("maxs",
-    string.format("%d %d %d", self.TRACK_WIDTH / 2 + self.BORDER_WIDTH, self.TRACK_LENGTH / 2 + self.BORDER_WIDTH, 64))
-  oobTrigger:Spawn()
-
-  part.entities.oobTrigger = oobTrigger
 end
 
 function ENT:AddPartToTrack(partTypeId, connectionSide)
@@ -780,17 +641,12 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
   local lastAngles = lastPart.angles or Angle(0, 0, 0)
 
   -- Calculate connection point based on the last part's forward direction
-  local forwardVector = lastAngles:Forward()
+  local forwardVector = lastAngles:Right() * -1
   local connectionPoint = lastPart.position + forwardVector * self.TRACK_LENGTH
 
   -- Mark the last part as connected on the back side
   lastPart.connectedSides["back"] = true
-  -- Remove the back border control entity if it exists
-  local backControlKey = "border_back"
-  if lastPart.vertexEntities[backControlKey] and IsValid(lastPart.vertexEntities[backControlKey]) then
-    lastPart.vertexEntities[backControlKey]:Remove()
-    lastPart.vertexEntities[backControlKey] = nil
-  end
+
   self:SyncMeshToClients(lastPart)
 
   -- Create the new part with front side connected, inheriting angles from the last part
@@ -813,21 +669,10 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
       newPart.customVertices[1] = Vector(newPart.customVertices[1] or self:GetDefaultVertexPosition(newPart, 1))
       newPart.customVertices[1].z = lastPart.customVertices[4].z -- inherit Z height
     end
-
-    -- Update the vertex entity positions to match the inherited heights
-    if newPart.vertexEntities[1] and IsValid(newPart.vertexEntities[1]) and newPart.customVertices[1] then
-      newPart.vertexEntities[1]:SetPos(newPart.customVertices[1])
-    end
-    if newPart.vertexEntities[2] and IsValid(newPart.vertexEntities[2]) and newPart.customVertices[2] then
-      newPart.vertexEntities[2]:SetPos(newPart.customVertices[2])
-    end
   end
 
   -- Also inherit border height from the last part
   newPart.borderHeight = lastPart.borderHeight
-
-  -- Update border control positions with the inherited height
-  self:UpdateBorderControls(newPart)
 
   table.insert(self.trackParts, newPart)
 
@@ -839,13 +684,6 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
 end
 
 function ENT:RemoveBorderConnection(part, side)
-  -- Also remove the border control entity
-  local controlKey = "border_" .. side
-  if part.vertexEntities[controlKey] and IsValid(part.vertexEntities[controlKey]) then
-    part.vertexEntities[controlKey]:Remove()
-    part.vertexEntities[controlKey] = nil
-  end
-
   part.connectionSide = side
 
   self:SyncMeshToClients(part)
@@ -867,56 +705,6 @@ function ENT:GetPartByID(id)
     end
   end
   return nil
-end
-
-function ENT:ToggleEditMode(enable)
-  self.editMode = enable
-
-  -- Show/hide vertex entities
-  for _, part in ipairs(self.trackParts) do
-    local config = self:GetPartTypeConfig(part.type)
-
-    for vertexKey, vertexEnt in pairs(part.vertexEntities) do
-      if IsValid(vertexEnt) then
-        if enable then
-          local shouldShow = true
-
-          -- Check if this is a track vertex (numeric keys 1,2,3,4)
-          local vertexIndex = tonumber(vertexKey)
-          if vertexIndex then
-            -- This is a track vertex
-            if config and config.blockVertexManipulation then
-              -- Hide all track vertices for blocked parts
-              shouldShow = false
-            elseif self:IsVertexConnectedToBlockedPart(part, vertexIndex) then
-              -- Hide vertices connected to blocked parts
-              shouldShow = false
-            end
-          end
-          -- Border controls (non-numeric keys like "border_left") are always shown
-
-          vertexEnt:SetNoDraw(not shouldShow)
-          if shouldShow then
-            local phys = vertexEnt:GetPhysicsObject()
-            if IsValid(phys) then
-              phys:Wake()
-            end
-          else
-            local phys = vertexEnt:GetPhysicsObject()
-            if IsValid(phys) then
-              phys:Sleep()
-            end
-          end
-        else
-          vertexEnt:SetNoDraw(true)
-          local phys = vertexEnt:GetPhysicsObject()
-          if IsValid(phys) then
-            phys:Sleep()
-          end
-        end
-      end
-    end
-  end
 end
 
 -- Helper function to check if a vertex is connected to a blocked part
@@ -956,13 +744,6 @@ end
 function ENT:OnRemove()
   -- Clean up all created entities
   for _, part in ipairs(self.trackParts) do
-    -- Remove vertex entities
-    for _, vertexEnt in pairs(part.vertexEntities) do
-      if IsValid(vertexEnt) then
-        vertexEnt:Remove()
-      end
-    end
-
     -- Remove game entities
     for _, entity in pairs(part.entities) do
       if IsValid(entity) then
@@ -979,14 +760,5 @@ net.Receive("MinigolfDesigner_AddPart", function(len, ply)
 
   if IsValid(designerEnt) and designerEnt:GetClass() == "minigolf_track_designer" then
     designerEnt:AddPartToTrack(partType, "front")
-  end
-end)
-
-net.Receive("MinigolfDesigner_ToggleEditMode", function(len, ply)
-  local designerEnt = net.ReadEntity()
-  local enable = net.ReadBool()
-
-  if IsValid(designerEnt) and designerEnt:GetClass() == "minigolf_track_designer" then
-    designerEnt:ToggleEditMode(enable)
   end
 end)

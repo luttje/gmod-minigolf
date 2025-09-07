@@ -22,38 +22,14 @@ function ENT:Initialize()
   self:SetRenderBounds(Vector(-1000, -1000, -1000), Vector(1000, 1000, 1000))
 end
 
--- For some reason draws in the skybox:
 function ENT:Draw()
-  -- self:DrawModel()
+  self:DrawModel()
 
-  -- -- Draw all mesh parts
-  -- for partID, meshPart in pairs(self.meshParts) do
-  --   self:DrawMeshPart(meshPart)
-  -- end
+  -- Draw all mesh parts
+  for partID, meshPart in pairs(self.meshParts) do
+    self:DrawMeshPart(meshPart)
+  end
 end
-
---- We manually draw the track to appears it doesn't draw in the skybox
-hook.Add("PostDrawTranslucentRenderables", "MinigolfTrackDesigner.TrackDrawing",
-  function(isDrawingDepth, isDrawingSkybox)
-    if (isDrawingSkybox or isDrawingDepth) then return end
-
-    local tracks = ents.FindByClass("minigolf_track_designer")
-
-    for _, track in pairs(tracks) do
-      if (not IsValid(track) or not track.meshParts) then continue end
-      for partID, meshPart in pairs(track.meshParts) do
-        track:DrawMeshPart(meshPart)
-      end
-    end
-
-    -- Draw the handles for the vertices over the top
-    local vertices = ents.FindByClass("minigolf_track_designer_vertex")
-
-    for _, vertex in pairs(vertices) do
-      if (not IsValid(vertex) or vertex:GetNoDraw()) then continue end
-      vertex:Draw()
-    end
-  end)
 
 function ENT:DrawMeshPart(meshPart)
   if not meshPart.meshes or #meshPart.meshes == 0 then return end
@@ -212,18 +188,6 @@ net.Receive("MinigolfDesigner_OpenMenu", function()
   frame:Center()
   frame:SetTitle("Minigolf Track Designer")
   frame:MakePopup()
-
-  -- Edit mode toggle
-  local editToggle = vgui.Create("DCheckBoxLabel", frame)
-  editToggle:SetText("Edit Mode (Show vertex handles)")
-  editToggle:SetPos(20, 40)
-  editToggle:SetSize(200, 20)
-  editToggle.OnChange = function(self, val)
-    net.Start("MinigolfDesigner_ToggleEditMode")
-    net.WriteEntity(designerEnt)
-    net.WriteBool(val)
-    net.SendToServer()
-  end
 
   -- Instructions
   local instructions = vgui.Create("DLabel", frame)
