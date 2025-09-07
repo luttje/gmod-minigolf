@@ -57,7 +57,6 @@ local FORCE_FRACTION_MIN = 0.0001
 local SCROLL_MODIFIER = 2
 local PITCH_MULTIPLIER = 100
 local PITCH_MIN = 0
-local PITCH_MAX = 90
 
 local arrow = Material("minigolf/direction-arrow.png")
 local padding = 15
@@ -186,8 +185,8 @@ hook.Add("InputMouseApply", "Minigolf.AdjustPowerWithButtonsAndScrolla", functio
 		return
 	end
 
-	if (maxPitch ~= 0) then
-		currentPitch = math.min(PITCH_MAX, math.max(PITCH_MIN, currentPitch + (adjust * -PITCH_MULTIPLIER)))
+	if (maxPitch ~= PITCH_MIN) then
+		currentPitch = math.min(maxPitch, math.max(PITCH_MIN, currentPitch + (adjust * -PITCH_MULTIPLIER)))
 	elseif (UnPredictedCurTime() - lastTimePitchErrorPlayed > 1) then
 		lastTimePitchErrorPlayed = UnPredictedCurTime()
 		LocalPlayer():EmitSound("Resource/warning.wav", 75, 200, 0.1)

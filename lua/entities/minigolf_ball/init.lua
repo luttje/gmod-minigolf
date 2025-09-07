@@ -229,36 +229,57 @@ function ENT:OnTakeDamage(dmgInfo)
 	dmgInfo:ScaleDamage(0)
 end
 
-net.Receive("Minigolf.SetBallForce", function(len, ply)
-	local ball = ply:GetBallGivingForce()
+net.Receive("Minigolf.SetBallForce", function(len, player)
+	local givenForce = net.ReadFloat()
+	local ballAngle = net.ReadAngle()
+	local ball = player:GetBallGivingForce()
 
-	if (IsValid(ball)) then
-		local givenForce = net.ReadFloat()
-
-		if (givenForce == Minigolf.CANCEL_BALL_FORCE) then
-			ball:ShowForceMeter(false)
-			return
-		end
-
-		local ballForce = math.min(givenForce * 1000, 2048)
-		local ballAngle = net.ReadAngle()
-
-		-- Don't let us hit the ball into the ground.
-		-- ballAngle.p = math.max(0, ballAngle.p)
-
-		-- In fact, make it zero for now, so we only fire level with the ground
-		ballAngle.p = 0
-
-		local hookCall = hook.Call("Minigolf.PlayerHitBall", Minigolf.GM(), ply, ball)
-
-		if (hookCall ~= false) then
-			rollBallInDirection(ball, -ballAngle:Right() * ballForce)
-
-			ball:SetStrokes(ball:GetStrokes() + 1)
-		end
-
-		ball = nil
+	if (not IsValid(ball)) then
+		return
 	end
+
+	if (givenForce == Minigolf.CANCEL_BALL_FORCE) then
+		ball:ShowForceMeter(false)
+		return
+	end
+
+	local start = ball:GetStart()
+
+	if (not IsValid(start)) then
+		return
+	end
+
+	-- Confirm that the pitch is below the maximum allowed this hole
+	local pitch = ballAngle.r
+
+	if (pitch > start:GetMaxPitch()) then
+		Minigolf.Messages.Send(
+			player,
+			"Your shot's angle is too steep! Max angle is " .. start:GetMaxPitch() .. " degrees.",
+			nil,
+			Minigolf.TEXT_EFFECT_DANGER
+		)
+
+		return
+	end
+
+	local ballForce = math.min(givenForce * 1000, 2048)
+
+	-- Don't let us hit the ball into the ground.
+	-- ballAngle.p = math.max(0, ballAngle.p)
+
+	-- In fact, make it zero for now, so we only fire level with the ground
+	ballAngle.p = 0
+
+	local hookCall = hook.Call("Minigolf.PlayerHitBall", Minigolf.GM(), player, ball)
+
+	if (hookCall ~= false) then
+		rollBallInDirection(ball, -ballAngle:Right() * ballForce)
+
+		ball:SetStrokes(ball:GetStrokes() + 1)
+	end
+
+	ball = nil
 end)
 
 function ENT:UpdateTransmitState()
