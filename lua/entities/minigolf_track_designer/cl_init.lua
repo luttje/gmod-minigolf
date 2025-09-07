@@ -184,7 +184,7 @@ net.Receive("MinigolfDesigner_OpenMenu", function()
   if not IsValid(designerEnt) then return end
 
   local frame = vgui.Create("DFrame")
-  frame:SetSize(500, 400)
+  frame:SetSize(500, 450)
   frame:Center()
   frame:SetTitle("Minigolf Track Designer")
   frame:MakePopup()
@@ -197,8 +197,19 @@ net.Receive("MinigolfDesigner_OpenMenu", function()
   instructions:SetSize(460, 80)
   instructions:SetWrap(true)
 
+  -- Edit Mode Toggle Button
+  local editModeBtn = vgui.Create("DButton", frame)
+  editModeBtn:SetText("Toggle Edit Mode")
+  editModeBtn:SetPos(20, 160)
+  editModeBtn:SetSize(200, 30)
+  editModeBtn.DoClick = function()
+    net.Start("MinigolfDesigner_ToggleEditMode")
+    net.WriteEntity(designerEnt)
+    net.SendToServer()
+  end
+
   -- Part addition buttons - dynamically create from registered types
-  local y = 160
+  local y = 210
   local buttonWidth = 140
   local buttonHeight = 40
   local buttonSpacing = 150

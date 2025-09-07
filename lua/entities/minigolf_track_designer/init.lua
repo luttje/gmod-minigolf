@@ -15,6 +15,7 @@ util.AddNetworkString("MinigolfDesigner_AddPart")
 util.AddNetworkString("MinigolfDesigner_UpdateMesh")
 util.AddNetworkString("MinigolfDesigner_SetBorderHeight")
 util.AddNetworkString("MinigolfDesigner_SyncMesh")
+util.AddNetworkString("MinigolfDesigner_ToggleEditMode")
 
 --- Spawns the track designer flush with the ground
 function ENT:SpawnFunction(player, trace, className)
@@ -50,10 +51,141 @@ function ENT:Initialize()
   self.currentEditingPart = nil
   self.nextPartID = 1
   self.editMode = false
+  self.vertexEntities = {} -- Track all vertex entities
 
   -- Create the starting piece
   self:CreateStartPart()
   self:BuildPhysicsFromCurrentParts()
+end
+
+function ENT:SetEditMode(enabled)
+  self.editMode = enabled
+
+  if enabled then
+    self:SpawnAllVertices()
+  else
+    self:RemoveAllVertices()
+  end
+end
+
+function ENT:SpawnAllVertices()
+  -- Remove existing vertices first
+  self:RemoveAllVertices()
+
+  for _, part in ipairs(self.trackParts) do
+    local config = self:GetPartTypeConfig(part.type)
+
+    -- Only spawn vertices for parts that allow vertex manipulation
+    if not config or not config.blockVertexManipulation then
+      self:SpawnVerticesForPart(part)
+    end
+  end
+end
+
+function ENT:SpawnVerticesForPart(part)
+  if not part then return end
+
+  local partVertices = {}
+
+  -- Spawn 4 corner vertices for track surface
+  for i = 1, 4 do
+    local vertexPos = self:GetDefaultVertexPosition(part, i)
+
+    -- Use custom vertex position if available
+    if part.customVertices and part.customVertices[i] then
+      vertexPos = part.customVertices[i]
+    end
+
+    local vertex = ents.Create("minigolf_track_designer_vertex")
+    if IsValid(vertex) then
+      vertex:SetPos(vertexPos)
+      vertex:Spawn()
+      vertex:Activate()
+      vertex:SetVertexData(self, part.id, i, "track")
+
+      table.insert(partVertices, vertex)
+    end
+  end
+
+  -- Spawn border height vertices (one per border side)
+  local borderSides = { "left", "right", "front", "back" }
+  for _, side in ipairs(borderSides) do
+    -- Only spawn border vertex if this side is not connected
+    if not part.connectedSides[side] then
+      local borderPos = self:GetBorderVertexPosition(part, side)
+
+      local vertex = ents.Create("minigolf_track_designer_vertex")
+      if IsValid(vertex) then
+        vertex:SetPos(borderPos)
+        vertex:Spawn()
+        vertex:Activate()
+        vertex:SetVertexData(self, part.id, 0, "border", side)
+
+        table.insert(partVertices, vertex)
+      end
+    end
+  end
+
+  self.vertexEntities[part.id] = partVertices
+end
+
+function ENT:GetBorderVertexPosition(part, side)
+  local pos = part.position
+  local angles = part.angles or Angle(0, 0, 0)
+  local w = self.TRACK_WIDTH / 2
+  local l = self.TRACK_LENGTH / 2
+  local bw = self.BORDER_WIDTH
+  local bh = part.borderHeight
+
+  local relativePos
+
+  if side == "left" then
+    relativePos = Vector(-w - bw / 2, 0, bh)
+  elseif side == "right" then
+    relativePos = Vector(w + bw / 2, 0, bh)
+  elseif side == "front" then
+    relativePos = Vector(0, -l - bw / 2, bh)
+  elseif side == "back" then
+    relativePos = Vector(0, l + bw / 2, bh)
+  else
+    relativePos = Vector(0, 0, bh)
+  end
+
+  -- Rotate the relative position by the part's angles
+  relativePos:Rotate(angles)
+  return pos + relativePos
+end
+
+function ENT:RemoveAllVertices()
+  for partID, vertices in pairs(self.vertexEntities) do
+    for _, vertex in ipairs(vertices) do
+      if IsValid(vertex) then
+        vertex:Remove()
+      end
+    end
+  end
+  self.vertexEntities = {}
+end
+
+function ENT:RemoveVerticesForPart(partID)
+  if self.vertexEntities[partID] then
+    for _, vertex in ipairs(self.vertexEntities[partID]) do
+      if IsValid(vertex) then
+        vertex:Remove()
+      end
+    end
+    self.vertexEntities[partID] = nil
+  end
+end
+
+function ENT:UpdateVerticesForPart(part)
+  if not self.editMode then return end
+
+  -- Remove old vertices for this part
+  self:RemoveVerticesForPart(part.id)
+
+  -- Spawn new vertices
+  self:SpawnVerticesForPart(part)
 end
 
 function ENT:BuildPhysicsFromCurrentParts()
@@ -133,6 +265,11 @@ function ENT:CreateTrackPart(partTypeId, position, angles, connectionSide)
   self:SyncMeshToClients(part)
   self:BuildPhysicsFromCurrentParts()
 
+  -- Spawn vertices for this part if in edit mode
+  if self.editMode then
+    self:SpawnVerticesForPart(part)
+  end
+
   return part
 end
 
@@ -167,6 +304,11 @@ function ENT:OnVertexMoved(partID, vertexIndex, vertexType, newPos)
     if math.abs(part.borderHeight - newHeight) > 1 then
       part.borderHeight = newHeight
       self:UpdatePartMesh(partID)
+
+      -- Update all border vertices for this part
+      if self.editMode then
+        self:UpdateVerticesForPart(part)
+      end
     end
   else
     self:UpdateTrackVertexDirect(part, vertexIndex, newPos)
@@ -187,6 +329,11 @@ function ENT:UpdateTrackVertexDirect(part, vertexIndex, newPos)
 
   -- Regenerate mesh with new vertex positions
   self:UpdatePartMesh(part.id)
+
+  -- Update vertices if in edit mode
+  if self.editMode then
+    self:UpdateVerticesForPart(part)
+  end
 end
 
 function ENT:UpdateConnectedNeighbors(part, movedVertexIndex, movedPos)
@@ -256,6 +403,11 @@ function ENT:UpdateConnectedVertex(targetPart, vertexIndex, deltaPos)
 
   -- Update the mesh for this part
   self:UpdatePartMesh(targetPart.id)
+
+  -- Update vertices if in edit mode
+  if self.editMode then
+    self:UpdateVerticesForPart(targetPart)
+  end
 end
 
 function ENT:OnVertexRemoved(partID, vertexIndex, vertexType)
@@ -680,6 +832,11 @@ function ENT:AddPartToTrack(partTypeId, connectionSide)
   self:SyncMeshToClients(newPart)
   self:BuildPhysicsFromCurrentParts()
 
+  -- Update vertices for the last part (to remove border on connected side)
+  if self.editMode then
+    self:UpdateVerticesForPart(lastPart)
+  end
+
   return newPart
 end
 
@@ -742,6 +899,9 @@ function ENT:IsVertexConnectedToBlockedPart(part, vertexIndex)
 end
 
 function ENT:OnRemove()
+  -- Clean up all vertex entities
+  self:RemoveAllVertices()
+
   -- Clean up all created entities
   for _, part in ipairs(self.trackParts) do
     -- Remove game entities
@@ -760,5 +920,13 @@ net.Receive("MinigolfDesigner_AddPart", function(len, ply)
 
   if IsValid(designerEnt) and designerEnt:GetClass() == "minigolf_track_designer" then
     designerEnt:AddPartToTrack(partType, "front")
+  end
+end)
+
+net.Receive("MinigolfDesigner_ToggleEditMode", function(len, ply)
+  local designerEnt = net.ReadEntity()
+
+  if IsValid(designerEnt) and designerEnt:GetClass() == "minigolf_track_designer" then
+    designerEnt:SetEditMode(not designerEnt.editMode)
   end
 end)

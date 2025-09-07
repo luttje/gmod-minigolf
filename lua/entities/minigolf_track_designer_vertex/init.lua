@@ -22,9 +22,10 @@ function ENT:Initialize()
   self.parentDesigner = nil
   self.partID = 0
   self.vertexIndex = 0
-  self.vertexType = "track" -- "track" or "border"
+  self.vertexType = "track"           -- "track" or "border"
   self.borderSide = ""
-  self.lastKnownPos = self:GetPos()
+  self.lastKnownPos = Vector(0, 0, 0) -- Initialize to zero vector
+  self.isInitialized = false          -- Flag to prevent initial movement trigger
 end
 
 function ENT:SetVertexData(parentDesigner, partID, vertexIndex, vertexType, borderSide)
@@ -40,9 +41,20 @@ function ENT:SetVertexData(parentDesigner, partID, vertexIndex, vertexType, bord
     self:SetModelScale(0.5, 0)
     self:SetColor(Color(139, 69, 19, 200)) -- Brown
   end
+
+  -- IMPORTANT: Set lastKnownPos to current position AFTER positioning is complete
+  -- This prevents the initial Think() from detecting movement
+  self.lastKnownPos = self:GetPos()
+  self.isInitialized = true
 end
 
 function ENT:Think()
+  -- Don't process movement until the vertex is fully initialized
+  if not self.isInitialized then
+    self:NextThink(CurTime() + 0.1)
+    return true
+  end
+
   local currentPos = self:GetPos()
 
   -- Constrain movement based on vertex type
@@ -54,6 +66,7 @@ function ENT:Think()
     currentPos = constrainedPos
   end
 
+  -- Only trigger movement callback if there's significant movement
   if self.lastKnownPos:Distance(currentPos) > 1 then
     self.lastKnownPos = currentPos
 
@@ -84,43 +97,34 @@ function ENT:ConstrainMovement(newPos)
     -- Border vertices can only move up/down (Z axis)
     -- Keep them fixed to their border position
     local pos = part.position
+    local angles = part.angles or Angle(0, 0, 0)
     local w = self.parentDesigner.TRACK_WIDTH / 2
     local l = self.parentDesigner.TRACK_LENGTH / 2
     local bw = self.parentDesigner.BORDER_WIDTH
 
+    local relativePos
     if self.borderSide == "left" then
-      constrainedPos.x = pos.x - w - bw
-      constrainedPos.y = pos.y
+      relativePos = Vector(-w - bw / 2, 0, newPos.z - pos.z)
     elseif self.borderSide == "right" then
-      constrainedPos.x = pos.x + w + bw
-      constrainedPos.y = pos.y
+      relativePos = Vector(w + bw / 2, 0, newPos.z - pos.z)
     elseif self.borderSide == "front" then
-      constrainedPos.x = pos.x
-      constrainedPos.y = pos.y - l - bw
+      relativePos = Vector(0, -l - bw / 2, newPos.z - pos.z)
     elseif self.borderSide == "back" then
-      constrainedPos.x = pos.x
-      constrainedPos.y = pos.y + l + bw
+      relativePos = Vector(0, l + bw / 2, newPos.z - pos.z)
+    else
+      relativePos = Vector(0, 0, newPos.z - pos.z)
     end
-  elseif self.vertexType == "track" then
-    -- Track vertices can move along their edge and up/down
-    local pos = part.position
-    local w = self.parentDesigner.TRACK_WIDTH / 2
-    local l = self.parentDesigner.TRACK_LENGTH / 2
 
-    -- Determine which edge this vertex is on and constrain accordingly
-    if self.vertexIndex == 1 then -- Bottom left (front-left)
-      constrainedPos.x = pos.x - w
-      constrainedPos.y = pos.y - l
-    elseif self.vertexIndex == 2 then -- Bottom right (front-right)
-      constrainedPos.x = pos.x + w
-      constrainedPos.y = pos.y - l
-    elseif self.vertexIndex == 3 then -- Top right (back-right)
-      constrainedPos.x = pos.x + w
-      constrainedPos.y = pos.y + l
-    elseif self.vertexIndex == 4 then -- Top left (back-left)
-      constrainedPos.x = pos.x - w
-      constrainedPos.y = pos.y + l
-    end
+    -- Rotate the relative position and add to part position
+    relativePos:Rotate(angles)
+    constrainedPos = pos + relativePos
+  elseif self.vertexType == "track" then
+    -- Track vertices can only move up/down (Z axis)
+    -- Keep them fixed to their corner position
+    local defaultPos = self.parentDesigner:GetDefaultVertexPosition(part, self.vertexIndex)
+    constrainedPos.x = defaultPos.x
+    constrainedPos.y = defaultPos.y
+    -- Allow Z movement for height adjustment
   end
 
   return constrainedPos
