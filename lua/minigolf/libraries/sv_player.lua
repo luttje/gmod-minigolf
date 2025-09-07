@@ -131,6 +131,18 @@ function Minigolf.Player.GetActiveHole(player)
 	return player._ActiveHole
 end
 
+function Minigolf.Player.GetActiveOnHole(start)
+	local playersOnHole = {}
+
+	for _, ply in ipairs(playerLibrary.GetAll()) do
+		if (ply:GetActiveHole() == start) then
+			table.insert(playersOnHole, ply)
+		end
+	end
+
+	return playersOnHole
+end
+
 playerMeta.SetActiveHole = Minigolf.Player.SetActiveHole
 playerMeta.GetActiveHole = Minigolf.Player.GetActiveHole
 

@@ -79,7 +79,7 @@ function Minigolf.Holes.End(player, ball, start, goal)
 	local strokes = ball:GetStrokes()
 	local customMessage = false
 
-	-- They may have disconnected
+	-- The player may have disconnected, so be sure they're still here
 	if (IsValid(player)) then
 		-- Goal can be nil when we end because of a time limit
 		if (goal) then
@@ -130,7 +130,30 @@ function Minigolf.Holes.End(player, ball, start, goal)
 	hook.Call("Minigolf.PlayerFinishedHole", Minigolf.GM(), player, ball, start, strokes)
 
 	if (IsValid(ball)) then
+		ball._MinigolfRemoving = true
 		ball:Remove()
+	end
+end
+
+--- Force the player to leave the hole. Useful if the ball or start aren't valid anymore
+function Minigolf.Holes.ForceEnd(player)
+	local ball = player:GetMinigolfBall()
+	local start = player:GetActiveHole()
+
+	if (IsValid(ball) and IsValid(start)) then
+		Minigolf.Holes.End(player, ball, start)
+	else
+		if (IsValid(start)) then
+			player:SetHoleScore(start, Minigolf.HOLE_DISQUALIFIED)
+		end
+
+		if (IsValid(ball)) then
+			ball:Remove()
+		end
+
+		player:SetPlayerBall(nil)
+		player:SetActiveHole(nil)
+		Minigolf.Holes.NetworkIDCache[player:SteamID()] = nil
 	end
 end
 

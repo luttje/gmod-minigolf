@@ -5,7 +5,7 @@ DISTANCE_TO_BALL_MAX = 80
 ENT.PrintName = "Minigolf Ball"
 ENT.Author = "Luttje"
 ENT.Information = "The ball to play with"
-ENT.Category = "Fun + Games"
+ENT.Category = "Minigolf"
 
 ENT.Spawnable = false
 

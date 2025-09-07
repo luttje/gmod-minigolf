@@ -91,7 +91,7 @@ function ENT:PhysicsCollide(data, physObj)
 	local newVelocity = physObj:GetVelocity()
 	local oldVelocityLength = data.OurOldVelocity:Length()
 
-	newVelocity = physObj:GetVelocity():GetNormal() * math.max(oldVelocityLength, speed)
+	newVelocity = physObj:GetVelocity():GetNormalized() * math.max(oldVelocityLength, speed)
 
 	if (oldVelocityLength <= 0.14) then
 		physObj:SetVelocity(Vector(0, 0, 0))
