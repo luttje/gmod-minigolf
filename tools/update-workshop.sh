@@ -65,19 +65,19 @@ fi
 # Create the GMA file
 echo ""
 echo "Creating GMA file..."
-"$GM_BIN_PATH/gmad.exe" create -folder "$SOURCE_CONTENT_DIR" -out "$SOURCE_CONTENT_DIR/minigolf.gma"
+"$GM_BIN_PATH/gmad.exe" create -folder "$SOURCE_CONTENT_DIR" -out "$SOURCE_CONTENT_DIR/../minigolf.gma"
 
 if [ "$DRY_RUN" = true ]; then
     echo ""
     echo "DRY RUN MODE - The following publish command would be executed:"
     echo "============================================================="
     echo "Publish to workshop:"
-    echo "   \"$GM_BIN_PATH/gmpublish.exe\" update -id \"$WORKSHOP_ID\" -addon \"$SOURCE_CONTENT_DIR/minigolf.gma\" -changes \"$UPDATE_MESSAGE\""
+    echo "   \"$GM_BIN_PATH/gmpublish.exe\" update -id \"$WORKSHOP_ID\" -addon \"$SOURCE_CONTENT_DIR/../minigolf.gma\" -changes \"$UPDATE_MESSAGE\""
     echo ""
     echo "DRY RUN COMPLETE - GMA file created but not published"
 else
     # Publish the GMA file to the workshop
     echo "Publishing to workshop..."
-    "$GM_BIN_PATH/gmpublish.exe" update -id "$WORKSHOP_ID" -addon "$SOURCE_CONTENT_DIR/minigolf.gma" -changes "$UPDATE_MESSAGE"
+    "$GM_BIN_PATH/gmpublish.exe" update -id "$WORKSHOP_ID" -addon "$SOURCE_CONTENT_DIR/../minigolf.gma" -changes "$UPDATE_MESSAGE"
     echo "Workshop content update completed!"
 fi

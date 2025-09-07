@@ -46,6 +46,3 @@ luac.out
 maps/*.log
 maps/*.prt
 maps/*.vmx
-
-# Ignore the built gma
-minigolf.gma

@@ -19,7 +19,6 @@
         "maps/*.vmf",
         "maps/*.vmx",
         "*.sw.vtx",
-        "minigolf.gma",
         "LICENSE",
         "README.md"
     ]
