@@ -14,7 +14,6 @@ In order to keep the code readable this document specifies the conventions this 
 * Do not abbreviate unless that the abbreviation is common in programming. For example: `config` instead of `configuration` is fine, but `ply` instead of `player` is not.
 * If you need to use the player library just define `local _player = player` at the top of the file.
 
-
 ## Syntax
 
 * Do not use GLua specific syntax like `/* C-like comments */`, `!`, `&&` and `||`, but use the regular Lua counterparts instead (respectively: `--[[ multiline comment ]]`, `not`, `and`, and `or`)
@@ -54,7 +53,6 @@ end
 
 ```
 
-
 ## Structure
 
 This section attempts to inform you where certain code should be placed
@@ -70,6 +68,7 @@ As a rule of thumb: code in the core is generally not recyclable, but specific t
 All functions that are useful for more than one context should be placed in this folder. Each file contains a library: a collection of functions which manipulate the same object, or otherwise involve the same subject.
 
 These files generally start with:
+
 ```lua
 Minigolf.LibraryName = {}
 

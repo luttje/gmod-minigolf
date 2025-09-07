@@ -4,7 +4,7 @@
 //==============================================================================//
 @include "base.fgd"
 
-@PointClass base(Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_config : 
+@PointClass base(Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_config :
 	"Minigolf Config\n"
 [
 	defaultMaxRetriesAfterCompleting(integer) : "Default Allowed Retries on Success" : 0 : "How many times a player can retry any hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished"
@@ -12,7 +12,7 @@
 	defaultMaxRetriesAfterMaxStrokes(integer) : "Default Allowed Retries after Max Strokes" : 0 : "How many times a player can retry any hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished"
 ]
 
-@PointClass base(Targetname, Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_hole_start : 
+@PointClass base(Targetname, Origin, Angles) studioprop("models/hunter/blocks/cube025x025x025.mdl") = minigolf_hole_start :
 	"Minigolf Hole Start\n"
 [
 	par(integer): "Par": 3 :"Average amount of strokes players should aim for"
@@ -23,13 +23,13 @@
 	description(String): "Description": "": "Hole Description"
 	maxStrokes(integer): "Max Strokes" : 12 : "How many strokes are allowed before the game ends automatically"
 	maxPitch(integer): "Max Pitch": 0 : "How many degrees pitch a player can make a lob shot at, don't specify or set as 0 to indicate no lob shots allowed"
-	
+
 	maxRetriesAfterCompleting(integer) : "Allowed Retries on Success" : 0 : "How many times a player can retry this hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished"
 	maxRetriesAfterTimeLimit(integer) : "Allowed Retries after Time Limit" : 0 : "How many times a player can retry this hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished"
 	maxRetriesAfterMaxStrokes(integer) : "Allowed Retries after Max Strokes" : 0 : "How many times a player can retry this hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished"
 ]
 
-@SolidClass base(Trigger) = minigolf_hole_end : 
+@SolidClass base(Trigger) = minigolf_hole_end :
 	"Minigolf Hole End\n"
 [
     hole(String): "[deprecated] Hole Name": "" : "[Deprecated! Use start_hole (Start Hole) instead!] Hole Name (Required to match a minigolf_hole_start name)"
@@ -37,15 +37,15 @@
 		start_hole(target_destination): "Start Hole": "" : "Points to an entity this end belongs to. Thanks to this, only the start hole specifies the hole and course name."
 ]
 
-@PointClass base(Origin, Angles) studioprop("models/props_c17/signpole001.mdl") = minigolf_hole_flag : 
-	"Minigolf Hole Flag\n" + 
+@PointClass base(Origin, Angles) studioprop("models/props_c17/signpole001.mdl") = minigolf_hole_flag :
+	"Minigolf Hole Flag\n" +
 	"A Flag for the Minigolf Hold End. This needs to touch a minigolf_hole_end entity!"
 [
 
 ]
 
-@SolidClass base(Trigger) = minigolf_trigger_oob : 
-	"Minigolf Out-Of-Bounds Trigger\n" + 
+@SolidClass base(Trigger) = minigolf_trigger_oob :
+	"Minigolf Out-Of-Bounds Trigger\n" +
 	"When the ball touches this brush the ball is considered Out-Of-Bounds. The ball will be reset to the last valid position."
 [
 

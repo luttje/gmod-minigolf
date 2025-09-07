@@ -52,7 +52,7 @@ function PANEL:PositionLabels()
 	self.holeNameLabel:SetPos(self:GetWide() * .5 - (self.holeNameLabel:GetWide() * .5), currentY)
 	currentY = currentY + self.holeNameLabel:GetTall() + (Minigolf.PADDING * 2)
 
-	if(holeDescVisible)then
+	if (holeDescVisible) then
 		self.holeDescriptionLabel:SizeToContents()
 		self.holeDescriptionLabel:SetPos(self:GetWide() * .5 - (self.holeDescriptionLabel:GetWide() * .5), currentY)
 		currentY = currentY + self.holeDescriptionLabel:GetTall() + Minigolf.PADDING
@@ -90,7 +90,7 @@ end
 function PANEL:RebuildHoleInfo()
 	local hole = self._Hole
 
-	if(not IsValid(hole))then
+	if (not IsValid(hole)) then
 		-- Ignore holes we haven't received in a networkmessage yet.
 		return
 	end
@@ -105,7 +105,7 @@ function PANEL:RebuildHoleInfo()
 
 	local pitch = hole:GetMaxPitch()
 
-	if(pitch == 0)then
+	if (pitch == 0) then
 		self.holeMaxPitchLabel:SetText("You are prohibited from making lob shots here.")
 	else
 		self.holeMaxPitchLabel:SetText("You can make lob shots at a maximum pitch of " .. pitch .. "° here.")
@@ -113,25 +113,27 @@ function PANEL:RebuildHoleInfo()
 
 	local strokes = LocalPlayer():GetNWInt(hole:GetUniqueHoleName() .. "Strokes", Minigolf.HOLE_NOT_PLAYED)
 
-	if(strokes > 0)then
-		self.hintLabel:SetText("You already played this hole and got " .. strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes) .. " on it!")
-	elseif(strokes == Minigolf.HOLE_DISQUALIFIED)then
+	if (strokes > 0) then
+		self.hintLabel:SetText("You already played this hole and got " ..
+			strokes .. " " .. Minigolf.Text.Pluralize("stroke", strokes) .. " on it!")
+	elseif (strokes == Minigolf.HOLE_DISQUALIFIED) then
 		self.hintLabel:SetText("You already played this hole and got disqualified on it!")
-	elseif(strokes == Minigolf.HOLE_NOT_PLAYED)then
+	elseif (strokes == Minigolf.HOLE_NOT_PLAYED) then
 		self.hintLabel:SetText(playHoleText)
 	else
 		self.hintLabel:SetText("<error 734M>") -- TODO: logic error in code above
 	end
 
-	if(self.currentTime)then
-		self.holeTimeLimitLabel:SetText(tostring(self.currentTime) .. " seconds remaining (Time Limit: " .. hole:GetLimit() .. " seconds)")
+	if (self.currentTime) then
+		self.holeTimeLimitLabel:SetText(tostring(self.currentTime) ..
+			" seconds remaining (Time Limit: " .. hole:GetLimit() .. " seconds)")
 		self.holeTimeLimitLabel:SizeToContents()
 	else
-		self.holeTimeLimitLabel:SetText("Time Limit: " .. hole:GetLimit() .. " seconds")	
+		self.holeTimeLimitLabel:SetText("Time Limit: " .. hole:GetLimit() .. " seconds")
 	end
-	
+
 	hook.Call("Minigolf.AdjustRebuildHolePanel", nil, self, hole, strokes)
-	
+
 	self.hintLabel:SizeToContents()
 	self.holeNameLabel:SizeToContents()
 	self.holeDescriptionLabel:SizeToContents()
@@ -145,7 +147,7 @@ function PANEL:RebuildHoleInfo()
 end
 
 function PANEL:Think()
-	if(not self._Hole)then
+	if (not self._Hole) then
 		return
 	end
 

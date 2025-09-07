@@ -1,10 +1,16 @@
 Minigolf = Minigolf or {}
 
 Minigolf.Convars = {}
-Minigolf.Convars.CommandPrefix = CreateConVar("minigolf_command_prefix", "+", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "The prefix for all minigolf commands.")
-Minigolf.Convars.PlayerConfigPowerMode = CreateConVar("minigolf_allow_change_power_mode", "1", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Can a player change their own power mode?")
-Minigolf.Convars.DefaultAutoPowerMode = CreateConVar("minigolf_auto_power_mode", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Should the powerbar bounce back and forth until the player releases a key?")
-Minigolf.Convars.AutoPowerVelocity = CreateConVar("minigolf_auto_power_velocity", "50", {FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "How fast should the powerbar bounce back and forth? (lower number is slower)")
+Minigolf.Convars.CommandPrefix = CreateConVar("minigolf_command_prefix", "+",
+	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "The prefix for all minigolf commands.")
+Minigolf.Convars.PlayerConfigPowerMode = CreateConVar("minigolf_allow_change_power_mode", "1",
+	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Can a player change their own power mode?")
+Minigolf.Convars.DefaultAutoPowerMode = CreateConVar("minigolf_auto_power_mode", "0",
+	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE },
+	"Should the powerbar bounce back and forth until the player releases a key?")
+Minigolf.Convars.AutoPowerVelocity = CreateConVar("minigolf_auto_power_velocity", "50",
+	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE },
+	"How fast should the powerbar bounce back and forth? (lower number is slower)")
 
 Minigolf.CANCEL_BALL_FORCE = -1
 
@@ -39,7 +45,7 @@ Minigolf.COLOR_PRIMARY_LIGHT = Color(143, 168, 79)
 Minigolf.COLOR_SECONDARY = Color(143, 168, 79)
 Minigolf.COLOR_SECONDARY_LIGHT = Color(118, 153, 31)
 
-if(SERVER)then AddCSLuaFile("sh_util.lua") end
+if (SERVER) then AddCSLuaFile("sh_util.lua") end
 include("sh_util.lua")
 
 -- Automatically include everything in these directories
@@ -49,13 +55,13 @@ Minigolf.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "vgui/"), "lua/")
 
 Minigolf.Items.IncludeDirectory(Minigolf.PathCombine("lua/minigolf", "items/"), "lua/")
 
-if(SERVER)then
+if (SERVER) then
 	AddCSLuaFile("cl_init.lua")
 	include("sv_init.lua")
 
 	AddCSLuaFile("sh_hooks.lua")
 	include("sv_hooks.lua")
-elseif(CLIENT)then
+elseif (CLIENT) then
 	include("cl_init.lua")
 end
 

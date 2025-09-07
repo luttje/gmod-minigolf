@@ -6,25 +6,25 @@ function ENT:Initialize()
 end
 
 function ENT:StartTouch(entity)
-	if(IsValid(entity) and entity:GetClass() == "minigolf_ball")then
-		if(self:GetStart() == entity:GetStart())then
+	if (IsValid(entity) and entity:GetClass() == "minigolf_ball") then
+		if (self:GetStart() == entity:GetStart()) then
 			Minigolf.Holes.End(entity:GetPlayer(), entity, entity:GetStart(), self)
 		else
 			hook.Call("Minigolf.BallOutOfBounds", Minigolf.GM(), entity:GetPlayer(), entity, self)
 		end
-	elseif(entity.OnHoleEndTouched)then
+	elseif (entity.OnHoleEndTouched) then
 		entity:OnHoleEndTouched(self)
 	end
 end
 
 function ENT:KeyValue(key, value)
 	key = string.lower(key)
-	
-	if(key == "hole")then
+
+	if (key == "hole") then
 		self:SetHoleName(tostring(value):Trim())
-	elseif(key == "course")then
+	elseif (key == "course") then
 		self:SetCourse(tostring(value):Trim())
-	elseif(key == "start_hole")then
+	elseif (key == "start_hole") then
 		self:SetStartName(tostring(value):Trim())
 	end
 end
@@ -55,25 +55,26 @@ function ENT:SetStartName(startName)
 end
 
 function ENT:GetStart()
-	if(self._Start)then
+	if (self._Start) then
 		return self._Start
 	end
 
-	if(self._StartName)then
+	if (self._StartName) then
 		local start = ents.FindByName(self._StartName)[1]
-	
-		if(not IsValid(start))then
-			error("Minigolf: Start hole ".. tostring(self._StartName) .." did not exist for entity ".. tostring(self) .."!")
+
+		if (not IsValid(start)) then
+			error("Minigolf: Start hole " ..
+				tostring(self._StartName) .. " did not exist for entity " .. tostring(self) .. "!")
 		end
 
 		self._Start = start
 		return self._Start
 	end
-	
+
 	for _, otherEntity in pairs(ents.FindByClass("minigolf_hole_start")) do
-		if(otherEntity:GetUniqueHoleName() == self:GetUniqueHoleName()
-		-- WORKAROUND: golf_rocket_hub_alpha2 didn't correctly specify the course name on the end holes.
-		or otherEntity:GetHoleName() == self:GetHoleName())then
+		if (otherEntity:GetUniqueHoleName() == self:GetUniqueHoleName()
+				-- WORKAROUND: golf_rocket_hub_alpha2 didn't correctly specify the course name on the end holes.
+				or otherEntity:GetHoleName() == self:GetHoleName()) then
 			self._Start = otherEntity
 
 			return self._Start
@@ -81,6 +82,6 @@ function ENT:GetStart()
 	end
 end
 
-function ENT:UpdateTransmitState()	
-	return TRANSMIT_ALWAYS 
+function ENT:UpdateTransmitState()
+	return TRANSMIT_ALWAYS
 end

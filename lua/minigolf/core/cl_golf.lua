@@ -4,12 +4,12 @@ net.Receive("Minigolf.PlayerHasFinished", function()
 	local start = net.ReadEntity()
 	local strokes = net.ReadUInt(32)
 
-	if(not IsValid(start) or not IsValid(player))then
+	if (not IsValid(start) or not IsValid(player)) then
 		-- Ignore data about players or holes we can't see
 		return
 	end
 
-	if(not start._Strokes)then
+	if (not start._Strokes) then
 		start._Strokes = {}
 	end
 
@@ -25,7 +25,7 @@ net.Receive("Minigolf.SetPlayerTimeLimit", function()
 
 	hook.Call("Minigolf.PlayerTimeLimit", Minigolf.GM(), owner, timeLimit)
 
-	if(not IsValid(owner))then
+	if (not IsValid(owner)) then
 		-- Ignore data about players we can't see
 		return
 	end

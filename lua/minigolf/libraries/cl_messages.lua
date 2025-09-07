@@ -17,13 +17,13 @@ function Minigolf.Messages.Print(msg, icon, textEffect)
 	local colorPositive = Minigolf.Colors.Get("Positive")
 	local color = Minigolf.Colors.Get("Background")
 
-	if(textEffect == Minigolf.TEXT_EFFECT_ATTENTION)then
+	if (textEffect == Minigolf.TEXT_EFFECT_ATTENTION) then
 		color = colorChat
-	elseif(textEffect == Minigolf.TEXT_EFFECT_DANGER)then
+	elseif (textEffect == Minigolf.TEXT_EFFECT_DANGER) then
 		color = colorNegative
-	elseif(textEffect == Minigolf.TEXT_EFFECT_SPARKLE)then
+	elseif (textEffect == Minigolf.TEXT_EFFECT_SPARKLE) then
 		color = Color(255, 195, 18)
-	elseif(textEffect == Minigolf.TEXT_EFFECT_CASH)then
+	elseif (textEffect == Minigolf.TEXT_EFFECT_CASH) then
 		color = colorPositive
 	end
 

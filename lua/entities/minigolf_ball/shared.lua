@@ -1,4 +1,4 @@
-DEFINE_BASECLASS( "base_anim" )
+DEFINE_BASECLASS("base_anim")
 
 DISTANCE_TO_BALL_MAX = 80
 

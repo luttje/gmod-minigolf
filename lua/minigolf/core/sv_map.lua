@@ -6,8 +6,8 @@ hook.Add("InitPostEntity", "Minigolf.CountHolesAndMarkPhysboxesForCustomPhys", f
 	-- When we decide to have multiple starts for a single hole count the unique hole names
 	for _, hole in ipairs(ents.FindByClass("minigolf_hole_start")) do
 		local uniqueHoleName = hole:GetUniqueHoleName()
-		
-		if(not Minigolf.Holes.All[uniqueHoleName])then
+
+		if (not Minigolf.Holes.All[uniqueHoleName]) then
 			Minigolf.Holes.All[uniqueHoleName] = hole
 
 			Minigolf.Holes.TotalCount = Minigolf.Holes.TotalCount + 1

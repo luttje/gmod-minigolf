@@ -1,21 +1,23 @@
 {
-  "title"		:	"Minigolf",
-  "type"		:	"gamemode",
-  "tags"		:	[ "fun", "comic" ],
-  "description":	"Play minigolf with your friends in this custom gamemode.",
-  "ignore"	:
-  [
-    ".git*",
-    ".github*",
-    ".glua*",
-    ".vscode*",
-    ".gitignore",
-    "maps/*.log",
-    "maps/*.prt",
-    "maps/*.vmf",
-    "maps/*.vmx",
-    "docs*",
-    "LICENSE",
-    "README.md"
-  ]
+    "title": "Minigolf",
+    "type": "gamemode",
+    "tags": [
+        "fun",
+        "comic"
+    ],
+    "description": "Play minigolf with your friends in this custom gamemode.",
+    "ignore": [
+        ".git*",
+        ".github*",
+        ".glua*",
+        ".vscode*",
+        ".gitignore",
+        "maps/*.log",
+        "maps/*.prt",
+        "maps/*.vmf",
+        "maps/*.vmx",
+        "docs*",
+        "LICENSE",
+        "README.md"
+    ]
 }

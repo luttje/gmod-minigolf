@@ -31,7 +31,7 @@ util.AddNetworkString("Minigolf.GetBallForceCancel")
 net.Receive("Minigolf.StartBallForce", function(len, player)
 	local ball = player:GetMinigolfBall()
 
-	if(IsValid(ball) and ball:GetUseable() and ball:GetStationary() and player:IsInDistanceOf(ball, DISTANCE_TO_BALL_MAX))then
+	if (IsValid(ball) and ball:GetUseable() and ball:GetStationary() and player:IsInDistanceOf(ball, DISTANCE_TO_BALL_MAX)) then
 		ball:ShowForceMeter(not IsValid(player:GetBallGivingForce()))
 	end
 end)
@@ -39,7 +39,7 @@ end)
 local function rollBallInDirection(ball, directionVector)
 	local phys = ball:GetPhysicsObject()
 
-	if(IsValid(phys))then
+	if (IsValid(phys)) then
 		phys:SetVelocity(directionVector)
 
 		return true
@@ -54,23 +54,23 @@ function ENT:Initialize()
 	self:SetModel(self.Model)
 	self:SetMaterial("minigolf/balls/regular_ball")
 
-	if(self.ModelScale)then
+	if (self.ModelScale) then
 		self:SetModelScale(self.ModelScale)
 		self:DrawShadow(false)
 	end
 
 	self:SetUseType(SIMPLE_USE)
-	self:PhysicsInit( SOLID_VPHYSICS )
-	self:SetMoveType( MOVETYPE_VPHYSICS ) -- Automatically called by PhysicsInitSphere
-	self:SetSolid( SOLID_VPHYSICS ) -- Overriden by PhysicsInitSphere to SOLID_BBOX
+	self:PhysicsInit(SOLID_VPHYSICS)
+	self:SetMoveType(MOVETYPE_VPHYSICS) -- Automatically called by PhysicsInitSphere
+	self:SetSolid(SOLID_VPHYSICS)    -- Overriden by PhysicsInitSphere to SOLID_BBOX
 	self:SetCustomCollisionCheck(true)
 
- 	-- Set perfect sphere collisions (54mm of diameter)
+	-- Set perfect sphere collisions (54mm of diameter)
 	self:PhysicsInitSphere(0.94, "minigolf_ball")
 	self:SetCollisionBounds(Vector(-0.94, -0.94, -0.94), Vector(0.94, 0.94, 0.94))
 
 	local physObj = self:GetPhysicsObject()
- 
+
 	if (physObj:IsValid()) then
 		physObj:SetMass(1)
 		physObj:SetDamping(0, 1.2)
@@ -93,14 +93,14 @@ function ENT:PhysicsCollide(data, physObj)
 
 	newVelocity = physObj:GetVelocity():GetNormal() * math.max(oldVelocityLength, speed)
 
-	if(oldVelocityLength <= 0.14) then
+	if (oldVelocityLength <= 0.14) then
 		physObj:SetVelocity(Vector(0, 0, 0))
 		physObj:EnableMotion(false)
 		return physObj:EnableMotion(true)
 	end
 
 	newVelocity = newVelocity * 0.75
-	
+
 	return physObj:SetVelocity(newVelocity)
 end
 
@@ -108,19 +108,19 @@ function ENT:Think()
 	local velocity = self:GetVelocity()
 	local velocityLength = velocity:Length()
 
-	if(velocityLength < 5)then
+	if (velocityLength < 5) then
 		local phys = self:GetPhysicsObject()
 
-		if(IsValid(phys))then
+		if (IsValid(phys)) then
 			phys:AddVelocity(-velocity)
 		end
-		
-		if(not self:GetStationary())then
+
+		if (not self:GetStationary()) then
 			self:SetStationary(true)
 
 			local physObj = self:GetPhysicsObject()
 			physObj:EnableMotion(false)
-			physObj:SetVelocityInstantaneous(Vector(0,0,0))
+			physObj:SetVelocityInstantaneous(Vector(0, 0, 0))
 			physObj:EnableMotion(true)
 
 			hook.Call("Minigolf.BallRolledStationary", Minigolf.GM(), self)
@@ -135,7 +135,7 @@ function ENT:MoveToPos(position)
 
 	physObj:EnableMotion(false)
 	self:SetPos(position)
-	physObj:SetVelocityInstantaneous(Vector(0,0,0))
+	physObj:SetVelocityInstantaneous(Vector(0, 0, 0))
 	physObj:EnableMotion(true)
 end
 
@@ -147,12 +147,12 @@ end
 
 function ENT:OnUse(activator)
 	-- Make sure the activator is a player and is in range
-	if(activator:IsPlayer() and activator:IsInDistanceOf(self, DISTANCE_TO_BALL_MAX))then
-		if(activator:KeyDown(IN_RELOAD))then
-			if(activator == self:GetPlayer())then
+	if (activator:IsPlayer() and activator:IsInDistanceOf(self, DISTANCE_TO_BALL_MAX)) then
+		if (activator:KeyDown(IN_RELOAD)) then
+			if (activator == self:GetPlayer()) then
 				self:SetStrokes(self:GetStrokes() + 1)
 				self:ReturnToStart()
-			elseif(not IsValid(self:GetPlayer()))then
+			elseif (not IsValid(self:GetPlayer())) then
 				Minigolf.Holes.End(nil, self, self:GetStart())
 			end
 		end
@@ -162,7 +162,7 @@ end
 function ENT:ShowForceMeter(shouldShow)
 	local player = self:GetPlayer()
 
-	if(shouldShow)then
+	if (shouldShow) then
 		player:SetBallGivingForce(self)
 
 		hook.Call("Minigolf.BallStartedGivingForce", Minigolf.GM(), player, self)
@@ -197,7 +197,7 @@ function ENT:SetPlayer(player)
 	self:SetNWString("PlayerName", player:Nick())
 	self:SetNWEntity("Player", player)
 
-	if(not self.hasInitialized)then
+	if (not self.hasInitialized) then
 		self.hasInitialized = true
 		hook.Call("Minigolf.BallInit", Minigolf.GM(), player, self)
 	end
@@ -232,10 +232,10 @@ end
 net.Receive("Minigolf.SetBallForce", function(len, ply)
 	local ball = ply:GetBallGivingForce()
 
-	if(IsValid(ball))then
+	if (IsValid(ball)) then
 		local givenForce = net.ReadFloat()
 
-		if(givenForce == Minigolf.CANCEL_BALL_FORCE)then
+		if (givenForce == Minigolf.CANCEL_BALL_FORCE) then
 			ball:ShowForceMeter(false)
 			return
 		end
@@ -251,7 +251,7 @@ net.Receive("Minigolf.SetBallForce", function(len, ply)
 
 		local hookCall = hook.Call("Minigolf.PlayerHitBall", Minigolf.GM(), ply, ball)
 
-		if(hookCall ~= false)then
+		if (hookCall ~= false) then
 			rollBallInDirection(ball, -ballAngle:Right() * ballForce)
 
 			ball:SetStrokes(ball:GetStrokes() + 1)
@@ -262,5 +262,5 @@ net.Receive("Minigolf.SetBallForce", function(len, ply)
 end)
 
 function ENT:UpdateTransmitState()
-	return TRANSMIT_ALWAYS 
+	return TRANSMIT_ALWAYS
 end

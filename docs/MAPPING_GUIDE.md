@@ -1,42 +1,45 @@
 # Mapping for Minigolf
+
 The mapper has full control of the minigolf tracks using the scripted entities (SENTs) specified in the chapter below.
 
 ![Example of a minigolf_hole_start and minigolf_trigger_oob brush](assets/mapping/object_information_panel.jpg)
-
 
 ## Mapping Reference
 
 _In order to quickly add the below entities you can include the [`minigolf.fgd`](minigolf.fgd) in Hammer (Tools > Options > Game Configurations > Game Data Files > Add)._
 
 ### `minigolf_hole_start`
+
 Describes where players start to play on a minigolf track (by pressing `USE` on it). The hole and description are displayed on the players' GUI.
 
-#### Available Properties:
-  * `targetname`: You need to give every start entity a unique name. One or more `minigolf_hole_end` will point to this.
+#### Available Properties
 
-  * `par`: average amount of strokes players should aim for (default: 3)
+* `targetname`: You need to give every start entity a unique name. One or more `minigolf_hole_end` will point to this.
 
-  * `hole`: the name of this hole (required)
+* `par`: average amount of strokes players should aim for (default: 3)
 
-  * `course`: the name of the course this hole is on, for when there are multiple courses on one map (default: "", (an empty string))
+* `hole`: the name of this hole (required)
 
-  * `order`: number used for ordering holes on the scoreboard (lower numbers appear higher)
+* `course`: the name of the course this hole is on, for when there are multiple courses on one map (default: "", (an empty string))
 
-  * `limit`: how long players can take on the hole in seconds (default: 60)
+* `order`: number used for ordering holes on the scoreboard (lower numbers appear higher)
 
-  * `description`: a description for the hole
+* `limit`: how long players can take on the hole in seconds (default: 60)
 
-  * `maxStrokes`: how many strokes are allowed before the game ends automatically (default: 12)
+* `description`: a description for the hole
 
-  * `maxPitch`: how many degrees pitch a player can make a lob shot at, don't specify or set as 0 to indicate no lob shots allowed (default: 0)
+* `maxStrokes`: how many strokes are allowed before the game ends automatically (default: 12)
 
-  * `maxRetriesAfterCompleting`: how many times a player can retry this hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished
+* `maxPitch`: how many degrees pitch a player can make a lob shot at, don't specify or set as 0 to indicate no lob shots allowed (default: 0)
 
-  * `maxRetriesAfterTimeLimit`: how many times a player can retry this hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished
+* `maxRetriesAfterCompleting`: how many times a player can retry this hole after completing it. -1 for infinite, 0 for no retries until all holes have been finished
 
-  * `maxRetriesAfterMaxStrokes`: how many times a player can retry this hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished
+* `maxRetriesAfterTimeLimit`: how many times a player can retry this hole after reaching the time limit. -1 for infinite, 0 for no retries until all holes have been finished
 
-#### Hammer Instructions:
+* `maxRetriesAfterMaxStrokes`: how many times a player can retry this hole after reaching the maximum amount of strokes. -1 for infinite, 0 for no retries until all holes have been finished
+
+#### Hammer Instructions
+
   1. In hammer [spawn a new Point Entity](https://developer.valvesoftware.com/wiki/Entity_Creation) and select it
 
   2. [Open the object properties by pressing `Ctrl + Enter`](https://developer.valvesoftware.com/wiki/Hammer_Object_Properties_Dialog)
@@ -49,10 +52,10 @@ Describes where players start to play on a minigolf track (by pressing `USE` on 
 
   5. Click `Add`
 
-  6. Now type in the properties listed above under `Key`. 
+  6. Now type in the properties listed above under `Key`.
 
   7. Give your desired value under `Value` then click OK to finalize your configuration.
-  
+
 **If you <u>are</u> using the `minigolf.fgd`:**
 
   3. Select the `minigolf_hole_start` from the `Class` dropdown
@@ -61,20 +64,21 @@ Describes where players start to play on a minigolf track (by pressing `USE` on 
 
 When the map is loaded by the gamemode these values are stored in memory.
 
-
 ### `minigolf_hole_end`
+
 Specifies the end/goal/hole. When the ball touches this brush the player will have reached the end in as many strokes as they have up to that point.
 
 Because of this design, in theory it's possible (untested) to have a hole with a single start and multiple valid ends (that all point to the same start.)
 
-#### Available Properties:
-  * `start_hole`: The targetname of a `minigolf_hole_start` that is associated with this end.
+#### Available Properties
 
+* `start_hole`: The targetname of a `minigolf_hole_start` that is associated with this end.
 
-#### Hammer Instructions:
-  1. Create one or multiple brushes in Hammer, along the edges and over the top of the minigolf track. 
+#### Hammer Instructions
 
-  2. Give these brushes the 'trigger' material on all faces. 
+  1. Create one or multiple brushes in Hammer, along the edges and over the top of the minigolf track.
+
+  2. Give these brushes the 'trigger' material on all faces.
 
   3. Now press [`Ctrl + T` to tie it to an entity](https://developer.valvesoftware.com/wiki/Hammer_Tools_Menu#Tie_to_Entity_.3CCtrl.2BT.3E)
 
@@ -87,41 +91,44 @@ Because of this design, in theory it's possible (untested) to have a hole with a
   _You need to have made sure that the `minigolf_hole_start` has a name (`targetname` property)._
 
 ### `minigolf_hole_flag`
+
 This entity adds a flag to a hole. When the player comes near the flag it will raise, allowing them to see the ball better around the hole area.
 
-#### Hammer Instructions:
+#### Hammer Instructions
+
   1. Create a point entity with the class `minigolf_hole_flag`
-  
+
   2. Rotate the entity in the object properties menu to change the rotation of the flag relative to the top(x/y) view:
-  
+
       ![Showing the direction relative to the top view](https://github.com/luttje/gmod-minigolf/blob/main/docs/assets/mapping/flag_direction.jpg)
-  
+
   3. Make sure the entity is touching the related `minigolf_hole_end`
-  
 
 ### `minigolf_trigger_oob`
+
 When the ball touches this brush the ball is considered Out-Of-Bounds. The ball will be reset to the last valid position There are no properties for this entity.
 
-#### Hammer Instructions:
-  1. Create one or multiple brushes in Hammer, along the edges and over the top of the minigolf track. 
+#### Hammer Instructions
 
-  2. Give these brushes the 'trigger' material on all faces. 
+  1. Create one or multiple brushes in Hammer, along the edges and over the top of the minigolf track.
+
+  2. Give these brushes the 'trigger' material on all faces.
 
   3. Now press [`Ctrl + T` to tie it to an entity](https://developer.valvesoftware.com/wiki/Hammer_Tools_Menu#Tie_to_Entity_.3CCtrl.2BT.3E)
 
   4. Choose `minigolf_trigger_oob` as the entity type by typing it into the class name (or selecting it if you are using the `minigolf.fgd`).
 
-
 ### `minigolf_config`
+
 A point entity that dictates how the addon should behave. It can set default information for all holes. There should be only one of this entity on a map.
 
-#### Available Properties:
-  * `defaultMaxRetriesAfterCompleting`: How many times a player can retry any hole after completing it. The maxRetriesAfterCompleting property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+#### Available Properties
 
-  * `defaultMaxRetriesAfterTimeLimit`: How many times a player can retry any hole after reaching the time limit. The maxRetriesAfterTimeLimit property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+* `defaultMaxRetriesAfterCompleting`: How many times a player can retry any hole after completing it. The maxRetriesAfterCompleting property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
 
-  * `defaultMaxRetriesAfterMaxStrokes`: How many times a player can retry any hole after reaching the maximum amount of strokes. The maxRetriesAfterMaxStrokes property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
+* `defaultMaxRetriesAfterTimeLimit`: How many times a player can retry any hole after reaching the time limit. The maxRetriesAfterTimeLimit property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
 
+* `defaultMaxRetriesAfterMaxStrokes`: How many times a player can retry any hole after reaching the maximum amount of strokes. The maxRetriesAfterMaxStrokes property on a hole overrides this. -1 for infinite, 0 for no retries until all holes have been finished (default: 0)
 
 ## Additional properties
 
@@ -134,7 +141,6 @@ You can control more behaviour by applying any of the following properties to an
     * `only_balls`: Collide only with minigolf balls
     * `only_others`: Collide only with other entities that have `only_others` (or `balls_and_others`) as a value for this property
     * `balls_and_others`: Collide with balls and entities with `only_others` or `balls_and_others` as a value for this property
-
 
 ## Examples
 
@@ -155,7 +161,6 @@ Luttje: [golf_dev_minimal_v3.vmf](https://mega.nz/file/plRx0QhI#fRTKcXxUoKOdpZDc
     9. **Luttje's "Bouncer"**
 
   * The other garage boxes (0 through 7 and 10 and 11) are currently empty.
-
 
 ## Tips & Problems
 

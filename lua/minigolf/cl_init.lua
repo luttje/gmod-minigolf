@@ -1,5 +1,6 @@
 Minigolf.Menus = {}
-Minigolf.Convars.ShowHints = CreateClientConVar("minigolf_show_hints", "1", true, false, "Whether to show hints on screen in Minigolf")
+Minigolf.Convars.ShowHints = CreateClientConVar("minigolf_show_hints", "1", true, false,
+	"Whether to show hints on screen in Minigolf")
 
 -- Fonts
 surface.CreateFont("MinigolfMain", {
@@ -61,10 +62,10 @@ surface.CreateFont("MinigolfIcons", {
 
 -- Palette: https://flatuicolors.com/palette/nl
 Minigolf.Colors.Set("Background", Color(255, 255, 255)) -- White background
-Minigolf.Colors.Set("Foreground", Color(27, 20, 100)) -- Purple for buttons and other controls
-Minigolf.Colors.Set("Text", Color(0, 0, 0)) -- Black for most fonts
+Minigolf.Colors.Set("Foreground", Color(27, 20, 100))   -- Purple for buttons and other controls
+Minigolf.Colors.Set("Text", Color(0, 0, 0))             -- Black for most fonts
 Minigolf.Colors.Set("ButtonText", Color(255, 255, 255)) -- Font colour on buttons
-Minigolf.Colors.Set("Negative", Color(234, 32, 39)) -- Colour for negative messages/buttons
-Minigolf.Colors.Set("Information", Color(6, 82, 221)) -- Colour for information messages/buttons
-Minigolf.Colors.Set("Positive", Color(0, 148, 50)) -- Colour for positive messages/buttons
-Minigolf.Colors.Set("ChatPrint", Color(247, 159, 31)) -- Orange-ish for chat messages by Game Avail
+Minigolf.Colors.Set("Negative", Color(234, 32, 39))     -- Colour for negative messages/buttons
+Minigolf.Colors.Set("Information", Color(6, 82, 221))   -- Colour for information messages/buttons
+Minigolf.Colors.Set("Positive", Color(0, 148, 50))      -- Colour for positive messages/buttons
+Minigolf.Colors.Set("ChatPrint", Color(247, 159, 31))   -- Orange-ish for chat messages by Game Avail

@@ -24,27 +24,26 @@ Server owners can set these:
 * `minigolf_auto_power_velocity`: How fast should the powerbar bounce back and forth? (lower number is slower)
   * `50` by default
 
-
 ## Integrations
 
 ### Reward points or money for certain scores
 
 Copy the file at [`docs/examples/sv_rewards.lua`](https://github.com/luttje/gmod-minigolf/blob/main/docs/examples/sv_rewards.lua) to your custom addon _or_ to `garrysmod/lua/autorun/server`. Within it you can configure the reward for each type of scoring on a hole.
 
-
 ### Minigolf Items
 
 There are 3 different item types by default:
+
 * **Ball Area Effects:** A texture flat on the ground underneath the ball.
 * **Ball Trails:** Trails, but not for a player but their Minigolf ball.
 * **Balls:** A skin or completely different model for a players' ball.
 
 None of these items affect the performance of a ball. So even though a model is not perfectly spherical, it'll still roll as if it is (which is good).
 
-
 #### Equiping an item
 
 The following snippet equips an item. Making it's effect visible for everyone.
+
 ```lua
 -- ball_skull is the UniqueID of an item that changes a players' balls to a skull
 local item = Minigolf.Items.Get("ball_skull")
@@ -54,26 +53,27 @@ Minigolf.Items.Equip(item, receiver)
 -- Minigolf.Items.Unequip works the exact same way, but does the opposite
 ```
 
-With that you can integrate these default items in any gamemode or addon. 
-
+With that you can integrate these default items in any gamemode or addon.
 
 #### Custom items
 
 You can also create your own variations of these items in your gamemode. You can find an example in the included `gm_minigolf` gamemode.
 
 Be sure to:
+
 1. Place items in a directory named `balls`, `ball_trails` or `ball_area_effects` (otherwise you'll have to make your own type)
 2. Include the `items` directory in your gamemode like so:
+
 ```lua
 Minigolf.Items.IncludeDirectory(Minigolf.PathCombine("gamemodes/<your gamemode folder>/gamemode", "items/"))
 ```
 
 For an example, checkout: ([gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua](https://github.com/luttje/gmod-minigolf/blob/main/gamemodes/gm_minigolf/gamemode/items/ball_trails/lovely_ball.lua)) and ([gamemodes/gm_minigolf/gamemode/sh_init.lua](https://github.com/luttje/gmod-minigolf/blob/main/gamemodes/gm_minigolf/gamemode/sh_init.lua)).
 
-
 #### Examples
 
-##### PointShop 1 Item (untested):
+##### PointShop 1 Item (untested)
+
 ```lua
 ITEM.Name = "Minigolf Skull Ball"
 ITEM.Price = 50
@@ -91,8 +91,8 @@ function ITEM:OnHolster(player)
 end
 ```
 
+##### Clockwork Schema Item (untested)
 
-##### Clockwork Schema Item (untested):
 ```lua
 local ITEM = Clockwork.item:New();
 

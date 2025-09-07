@@ -25,10 +25,10 @@ Minigolf.Commands.Register("giveup", function(player)
 	local activeHole = player:GetActiveHole()
 	local ball = player:GetMinigolfBall()
 
-	if(IsValid(ball) and IsValid(activeHole))then
+	if (IsValid(ball) and IsValid(activeHole)) then
 		hook.Call("Minigolf.PlayerGivesUp", Minigolf.GM(), player, activeHole)
 		Minigolf.Messages.Send(player, "You gave up!", nil, Minigolf.TEXT_EFFECT_DANGER)
-		
+
 		Minigolf.Holes.End(player, ball, activeHole)
 	else
 		Minigolf.Messages.Send(player, "You're not playing a hole, so can't give up!", nil, Minigolf.TEXT_EFFECT_DANGER)
@@ -36,16 +36,17 @@ Minigolf.Commands.Register("giveup", function(player)
 end, "Finish the hole you are currently playing at with a DSQ (disqualified) score")
 
 Minigolf.Commands.Register("enablehints", function(player)
-  player:ConCommand("minigolf_show_hints 1")
+	player:ConCommand("minigolf_show_hints 1")
 end, "Enables on screen help")
 
 Minigolf.Commands.Register("disablehints", function(player)
-  player:ConCommand("minigolf_show_hints 1")
+	player:ConCommand("minigolf_show_hints 1")
 end, "Disables on screen help")
 
 Minigolf.Commands.Register("enableautopower", function(player)
-  if(not Minigolf.Convars.PlayerConfigPowerMode:GetBool())then
-		Minigolf.Messages.Send(player, "The admin does not allow you to change your power mode.", nil, Minigolf.TEXT_EFFECT_DANGER)
+	if (not Minigolf.Convars.PlayerConfigPowerMode:GetBool()) then
+		Minigolf.Messages.Send(player, "The admin does not allow you to change your power mode.", nil,
+			Minigolf.TEXT_EFFECT_DANGER)
 		return
 	end
 
@@ -54,11 +55,12 @@ Minigolf.Commands.Register("enableautopower", function(player)
 end, "Enables automatic power mode")
 
 Minigolf.Commands.Register("disableautopower", function(player)
-	if(not Minigolf.Convars.PlayerConfigPowerMode:GetBool())then
-		Minigolf.Messages.Send(player, "The admin does not allow you to change your power mode.", nil, Minigolf.TEXT_EFFECT_DANGER)
+	if (not Minigolf.Convars.PlayerConfigPowerMode:GetBool()) then
+		Minigolf.Messages.Send(player, "The admin does not allow you to change your power mode.", nil,
+			Minigolf.TEXT_EFFECT_DANGER)
 		return
 	end
-	
+
 	player:SetNWBool("Minigolf.AutoPowerMode", false)
 	Minigolf.Messages.Send(player, "Automatic power mode disabled!", nil, Minigolf.TEXT_EFFECT_NORMAL)
 end, "Disables automatic power mode")

@@ -35,4 +35,3 @@ end
 function ENT:GetDescription()
 	return self:GetNWString("HoleDescription", "")
 end
-

@@ -8,14 +8,14 @@ Minigolf.Colors = Minigolf.Colors or {}
 ---@param key string
 ---@param value any
 function Minigolf.Config.Set(key, value)
-  Minigolf.Config._Config[key] = value
+	Minigolf.Config._Config[key] = value
 end
 
 ---
 ---@param key string
 ---@param color Color
 function Minigolf.Colors.Set(key, color)
-  Minigolf.Config.Set("Color" .. key, color)
+	Minigolf.Config.Set("Color" .. key, color)
 end
 
 ---
@@ -23,7 +23,7 @@ end
 ---@param default any
 ---@return any
 function Minigolf.Config.Get(key, default)
-  return Minigolf.Config._Config[key] or default
+	return Minigolf.Config._Config[key] or default
 end
 
 ---
@@ -31,5 +31,5 @@ end
 ---@param defaultColor? Color
 ---@return Color
 function Minigolf.Colors.Get(key, defaultColor)
-  return Minigolf.Config.Get("Color" .. key, defaultColor or Color(255, 255, 255))
+	return Minigolf.Config.Get("Color" .. key, defaultColor or Color(255, 255, 255))
 end

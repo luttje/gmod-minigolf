@@ -8,7 +8,7 @@ function Minigolf.Messages.Send(receivers, message, icon, textEffect)
 	net.WriteString(icon or "NONE")
 	net.WriteUInt(textEffect or Minigolf.TEXT_EFFECT_NORMAL, 8)
 
-	if(not receivers)then
+	if (not receivers) then
 		net.Broadcast()
 	else
 		net.Send(receivers)

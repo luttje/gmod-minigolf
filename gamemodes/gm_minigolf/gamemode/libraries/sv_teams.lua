@@ -21,7 +21,7 @@ function Minigolf.Teams.NetworkForGame(teamID, name, color, receiver)
 	net.WriteString(name)
 	net.WriteColor(color)
 
-	if(not receiver)then
+	if (not receiver) then
 		net.Broadcast()
 	else
 		net.Send(receiver)
@@ -33,28 +33,28 @@ function Minigolf.Teams.NetworkAll(player)
 	local players = player or playerLibrary.GetAll()
 
 	net.Start("Minigolf.UpdateGolfTeamMenu")
-		net.WriteTable(Minigolf.Teams.GetCompactInfo())
+	net.WriteTable(Minigolf.Teams.GetCompactInfo())
 	net.Send(players)
 end
 
 function Minigolf.Teams.Join(player, teamID, password)
 	local targetTeam = Minigolf.Teams.All[teamID]
 
-	if(targetTeam.Password)then
-		if(targetTeam.Password ~= password)then
+	if (targetTeam.Password) then
+		if (targetTeam.Password ~= password) then
 			return false
 		end
 	end
 
 	player:SetTeam(teamID)
 	targetTeam.MemberNetworkIds[player:SteamID()] = true
-	
+
 	local teamMembers = team.GetPlayers(teamID)
 
 	for _, teamMember in pairs(teamMembers) do
-		if(teamMember ~= player)then
+		if (teamMember ~= player) then
 			for holeName, holeScore in pairs(teamMember:GetAllHoleScores()) do
-				if(holeScore ~= Minigolf.HOLE_NOT_PLAYED)then
+				if (holeScore ~= Minigolf.HOLE_NOT_PLAYED) then
 					player:SetHoleScore(holeName, Minigolf.HOLE_SKIPPED)
 				end
 			end
@@ -65,7 +65,7 @@ function Minigolf.Teams.Join(player, teamID, password)
 	end
 
 	net.Start("Minigolf.PlayerJoinedTeam")
-		net.WriteEntity(player)
+	net.WriteEntity(player)
 	net.Broadcast()
 
 	return true
@@ -75,7 +75,7 @@ function Minigolf.Teams.Leave(player)
 	local teamID = player:Team()
 	local targetTeam = Minigolf.Teams.All[teamID]
 
-	if(not targetTeam or teamID == TEAM_MINIGOLF_SPECTATORS)then
+	if (not targetTeam or teamID == TEAM_MINIGOLF_SPECTATORS) then
 		return false
 	end
 
@@ -90,7 +90,7 @@ function Minigolf.Teams.Leave(player)
 
 	hook.Call("Minigolf.PlayerLeftTeam", Minigolf.GM(), player, teamID)
 
-	if(#team.GetPlayers(teamID) == 0)then
+	if (#team.GetPlayers(teamID) == 0) then
 		Minigolf.Teams.Remove(teamID)
 	end
 
@@ -99,21 +99,21 @@ end
 
 function Minigolf.Teams.LeaveByNetworkID(networkId)
 	local targetTeam
-	
+
 	for teamID, team in pairs(Minigolf.Teams.All) do
-		if(team.MemberNetworkIds[networkId] == true)then
+		if (team.MemberNetworkIds[networkId] == true) then
 			targetTeam = team
 			break
 		end
 	end
 
-	if(targetTeam == nil)then
+	if (targetTeam == nil) then
 		return
 	end
 
 	targetTeam.MemberNetworkIds[networkId] = nil
 
-	if(table.Count(targetTeam.MemberNetworkIds) == 0)then
+	if (table.Count(targetTeam.MemberNetworkIds) == 0) then
 		Minigolf.Teams.Remove(targetTeam.ID)
 	end
 
@@ -124,7 +124,7 @@ function Minigolf.Teams.GetTeamLeaders(teamID, excludePlayer)
 	local leaders = {}
 
 	for _, teamMember in pairs(team.GetPlayers(teamID)) do
-		if(teamMember:GetTeamLeader() and (not excludePlayer or teamMember ~= excludePlayer))then
+		if (teamMember:GetTeamLeader() and (not excludePlayer or teamMember ~= excludePlayer)) then
 			table.insert(leaders, teamMember)
 		end
 	end

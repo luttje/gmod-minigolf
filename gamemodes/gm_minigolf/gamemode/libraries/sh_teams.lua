@@ -7,7 +7,7 @@ function Minigolf.Teams.GetOtherPlayersOnTeam(player)
 	local otherPlayers = {}
 
 	for _, teamPlayer in pairs(teamPlayers) do
-		if(teamPlayer ~= player)then
+		if (teamPlayer ~= player) then
 			table.insert(otherPlayers, teamPlayer)
 		end
 	end
@@ -18,8 +18,8 @@ end
 function Minigolf.Teams.Update(owner, name, color, password, updateID)
 	color = color or ColorRand()
 	password = password ~= "" and password or nil
-  
-  local teamID = updateID or #Minigolf.Teams.All + 1
+
+	local teamID = updateID or #Minigolf.Teams.All + 1
 
 	Minigolf.Teams.All[teamID] = {
 		ID = teamID,
@@ -33,18 +33,18 @@ function Minigolf.Teams.Update(owner, name, color, password, updateID)
 
 	team.SetUp(teamID, name, color)
 
-	if(SERVER)then
+	if (SERVER) then
 		Minigolf.Teams.NetworkForGame(teamID, name, color)
 
 		Minigolf.Teams.NetworkAll()
-  end
+	end
 
 	return teamID
 end
 
 function Minigolf.Teams.Remove(teamID)
 	Minigolf.Teams.All[teamID] = nil
-	
+
 	Minigolf.Teams.NetworkAll()
 end
 
@@ -54,7 +54,7 @@ end
 
 function Minigolf.Teams.FindByName(name)
 	for teamID, team in pairs(Minigolf.Teams.All) do
-		if(team.Name == name)then
+		if (team.Name == name) then
 			return team
 		end
 	end

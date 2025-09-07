@@ -1,4 +1,4 @@
-DEFINE_BASECLASS( "base_anim" )
+DEFINE_BASECLASS("base_anim")
 
 ENT.PrintName = "Minigolf Config"
 ENT.Author = "Luttje"

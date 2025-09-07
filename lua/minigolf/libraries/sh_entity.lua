@@ -8,7 +8,7 @@ Minigolf.Entity = Minigolf.Entity or {}
 ---@param distance number The distance in units
 ---@return boolean
 function Minigolf.Entity.IsInDistanceOf(entity, otherEntity, distance)
-  return entity:GetPos():DistToSqr(otherEntity:GetPos()) < (distance*distance)
+	return entity:GetPos():DistToSqr(otherEntity:GetPos()) < (distance * distance)
 end
 
 entityMeta.IsInDistanceOf = Minigolf.Entity.IsInDistanceOf
@@ -19,13 +19,13 @@ entityMeta.IsInDistanceOf = Minigolf.Entity.IsInDistanceOf
 ---@param value any The value to set the data to
 ---@return any
 function Minigolf.Entity.SetData(entity, key, value)
-  if(not entity._Minigolf)then
-    entity._Minigolf = {}
-  end
+	if (not entity._Minigolf) then
+		entity._Minigolf = {}
+	end
 
-  entity._Minigolf[key] = value
+	entity._Minigolf[key] = value
 
-  return entity._Minigolf[key]
+	return entity._Minigolf[key]
 end
 
 --- Get Minigolf data for the given entity.
@@ -34,14 +34,14 @@ end
 ---@param default any|nil A default value to set if nil was found
 ---@return any
 function Minigolf.Entity.GetData(entity, key, default)
-  if(entity._Minigolf and entity._Minigolf[key] ~= nil)then
-    return entity._Minigolf[key]
-  end
+	if (entity._Minigolf and entity._Minigolf[key] ~= nil) then
+		return entity._Minigolf[key]
+	end
 
-  entity._Minigolf = entity._Minigolf or {}
-  entity._Minigolf[key] = default
+	entity._Minigolf = entity._Minigolf or {}
+	entity._Minigolf[key] = default
 
-  return default
+	return default
 end
 
 entityMeta.SetMinigolfData = Minigolf.Entity.SetData

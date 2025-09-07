@@ -13,11 +13,11 @@ end
 function ENT:KeyValue(key, value)
 	key = string.lower(key)
 
-	if(key == "defaultmaxretriesaftercompleting")then
+	if (key == "defaultmaxretriesaftercompleting") then
 		self:SetDefaultMaxRetries(Minigolf.RETRY_RULE_AFTER_COMPLETING, tonumber(value))
-	elseif(key == "defaultmaxretriesaftertimelimit")then
+	elseif (key == "defaultmaxretriesaftertimelimit") then
 		self:SetDefaultMaxRetries(Minigolf.RETRY_RULE_AFTER_TIME_LIMIT, tonumber(value))
-	elseif(key == "defaultmaxretriesaftermaxstrokes")then
+	elseif (key == "defaultmaxretriesaftermaxstrokes") then
 		self:SetDefaultMaxRetries(Minigolf.RETRY_RULE_AFTER_MAX_STROKES, tonumber(value))
 	end
 end
@@ -31,6 +31,6 @@ function ENT:GetDefaultMaxRetries(rule)
 	return self._MaxRetryRules[rule] or 0
 end
 
-function ENT:UpdateTransmitState()	
-	return TRANSMIT_ALWAYS 
+function ENT:UpdateTransmitState()
+	return TRANSMIT_ALWAYS
 end

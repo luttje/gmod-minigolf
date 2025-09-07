@@ -46,7 +46,7 @@ function ENT:RaiseUp(activator)
 	-- Raise self in the air
 	self._OldPos = self:GetPos()
 	self._MovingFrom = self._OldPos
-	self._MovingTo = self._OldPos + Vector(0,0, RAISE_FLAG_BY)
+	self._MovingTo = self._OldPos + Vector(0, 0, RAISE_FLAG_BY)
 	self._MoveUntil = CurTime() + DURATION
 	self._RaisedBy = activator
 end
@@ -67,14 +67,14 @@ end]]
 function ENT:Think()
 	local start = self:GetStart()
 
-	if(not IsValid(start))then
+	if (not IsValid(start)) then
 		return
 	end
 
 	local player = start:GetPlayer()
 
-	if(self._MoveUntil)then
-		if(self._MoveUntil - CurTime() <= 0)then
+	if (self._MoveUntil) then
+		if (self._MoveUntil - CurTime() <= 0) then
 			self:SetPos(self._MovingTo)
 			self._MoveUntil = nil
 			self._MovingTo = nil
@@ -83,20 +83,20 @@ function ENT:Think()
 		end
 
 		local fraction = 1 - ((self._MoveUntil - CurTime()) / DURATION)
-		
+
 		self:SetPos(LerpVector(fraction, self._MovingFrom, self._MovingTo))
-	elseif(self._RaisedBy)then
-		if(not IsValid(self._RaisedBy) or not self._RaisedBy:IsInDistanceOf(self, FLAG_RAISE_DISTANCE) or not IsValid(self._RaisedBy:GetActiveHole()))then
+	elseif (self._RaisedBy) then
+		if (not IsValid(self._RaisedBy) or not self._RaisedBy:IsInDistanceOf(self, FLAG_RAISE_DISTANCE) or not IsValid(self._RaisedBy:GetActiveHole())) then
 			self:RaiseDown()
 			return
 		end
-	elseif(IsValid(player) and not self._MoveUntil)then
-		if(player:IsInDistanceOf(self, FLAG_RAISE_DISTANCE))then
+	elseif (IsValid(player) and not self._MoveUntil) then
+		if (player:IsInDistanceOf(self, FLAG_RAISE_DISTANCE)) then
 			self:RaiseUp(player)
 		end
 	end
 end
 
-function ENT:UpdateTransmitState()	
-	return TRANSMIT_ALWAYS 
+function ENT:UpdateTransmitState()
+	return TRANSMIT_ALWAYS
 end

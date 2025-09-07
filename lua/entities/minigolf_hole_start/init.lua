@@ -2,11 +2,11 @@ AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-function ENT:SpawnFunction( ply, tr, ClassName )
-	if ( not tr.Hit ) then return end
+function ENT:SpawnFunction(ply, tr, ClassName)
+	if (not tr.Hit) then return end
 
-	local ent = ents.Create( ClassName )
-	ent:SetPos( tr.HitPos + (tr.HitNormal * 15) )
+	local ent = ents.Create(ClassName)
+	ent:SetPos(tr.HitPos + (tr.HitNormal * 15))
 	ent:Spawn()
 
 	return ent
@@ -16,7 +16,7 @@ function ENT:Initialize()
 	self._MaxRetryRules = self._MaxRetryRules or {}
 	self:SetModel(self.Model)
 	self:SetMoveType(MOVETYPE_NONE)
-	self:SetUseType( SIMPLE_USE )
+	self:SetUseType(SIMPLE_USE)
 	self:SetSolid(SOLID_BBOX)
 	self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 	self:SetNoDraw(true)
@@ -37,38 +37,44 @@ end
 function ENT:Use(activator, caller)
 	local ball = self:GetBall()
 
-	if(not IsValid(ball) and activator:IsPlayer())then
+	if (not IsValid(ball) and activator:IsPlayer()) then
 		local activeHole = activator:GetActiveHole()
 
-		if(not IsValid(activeHole))then
+		if (not IsValid(activeHole)) then
 			local canPlay = hook.Call("Minigolf.CanStartPlaying", Minigolf.GM(), activator, self)
-			
-			if(canPlay ~= false)then
+
+			if (canPlay ~= false) then
 				ball = self:SetBall(self:SpawnBall(activator))
 
 				Minigolf.Holes.Start(activator, ball, self)
 
 				ball:ShowForceMeter(true)
 			end
-		elseif(activeHole == self)then
-			if(IsValid(ball))then
+		elseif (activeHole == self) then
+			if (IsValid(ball)) then
 				ball:ReturnToStart()
 			else
 				-- It seems the ball has glitched out and gone missing? Respawn it
 				self:SetBall(self:SpawnBall(activator))
 			end
 		else
-			Minigolf.Messages.Send(activator, "You can not play on this hole as you are already playing the hole '" .. activeHole:GetHoleName() .. "'!", nil, Minigolf.TEXT_EFFECT_DANGER)
+			Minigolf.Messages.Send(activator,
+				"You can not play on this hole as you are already playing the hole '" .. activeHole:GetHoleName() .. "'!",
+				nil, Minigolf.TEXT_EFFECT_DANGER)
 		end
 	else
 		local ballPlayer = ball:GetPlayer()
 
-		if(ballPlayer ~= activator)then
-			if(IsValid(ballPlayer))then
-				Minigolf.Messages.Send(activator, "You can not play on this hole as '" .. ballPlayer:Nick() .. "' is already playing'!", nil, Minigolf.TEXT_EFFECT_DANGER)
+		if (ballPlayer ~= activator) then
+			if (IsValid(ballPlayer)) then
+				Minigolf.Messages.Send(activator,
+					"You can not play on this hole as '" .. ballPlayer:Nick() .. "' is already playing'!", nil,
+					Minigolf.TEXT_EFFECT_DANGER)
 			else
 				Minigolf.Holes.End(nil, ball, ball:GetStart())
-				Minigolf.Messages.Send(activator, "A player disconnected while playing here. Removed their ball, try again to start playing.", nil, Minigolf.TEXT_EFFECT_ATTENTION)
+				Minigolf.Messages.Send(activator,
+					"A player disconnected while playing here. Removed their ball, try again to start playing.", nil,
+					Minigolf.TEXT_EFFECT_ATTENTION)
 			end
 		end
 	end
@@ -79,28 +85,28 @@ end
 
 function ENT:KeyValue(key, value)
 	key = string.lower(key)
-	
-	if(key == "hole")then
+
+	if (key == "hole") then
 		self:SetHoleName(tostring(value):Trim())
-	elseif(key == "course")then
+	elseif (key == "course") then
 		self:SetCourse(tostring(value):Trim())
-	elseif(key == "order")then
+	elseif (key == "order") then
 		self:SetOrder(tonumber(value))
-	elseif(key == "par")then
+	elseif (key == "par") then
 		self:SetPar(tonumber(value))
-	elseif(key == "limit")then
+	elseif (key == "limit") then
 		self:SetLimit(tonumber(value))
-	elseif(key == "description")then
+	elseif (key == "description") then
 		self:SetDescription(tostring(value):Trim())
-	elseif(key == "maxstrokes")then
+	elseif (key == "maxstrokes") then
 		self:SetMaxStrokes(tonumber(value))
-	elseif(key == "maxpitch")then
+	elseif (key == "maxpitch") then
 		self:SetMaxPitch(tonumber(value))
-	elseif(key == "maxretriesaftercompleting")then
+	elseif (key == "maxretriesaftercompleting") then
 		self:SetMaxRetries(Minigolf.RETRY_RULE_AFTER_COMPLETING, tonumber(value))
-	elseif(key == "maxretriesaftertimelimit")then
+	elseif (key == "maxretriesaftertimelimit") then
 		self:SetMaxRetries(Minigolf.RETRY_RULE_AFTER_TIME_LIMIT, tonumber(value))
-	elseif(key == "maxretriesaftermaxstrokes")then
+	elseif (key == "maxretriesaftermaxstrokes") then
 		self:SetMaxRetries(Minigolf.RETRY_RULE_AFTER_MAX_STROKES, tonumber(value))
 	end
 end
@@ -116,7 +122,7 @@ function ENT:GetBall()
 end
 
 function ENT:GetPlayer()
-	if(not IsValid(self._Ball))then
+	if (not IsValid(self._Ball)) then
 		return
 	end
 
@@ -206,19 +212,19 @@ function ENT:SetMaxRetries(rule, maxRetries)
 end
 
 function ENT:GetMaxRetries(rule)
-	if(self._MaxRetryRules[rule] ~= nil)then
+	if (self._MaxRetryRules[rule] ~= nil) then
 		return self._MaxRetryRules[rule]
 	end
 
 	local globalConfig = ents.FindByClass("minigolf_config")[1]
 
-	if(not IsValid(globalConfig))then
+	if (not IsValid(globalConfig)) then
 		return
 	end
 
 	return globalConfig:GetDefaultMaxRetries(rule)
 end
 
-function ENT:UpdateTransmitState()	
-	return TRANSMIT_ALWAYS 
+function ENT:UpdateTransmitState()
+	return TRANSMIT_ALWAYS
 end
