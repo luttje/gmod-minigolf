@@ -40,6 +40,8 @@ end
 function Minigolf.Holes.Start(player, ball, start)
 	local holeName = start:GetUniqueHoleName()
 	local timeLimit = start:GetLimit()
+		* (Minigolf.Convars.TimeLimitMultiplierGlobal:GetFloat() or 1)
+		* (player._MinigolfTimeMultiplier or 1)
 
 	if (not player:HasWeapon("minigolf_club")) then
 		player:Give("minigolf_club")
@@ -51,7 +53,7 @@ function Minigolf.Holes.Start(player, ball, start)
 
 	net.Start("Minigolf.SetPlayerTimeLimit")
 	net.WriteEntity(player)
-	net.WriteUInt(timeLimit, 32)
+	net.WriteUInt(math.min(timeLimit, 4294967295), 32)
 	net.Broadcast()
 
 	Minigolf.Holes.NetworkIDCache[player:SteamID()] = start
@@ -131,3 +133,31 @@ function Minigolf.Holes.End(player, ball, start, goal)
 		ball:Remove()
 	end
 end
+
+concommand.Add("minigolf_time_limit_multiplier", function(player, command, args)
+	if (not IsValid(player) or not player:IsAdmin()) then
+		return
+	end
+
+	local multiplier = tonumber(args[1])
+
+	if (not multiplier or multiplier <= 0) then
+		player:ChatPrint("Usage: minigolf_time_limit_multiplier <multiplier> [player]")
+		return
+	end
+
+	local targetPlayer = player
+
+	if (args[2]) then
+		local foundPlayer = Minigolf.Player.FindByName(args[2])
+
+		if (not foundPlayer) then
+			player:ChatPrint("Player not found!")
+			return
+		end
+
+		targetPlayer = foundPlayer
+	end
+
+	targetPlayer._MinigolfTimeMultiplier = multiplier
+end)

@@ -11,6 +11,9 @@ Minigolf.Convars.DefaultAutoPowerMode = CreateConVar("minigolf_auto_power_mode",
 Minigolf.Convars.AutoPowerVelocity = CreateConVar("minigolf_auto_power_velocity", "50",
 	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE },
 	"How fast should the powerbar bounce back and forth? (lower number is slower)")
+Minigolf.Convars.TimeLimitMultiplierGlobal = CreateConVar("minigolf_time_limit_multiplier_global", "1",
+	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE },
+	"Global time limit multiplier for all players.")
 
 Minigolf.CANCEL_BALL_FORCE = -1
 

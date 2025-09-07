@@ -8,6 +8,13 @@ A player can configure this for themselves:
   * `0`: Don't show hints
   * `1`: Show hints
 
+Admins can use these commands:
+
+* `minigolf_time_limit_multiplier`: Set a time limit multiplier for yourself or another player.
+  * `1` by default (no multiplier)
+  * Example: `minigolf_time_limit_multiplier 1000` to give yourself a very long time limit
+  * Example: `minigolf_time_limit_multiplier 0.5 JaneDoe` to make Jane Doe's time limit half as long
+
 Server owners can set these:
 
 * `minigolf_command_prefix`: The prefix for all minigolf commands.
@@ -23,6 +30,10 @@ Server owners can set these:
 
 * `minigolf_auto_power_velocity`: How fast should the powerbar bounce back and forth? (lower number is slower)
   * `50` by default
+
+* `minigolf_time_limit_multiplier_global`: Set a global time limit multiplier for all players.
+  * `1` by default (no multiplier)
+  * Example: `minigolf_time_limit_multiplier_global 2` to make everyone's time limit twice as long
 
 ## Integrations
 
