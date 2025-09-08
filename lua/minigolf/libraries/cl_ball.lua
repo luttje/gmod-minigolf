@@ -298,20 +298,18 @@ hook.Add("PostDrawTranslucentRenderables", "Minigolf.DrawBallOwner", function(is
 		local alpha = 255
 		local isLocalPlayerBall = (player == LocalPlayer())
 
-		if not isLocalPlayerBall and IsValid(localPlayerBall) and localPlayerBall ~= ball then
+		if (not isLocalPlayerBall and IsValid(localPlayerBall) and localPlayerBall ~= ball) then
 			local distance = ball:GetPos():Distance(localPlayerBall:GetPos())
 			local fadeStartDistance = 256 -- Distance at which alpha starts reducing
 			local fadeEndDistance = 64 -- Distance at which alpha reaches minimum
-			local minAlpha = 50  -- Minimum alpha value
+			local minAlpha = 50     -- Minimum alpha value
 
-			if distance <= fadeEndDistance then
-				-- Very close - minimum alpha
+			if (distance <= fadeEndDistance) then
 				alpha = minAlpha
-			elseif distance >= fadeStartDistance then
-				-- Far enough - full alpha
+			elseif (distance >= fadeStartDistance) then
 				alpha = 255
 			else
-				-- In between - interpolate from minAlpha to full alpha as distance increases
+				-- Interpolate from minAlpha to full alpha as distance increases
 				local factor = (distance - fadeEndDistance) / (fadeStartDistance - fadeEndDistance)
 				alpha = minAlpha + (255 - minAlpha) * factor
 			end
@@ -455,7 +453,9 @@ hook.Add("Think", "Minigolf.CancelIfNotNearBall", function()
 		return
 	end
 
-	if (ballState.isInputting and not LocalPlayer():IsInDistanceOf(ball, DISTANCE_TO_BALL_MAX)) then
+	local inRange = LocalPlayer():IsInDistanceOf(ball, MINIGOLF_DISTANCE_TO_BALL_MAX)
+
+	if (ballState.isInputting and not inRange) then
 		ballState.isInputting = false
 		ballState.lastPersonalForce = ballState.currentForce
 		LocalPlayer():SetBallGivingForce(nil)
@@ -465,7 +465,7 @@ hook.Add("Think", "Minigolf.CancelIfNotNearBall", function()
 		net.WriteFloat(Minigolf.CANCEL_BALL_FORCE)
 		net.WriteAngle(Angle(0, 0, 0))
 		net.SendToServer()
-	elseif (not ballState.isInputting and UnPredictedCurTime() - lastBallInteraction > 1) then
+	elseif (not ballState.isInputting and inRange and UnPredictedCurTime() - lastBallInteraction > 1) then
 		lastBallInteraction = UnPredictedCurTime()
 		net.Start("Minigolf.StartBallForce")
 		net.SendToServer()

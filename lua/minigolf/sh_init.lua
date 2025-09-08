@@ -4,6 +4,8 @@ local validHoleModes = {
 	turn_based = true,
 	simultaneous = true,
 	simultaneous_collide = true,
+	furthest_to_nearest = true,
+	furthest_to_nearest_collide = true
 }
 
 local validHoleModesString = table.concat(table.GetKeys(validHoleModes), ", ")

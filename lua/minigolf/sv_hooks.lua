@@ -97,7 +97,13 @@ hook.Add("KeyPress", "Minigolf.AllowUseBall", function(player, key)
 end)
 
 hook.Add("Minigolf.BallStartedGivingForce", "Minigolf.ShowBallForceToTeam", function(player, ball)
-	for _, teamPlayer in pairs(team.GetPlayers(player:Team())) do
+	local teamPlayers = playerLibrary.GetAll()
+
+	-- Allow hooks to modify who sees that the player is giving force to a ball (e.g: by removing all players not in the same team)
+	hook.Run("Minigolf.AdjustBallForceViewForPlayer", player, ball, teamPlayers)
+
+	-- Show players in the team that this player is giving force to a ball
+	for _, teamPlayer in pairs(teamPlayers) do
 		-- Delay this until we know for sure the ball has been created clientside
 		teamPlayer:OnEntityExists(ball, function(teamPlayer, entity)
 			net.Start("Minigolf.GetBallForce")
@@ -109,7 +115,9 @@ hook.Add("Minigolf.BallStartedGivingForce", "Minigolf.ShowBallForceToTeam", func
 end)
 
 hook.Add("Minigolf.BallStoppedGivingForce", "Minigolf.HideBallForceToTeam", function(player, ball)
+	-- We send this to all players, even if they didn't see the "start giving force" message, so no weird
+	-- desyncs can technically happen
 	net.Start("Minigolf.GetBallForceCancel")
 	net.WriteEntity(player)
-	net.Send(team.GetPlayers(player:Team()))
+	net.Broadcast()
 end)

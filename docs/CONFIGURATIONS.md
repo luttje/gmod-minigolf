@@ -24,6 +24,8 @@ Server owners can set these:
   * `turn_based` (default): Players take turns playing the hole, finishing the hole before the next player can play.
   * `simultaneous`: All players can play the hole at the same time.
   * `simultaneous_collide`: All players can play the hole at the same time, their balls can collide.
+  * `furthest_to_nearest`: Players take turns, after which the player furthest from the hole plays next.
+  * `furthest_to_nearest_collide`: Players take turns, after which the player furthest from the hole plays next, their balls can collide.
 
 * `minigolf_allow_change_power_mode`: Can a player change their own power mode?
   * `0`: Stop players from user `+enableautopower` and `+disableautopower`

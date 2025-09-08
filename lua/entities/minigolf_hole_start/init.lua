@@ -86,7 +86,7 @@ function ENT:Use(player, caller)
 
 	local holeMode = Minigolf.Convars.HoleMode:GetString()
 
-	-- In any case, if the player is already playing a hole, handle that first
+	-- If the interacting player is already playing a hole, handle that first
 	if (not self:CanPlayActiveHoleCheck(player)) then
 		return
 	end
@@ -99,6 +99,12 @@ function ENT:Use(player, caller)
 		return
 	elseif (holeMode == "simultaneous_collide") then
 		self:TryStartSimultaneous(player, true)
+		return
+	elseif (holeMode == "furthest_to_nearest") then
+		self:TryStartFurthestToNearest(player, false)
+		return
+	elseif (holeMode == "furthest_to_nearest_collide") then
+		self:TryStartFurthestToNearest(player, true)
 		return
 	end
 end
@@ -211,6 +217,64 @@ function ENT:TryStartSimultaneous(player, canCollide)
 		)
 
 		return false
+	end
+
+	self:TryStart(player, canCollide)
+
+	return true
+end
+
+--- Players take turns, after which the player furthest from the hole plays next.
+--- @param player Player
+--- @param canCollide boolean # Whether the balls can collide with each other
+--- @return boolean # true if the player can play this hole, false if they can't
+function ENT:TryStartFurthestToNearest(player, canCollide)
+	-- Same logic as simultaneous, except all balls have to be stationary when we start
+	if (canCollide and self:CheckForBallsNearStart()) then
+		Minigolf.Messages.Send(
+			player,
+			"You can not play on this hole as there are other balls near the start! Wait for them to move away.",
+			nil,
+			Minigolf.TEXT_EFFECT_DANGER
+		)
+
+		return false
+	end
+
+	local balls = self:GetBalls()
+
+	for _, ball in pairs(balls) do
+		if (not IsValid(ball)) then
+			continue
+		end
+
+		if (not ball:GetStationary()) then
+			Minigolf.Messages.Send(
+				player,
+				"You can not play on this hole as '" ..
+				ball:GetPlayer():Nick() .. "' their ball is still moving! Wait for it to stop.",
+				nil,
+				Minigolf.TEXT_EFFECT_DANGER
+			)
+
+			return false
+		end
+
+		-- If the player is currently giving force, don't let a new player start
+		local ballPlayer = ball:GetPlayer()
+
+		if (IsValid(ballPlayer) and IsValid(ballPlayer:GetBallGivingForce())) then
+			Minigolf.Messages.Send(
+				player,
+				"You can not play on this hole as '" ..
+				ballPlayer:Nick() ..
+				"' is currently hitting their ball! Wait for them to finish or step away from their ball.",
+				nil,
+				Minigolf.TEXT_EFFECT_DANGER
+			)
+
+			return false
+		end
 	end
 
 	self:TryStart(player, canCollide)
@@ -387,6 +451,24 @@ function ENT:GetMaxRetries(rule)
 	end
 
 	return globalConfig:GetDefaultMaxRetries(rule)
+end
+
+--- Find all hole ends that point to this start
+--- @return Entity[] # List of hole end entities that point to this start
+function ENT:GetEnds()
+	local ends = {}
+
+	local possibleEnds = {}
+	table.Add(possibleEnds, ents.FindByClass("minigolf_hole_end"))
+	table.Add(possibleEnds, ents.FindByClass("minigolf_hole_end_dynamic"))
+
+	for _, otherEntity in pairs(possibleEnds) do
+		if (otherEntity:GetStart() == self) then
+			table.insert(ends, otherEntity)
+		end
+	end
+
+	return ends
 end
 
 function ENT:UpdateTransmitState()

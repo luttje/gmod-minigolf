@@ -28,12 +28,78 @@ util.AddNetworkString("Minigolf.SetBallForce")
 util.AddNetworkString("Minigolf.GetBallForce")
 util.AddNetworkString("Minigolf.GetBallForceCancel")
 
+-- TODO: This is called often and the distance check is expensive, we can optimize this
 net.Receive("Minigolf.StartBallForce", function(len, player)
 	local ball = player:GetMinigolfBall()
 
-	if (IsValid(ball) and ball:GetUseable() and ball:GetStationary() and player:IsInDistanceOf(ball, DISTANCE_TO_BALL_MAX)) then
-		ball:ShowForceMeter(not IsValid(player:GetBallGivingForce()))
+	if (not IsValid(ball) or not ball:GetUseable() or not ball:GetStationary()) then
+		return
 	end
+
+	if (not player:IsInDistanceOf(ball, MINIGOLF_DISTANCE_TO_BALL_MAX)) then
+		return
+	end
+
+	local holeMode = Minigolf.Convars.HoleMode:GetString()
+
+	if (holeMode == "furthest_to_nearest" or holeMode == "furthest_to_nearest_collide") then
+		local furthestBall = nil
+		local furthestDistance = 0
+		local start = ball:GetStart()
+		local ends = start:GetEnds()
+
+		if (not IsValid(start)) then
+			ErrorNoHalt("[Minigolf] Player's ball has no start assigned, shouldn't happen!")
+			return
+		end
+
+		local balls = start:GetBalls()
+
+		for _, checkBall in pairs(balls) do
+			if (not IsValid(checkBall)) then
+				continue
+			end
+
+			-- Ensure all balls are stationary before allowing any to be hit
+			if (not checkBall:GetStationary()) then
+				return
+			end
+
+			-- If we find out a player is already giving force, we don't allow any other balls to be hit
+			-- This also prevents new players from joining
+			local otherPlayer = checkBall:GetPlayer()
+
+			if (IsValid(otherPlayer) and IsValid(otherPlayer:GetBallGivingForce()) and otherPlayer ~= player) then
+				return
+			end
+
+			-- Find the minimum distance from this ball to any end
+			local minDistanceToAnyEnd = math.huge
+			local ballPos = checkBall:GetPos()
+
+			for _, endPoint in pairs(ends) do
+				if (IsValid(endPoint)) then
+					local distanceToThisEnd = ballPos:Distance(endPoint:GetPos())
+
+					if (distanceToThisEnd < minDistanceToAnyEnd) then
+						minDistanceToAnyEnd = distanceToThisEnd
+					end
+				end
+			end
+
+			-- Check if this ball is furthest from all ends (has the largest minimum distance)
+			if (minDistanceToAnyEnd > furthestDistance) then
+				furthestDistance = minDistanceToAnyEnd
+				furthestBall = checkBall
+			end
+		end
+
+		if (furthestBall ~= ball) then
+			return
+		end
+	end
+
+	ball:ShowForceMeter(not IsValid(player:GetBallGivingForce()))
 end)
 
 local function rollBallInDirection(ball, directionVector)
@@ -147,7 +213,7 @@ end
 
 function ENT:OnUse(activator)
 	-- Make sure the activator is a player and is in range
-	if (activator:IsPlayer() and activator:IsInDistanceOf(self, DISTANCE_TO_BALL_MAX)) then
+	if (activator:IsPlayer() and activator:IsInDistanceOf(self, MINIGOLF_DISTANCE_TO_BALL_MAX)) then
 		if (activator:KeyDown(IN_RELOAD)) then
 			if (activator == self:GetPlayer()) then
 				self:SetStrokes(self:GetStrokes() + 1)

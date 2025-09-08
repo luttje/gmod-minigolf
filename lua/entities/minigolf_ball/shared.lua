@@ -1,6 +1,6 @@
 DEFINE_BASECLASS("base_anim")
 
-DISTANCE_TO_BALL_MAX = 80
+MINIGOLF_DISTANCE_TO_BALL_MAX = 80
 
 ENT.PrintName = "Minigolf Ball"
 ENT.Author = "Luttje"
