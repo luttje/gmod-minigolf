@@ -90,7 +90,7 @@ function Minigolf.Items.IncludeDirectory(directory, baseFolder)
 end
 
 function Minigolf.Items.Equip(item, player)
-	local equipedItems = player:GetMinigolfData("EquippedItems")
+	local equipedItems = player:GetMinigolfData("EquippedItems", {})
 	equipedItems[item] = true
 
 	if (SERVER) then
@@ -103,7 +103,7 @@ function Minigolf.Items.Equip(item, player)
 end
 
 function Minigolf.Items.Unequip(item, player)
-	local equipedItems = player:GetMinigolfData("EquippedItems")
+	local equipedItems = player:GetMinigolfData("EquippedItems", {})
 	equipedItems[item] = nil
 
 	if (SERVER) then
@@ -117,7 +117,7 @@ end
 
 --- Runs a function for each of the players' items which is or derives from the given base
 function Minigolf.Items.RunCallbackForEquipedItems(player, itemOrBase, callback, ...)
-	local equipedItems = player:GetMinigolfData("EquippedItems")
+	local equipedItems = player:GetMinigolfData("EquippedItems", {})
 
 	for item, _ in pairs(equipedItems) do
 		if (item == itemOrBase or item.Base == itemOrBase) then
