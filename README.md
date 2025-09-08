@@ -79,9 +79,9 @@ For a map to play on check out the [`maps/`](maps/) directory. Or for the `.vmf`
 
 ## Support me / Donate
 
-Thank you very much if you want to support me financially through a donation. I accept donations through PayPal.
+Thank you very much if you want to support me financially through a donation. I accept donations through [![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif) PayPal](https://www.paypal.com/donate?hosted_button_id=XGVDN2YMXC8TL) or [GitHub Sponsors](https://github.com/sponsors/luttje).
 
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate?hosted_button_id=XGVDN2YMXC8TL) *It makes me happy to hear you enjoy the gamemode so much!*
+__💓 Thank you very much for your support!__
 
 # Credits
 

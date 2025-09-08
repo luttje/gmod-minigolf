@@ -9,7 +9,7 @@ end
 
 function Minigolf.Items.SyncItemEquipped(item, player, receiver)
 	net.Start("Minigolf.Items.Equip")
-	net.WriteEntity(player)
+	net.WriteUInt(player:EntIndex(), MAX_EDICT_BITS)
 	net.WriteString(item.FilePath)
 
 	if (receiver) then
@@ -21,7 +21,7 @@ end
 
 function Minigolf.Items.SyncItemUnequipped(item, player)
 	net.Start("Minigolf.Items.Unequip")
-	net.WriteEntity(player)
+	net.WriteUInt(player:EntIndex(), MAX_EDICT_BITS)
 	net.WriteString(item.FilePath)
 	net.Broadcast()
 end
@@ -32,7 +32,7 @@ function Minigolf.Items.SyncAllEquippedItems(receiver)
 
 		if (equipedItems) then
 			for item, _ in pairs(equipedItems) do
-				Minigolf.Items.SyncEquippedItem(item, player, receiver)
+				Minigolf.Items.SyncItemEquipped(item, player, receiver)
 			end
 		end
 	end
