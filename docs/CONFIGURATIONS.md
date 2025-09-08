@@ -17,8 +17,13 @@ Admins can use these commands:
 
 Server owners can set these:
 
-* `minigolf_command_prefix`: The prefix for all minigolf commands.
+* `minigolf_command_prefix`: The prefix to activate minigolf commands.
   * `+` by default (`+enablehints`, `+enableautopower`)
+
+* `minigolf_hole_mode`: The way players play at a hole.
+  * `turn_based` (default): Players take turns playing the hole, finishing the hole before the next player can play.
+  * `simultaneous`: All players can play the hole at the same time.
+  * `simultaneous_collide`: All players can play the hole at the same time, their balls can collide.
 
 * `minigolf_allow_change_power_mode`: Can a player change their own power mode?
   * `0`: Stop players from user `+enableautopower` and `+disableautopower`

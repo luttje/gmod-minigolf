@@ -1,8 +1,19 @@
 Minigolf = Minigolf or {}
 
+local validHoleModes = {
+	turn_based = true,
+	simultaneous = true,
+	simultaneous_collide = true,
+}
+
+local validHoleModesString = table.concat(table.GetKeys(validHoleModes), ", ")
+
 Minigolf.Convars = {}
 Minigolf.Convars.CommandPrefix = CreateConVar("minigolf_command_prefix", "+",
 	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "The prefix for all minigolf commands.")
+Minigolf.Convars.HoleMode = CreateConVar("minigolf_hole_mode", "turn_based",
+	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE },
+	"The way players play at a hole. Options: " .. validHoleModesString)
 Minigolf.Convars.PlayerConfigPowerMode = CreateConVar("minigolf_allow_change_power_mode", "1",
 	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE }, "Can a player change their own power mode?")
 Minigolf.Convars.DefaultAutoPowerMode = CreateConVar("minigolf_auto_power_mode", "0",
@@ -14,6 +25,22 @@ Minigolf.Convars.AutoPowerVelocity = CreateConVar("minigolf_auto_power_velocity"
 Minigolf.Convars.TimeLimitMultiplierGlobal = CreateConVar("minigolf_time_limit_multiplier_global", "1",
 	{ FCVAR_ARCHIVE, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE },
 	"Global time limit multiplier for all players.")
+
+-- Validate Convar values
+cvars.AddChangeCallback(Minigolf.Convars.HoleMode:GetName(), function(convarName, oldValue, newValue)
+	if (not validHoleModes[newValue]) then
+		Minigolf.Convars.HoleMode:SetString(oldValue)
+
+		if (SERVER) then
+			print(
+				"[Minigolf] Invalid hole mode '" ..
+				newValue ..
+				"' set in convar '" ..
+				convarName .. "'. Reverting to '" .. oldValue .. "'. Valid options are: " .. validHoleModesString
+			)
+		end
+	end
+end, "Minigolf.HoleMode.Validate")
 
 Minigolf.CANCEL_BALL_FORCE = -1
 

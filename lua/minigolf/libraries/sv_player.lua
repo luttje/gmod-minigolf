@@ -131,6 +131,7 @@ function Minigolf.Player.GetActiveHole(player)
 	return player._ActiveHole
 end
 
+-- TODO: We also have minigolf_hole_start:GetPlayers() - is this redundant?
 function Minigolf.Player.GetActiveOnHole(start)
 	local playersOnHole = {}
 

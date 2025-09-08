@@ -71,7 +71,7 @@ function ENT:Think()
 		return
 	end
 
-	local player = start:GetPlayer()
+	local players = start:GetPlayers()
 
 	if (self._MoveUntil) then
 		if (self._MoveUntil - CurTime() <= 0) then
@@ -90,9 +90,12 @@ function ENT:Think()
 			self:RaiseDown()
 			return
 		end
-	elseif (IsValid(player) and not self._MoveUntil) then
-		if (player:IsInDistanceOf(self, FLAG_RAISE_DISTANCE)) then
-			self:RaiseUp(player)
+	elseif (#players > 0 and not self._MoveUntil) then
+		for _, player in ipairs(players) do
+			if (player:IsInDistanceOf(self, FLAG_RAISE_DISTANCE)) then
+				self:RaiseUp(player)
+				return
+			end
 		end
 	end
 end

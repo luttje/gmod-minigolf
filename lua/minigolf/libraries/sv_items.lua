@@ -28,7 +28,7 @@ end
 
 function Minigolf.Items.SyncAllEquippedItems(receiver)
 	for _, player in ipairs(player.GetAll()) do
-		local equipedItems = player:GetMinigolfData("EquippedItems")
+		local equipedItems = player:GetMinigolfData("EquippedItems", {})
 
 		if (equipedItems) then
 			for item, _ in pairs(equipedItems) do

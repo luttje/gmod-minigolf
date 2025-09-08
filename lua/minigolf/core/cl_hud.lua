@@ -9,7 +9,7 @@ hook.Add("HUDShouldDraw", "Minigolf.HideWeaponSelectionWhileGolfing", function(n
 
 	local activeWeapon = player:GetActiveWeapon()
 
-	if (IsValid(player._InputtingForceBall) and name == "CHudWeaponSelection" and IsValid(activeWeapon) and activeWeapon:GetClass() == "minigolf_club") then
+	if (IsValid(Minigolf.Ball.GetLocalPlayerInputBall()) and name == "CHudWeaponSelection" and IsValid(activeWeapon) and activeWeapon:GetClass() == "minigolf_club") then
 		return false
 	end
 end)

@@ -26,7 +26,7 @@ end
 function Minigolf.Holes.GetStartByNetworkID(networkID)
 	local hole = Minigolf.Holes.NetworkIDCache[networkID]
 
-	return hole, IsValid(hole) and hole:GetBall() or nil
+	return hole, IsValid(hole) and hole:GetBallByNetworkID(networkID) or nil
 end
 
 function Minigolf.Holes.ResetForPlayer(player)

@@ -35,14 +35,22 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 		return false
 	end
 
+	if (isEnt1Ball or isEnt2Ball) then
+		-- If they're both balls, let them collide if they're both in collide mode
+		if (isEnt1Ball and isEnt2Ball) then
+			local ball1Collide = ent1:GetNWBool("MinigolfBallsCollide", false)
+			local ball2Collide = ent2:GetNWBool("MinigolfBallsCollide", false)
+
+			return ball1Collide and ball2Collide
+		end
+
+		-- Don't let players interfere with balls, also not through props or their own bodies
+		return false
+	end
+
 	-- After this we only check if a player is one of the colliders
 	if (not (ent1:IsPlayer() or ent2:IsPlayer())) then
 		return
-	end
-
-	if (isEnt1Ball or isEnt2Ball) then
-		-- Don't let players interfere with balls
-		return false
 	end
 
 	-- Ensure players don't interact with objects part of a minigolf course
@@ -50,6 +58,8 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 			or ent2:GetMinigolfData("CollideRule") == "except_players") then
 		return false
 	end
+
+	print("No special collide rules, allow collision")
 end)
 
 hook.Add("EntityKeyValue", "Minigolf.MarkEntitiesWithCollideRules", function(ent, key, value)

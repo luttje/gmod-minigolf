@@ -135,7 +135,7 @@ A point entity that dictates how the addon should behave. It can set default inf
 You can control more behaviour by applying any of the following properties to any point and/or brush entities.
 
 * (Key) `minigolfCollide`
-  * Useful for func_physboxes that should only interact with balls or other physboxes
+  * Useful for func_physboxes that should only interact with balls or other physboxes (like a see-saw for balls).
   * Possible values:
     * `except_players`: Collide with everything, except players
     * `only_balls`: Collide only with minigolf balls

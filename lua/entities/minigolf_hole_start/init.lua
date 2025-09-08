@@ -28,9 +28,16 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_BBOX)
 	self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 	self:DrawShadow(false)
+
+	--- Will contain all balls mapped by player SteamID
+	--- This is so on disconnect (when we only have the SteamID) we can find the ball to remove.
+	self._Balls = {}
 end
 
-function ENT:SpawnBall(activator)
+--- Spawn a ball for the player at this start position
+--- @param activator Player
+--- @param canCollide? boolean
+function ENT:SpawnBall(activator, canCollide)
 	local ball = ents.Create("minigolf_ball")
 	ball:SetPos(self:GetPos())
 	ball:Spawn()
@@ -39,53 +46,176 @@ function ENT:SpawnBall(activator)
 	ball:SetPlayer(activator)
 	ball:ShowForceMeter() -- start immediately
 
+	if (canCollide) then
+		ball:SetNWBool("MinigolfBallsCollide", true)
+	end
+
+	ball:CallOnRemove("MinigolfBallRemoved", function()
+		if (IsValid(activator)) then
+			local networkID = activator:SteamID()
+			self._Balls[networkID] = nil
+		else
+			-- If the player is not valid, we need to search for the ball by entity
+			for networkID, existingBall in pairs(self._Balls) do
+				if (existingBall == ball) then
+					self._Balls[networkID] = nil
+					break
+				end
+			end
+		end
+	end)
+
 	return ball
 end
 
-function ENT:Use(activator, caller)
-	local ball = self:GetBall()
+function ENT:Use(player, caller)
+	if (not IsValid(player) or not player:IsPlayer()) then
+		return
+	end
 
-	if (not IsValid(ball) and activator:IsPlayer()) then
-		local activeHole = activator:GetActiveHole()
+	if (player:InVehicle() or not player:Alive()) then
+		Minigolf.Messages.Send(
+			player,
+			"You can not play on this hole while dead or in a vehicle!",
+			nil,
+			Minigolf.TEXT_EFFECT_DANGER
+		)
 
-		if (not IsValid(activeHole)) then
-			local canPlay = hook.Call("Minigolf.CanStartPlaying", Minigolf.GM(), activator, self)
+		return
+	end
 
-			if (canPlay ~= false) then
-				ball = self:SetBall(self:SpawnBall(activator))
+	local holeMode = Minigolf.Convars.HoleMode:GetString()
 
-				Minigolf.Holes.Start(activator, ball, self)
+	-- In any case, if the player is already playing a hole, handle that first
+	if (not self:CanPlayActiveHoleCheck(player)) then
+		return
+	end
 
-				ball:ShowForceMeter(true)
-			end
-		elseif (activeHole == self) then
-			if (IsValid(ball)) then
-				ball:ReturnToStart()
-			else
-				-- It seems the ball has glitched out and gone missing? Respawn it
-				self:SetBall(self:SpawnBall(activator))
-			end
-		else
-			Minigolf.Messages.Send(activator,
-				"You can not play on this hole as you are already playing the hole '" .. activeHole:GetHoleName() .. "'!",
-				nil, Minigolf.TEXT_EFFECT_DANGER)
-		end
-	else
-		local ballPlayer = ball:GetPlayer()
+	if (holeMode == "turn_based") then
+		self:TryStartTurnBased(player)
+		return
+	elseif (holeMode == "simultaneous") then
+		self:TryStartSimultaneous(player, false)
+		return
+	elseif (holeMode == "simultaneous_collide") then
+		self:TryStartSimultaneous(player, true)
+		return
+	end
+end
 
-		if (ballPlayer ~= activator) then
-			if (IsValid(ballPlayer)) then
-				Minigolf.Messages.Send(activator,
-					"You can not play on this hole as '" .. ballPlayer:Nick() .. "' is already playing'!", nil,
-					Minigolf.TEXT_EFFECT_DANGER)
-			else
-				Minigolf.Holes.End(nil, ball, ball:GetStart())
-				Minigolf.Messages.Send(activator,
-					"A player disconnected while playing here. Removed their ball, try again to start playing.", nil,
-					Minigolf.TEXT_EFFECT_ATTENTION)
-			end
+--- Check if there are any balls near the start position
+--- @return boolean # true if there are balls near the start position, false if there aren't
+function ENT:CheckForBallsNearStart()
+	local balls = self:GetBalls()
+
+	for _, ball in pairs(balls) do
+		if (IsValid(ball) and ball:GetPos():Distance(self:GetPos()) < 20) then
+			return true
 		end
 	end
+
+	return false
+end
+
+--- If the player has an active hole, they can't play this one, unless it's this one
+--- @param player Player
+--- @return boolean # true if the player can play this hole, false if they can't
+function ENT:CanPlayActiveHoleCheck(player)
+	local activeHole = player:GetActiveHole()
+
+	if (IsValid(activeHole)) then
+		if (activeHole ~= self) then
+			Minigolf.Messages.Send(
+				player,
+				"You can not play on this hole as you are already playing the hole '" ..
+				activeHole:GetHoleName() .. "'!",
+				nil,
+				Minigolf.TEXT_EFFECT_DANGER
+			)
+
+			return false
+		end
+
+		local ball = player:GetMinigolfBall()
+
+		if (IsValid(ball)) then
+			ball:ReturnToStart()
+		else
+			-- It seems the ball has glitched out and gone missing? Respawn it
+			self:AddOrReplaceBall(self:SpawnBall(player), player)
+		end
+
+		return false
+	end
+
+	return true
+end
+
+--- If hooks allow it, spawn the ball for the player
+--- @param player Player
+--- @param canCollide boolean
+function ENT:TryStart(player, canCollide)
+	-- If the player is new to this hole, let them play if hooks allow it
+	local canPlay = hook.Call("Minigolf.CanStartPlaying", Minigolf.GM(), player, self)
+
+	if (canPlay == false) then
+		return false
+	end
+
+	local ball = self:AddOrReplaceBall(self:SpawnBall(player, canCollide), player)
+
+	Minigolf.Holes.Start(player, ball, self)
+
+	ball:ShowForceMeter(true)
+end
+
+--- Players take turns playing the hole, finishing the hole before the next player can play.
+--- @param player Player
+--- @return boolean # true if the player can play this hole, false if they can't
+function ENT:TryStartTurnBased(player)
+	-- Check if there is already a player playing this hole
+	local activePlayers = self:GetPlayers()
+
+	if (#activePlayers > 0 and not table.HasValue(activePlayers, player)) then
+		local ballPlayer = activePlayers[1]
+
+		Minigolf.Messages.Send(
+			player,
+			"You can not play on this hole as '" ..
+			ballPlayer:Nick() .. "' is already playing here! Wait for them to finish.",
+			nil,
+			Minigolf.TEXT_EFFECT_DANGER
+		)
+
+		return false
+	end
+
+	self:TryStart(player, false)
+
+	return true
+end
+
+--- All players can play the hole at the same time.
+--- @param player Player
+--- @param canCollide boolean # Whether the balls can collide with each other
+--- @return boolean # true if the player can play this hole, false if they can't
+function ENT:TryStartSimultaneous(player, canCollide)
+	-- If the balls can collide, make sure all players on this hole have a ball not near the start
+	-- Otherwise spawning the ball will cause immediate collisions
+	if (canCollide and self:CheckForBallsNearStart()) then
+		Minigolf.Messages.Send(
+			player,
+			"You can not play on this hole as there are other balls near the start! Wait for them to move away.",
+			nil,
+			Minigolf.TEXT_EFFECT_DANGER
+		)
+
+		return false
+	end
+
+	self:TryStart(player, canCollide)
+
+	return true
 end
 
 function ENT:OnBallHit(ball)
@@ -119,22 +249,48 @@ function ENT:KeyValue(key, value)
 	end
 end
 
-function ENT:SetBall(ball)
-	self._Ball = ball
+function ENT:AddOrReplaceBall(ball, player)
+	for networkID, existingBall in pairs(self._Balls) do
+		if (IsValid(existingBall) and existingBall:GetPlayer() == player) then
+			self._Balls[networkID] = ball
+
+			return ball
+		end
+	end
+
+	-- If we didn't find an existing ball for the player, just add it
+	local networkID = player:SteamID()
+	self._Balls[networkID] = ball
 
 	return ball
 end
 
-function ENT:GetBall()
-	return self._Ball
+function ENT:GetBalls()
+	return self._Balls
 end
 
-function ENT:GetPlayer()
-	if (not IsValid(self._Ball)) then
-		return
+function ENT:GetBallByNetworkID(networkID)
+	for id, ball in pairs(self._Balls) do
+		if (IsValid(ball) and id == networkID) then
+			return ball
+		end
 	end
 
-	return self._Ball:GetPlayer()
+	return nil
+end
+
+function ENT:GetPlayers()
+	local players = {}
+
+	for networkID, ball in pairs(self._Balls) do
+		local player = ball:GetPlayer()
+
+		if (IsValid(player)) then
+			table.insert(players, player)
+		end
+	end
+
+	return players
 end
 
 function ENT:SetMaxStrokes(maxStrokes)
