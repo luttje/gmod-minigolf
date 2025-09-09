@@ -5,6 +5,8 @@ ENT.Icon = "entities/minigolf_hole_end_dynamic.png"
 function ENT:Initialize()
 	self.GripMaterial = Material("sprites/grip")
 	self.GripMaterialHover = Material("sprites/grip_hover")
+
+	self:SetMinigolfData("CollideRule", "only_balls")
 end
 
 function ENT:Draw()

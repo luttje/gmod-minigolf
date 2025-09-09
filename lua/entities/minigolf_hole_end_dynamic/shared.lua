@@ -1,5 +1,8 @@
 DEFINE_BASECLASS("base_anim")
 
+ENT.Type = "anim"
+ENT.Base = "base_anim"
+
 ENT.PrintName = "Minigolf Goal"
 ENT.Author = "Luttje"
 ENT.Information = "The goal which ends a hole when the ball touches it"

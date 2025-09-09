@@ -17,6 +17,8 @@ function ENT:SpawnFunction(player, trace, className)
 	entity:SetCourse("Custom Course")
 	entity:SetIsCustom(true)
 
+	MINIGOLF_LAST_CUSTOM_HOLE_START = entity
+
 	return entity
 end
 

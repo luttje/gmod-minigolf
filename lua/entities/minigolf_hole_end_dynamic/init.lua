@@ -26,6 +26,8 @@ function ENT:Initialize()
 
 	self:Activate()
 
+	self:SetMinigolfData("CollideRule", "only_balls")
+
 	local phys = self:GetPhysicsObject()
 	if (IsValid(phys)) then
 		phys:EnableMotion(false)
@@ -38,6 +40,18 @@ function ENT:Initialize()
 	self._Flag:Spawn()
 	self._Flag:Activate()
 	self._Flag:SetParent(self)
+
+	-- If the player just spawned a custom hole start, automatically link to it as it is
+	-- likely they want to link the two.
+	if (not IsValid(MINIGOLF_LAST_CUSTOM_HOLE_START)) then
+		return
+	end
+
+	self._Start = MINIGOLF_LAST_CUSTOM_HOLE_START
+	self:SetHoleName(self._Start:GetHoleName())
+	self:SetCourse(self._Start:GetCourse())
+	self:SetStartName(self._Start:GetHoleName())
+	self._Flag:SetStart(self._Start)
 end
 
 function ENT:Touch(entity)

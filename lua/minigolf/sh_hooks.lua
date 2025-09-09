@@ -21,17 +21,19 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 		return false
 	end
 
-	if ((mayEnt1CollideBallsExclusive or mayEnt2CollideBallsExclusive)
-			and not ((mayEnt1CollideBallsExclusive and isEnt2Ball)
-				or (mayEnt2CollideBallsExclusive and isEnt1Ball))) then
-		-- Collide only with minigolf balls
+	-- Handle "only_balls" rule
+	if (mayEnt1CollideBallsExclusive and not isEnt2Ball) then
+		return false
+	end
+	if (mayEnt2CollideBallsExclusive and not isEnt1Ball) then
 		return false
 	end
 
-	if ((mayEnt1CollideOthers or mayEnt2CollideOthers)
-			and not ((mayEnt1CollideOthers and (isEnt2Ball or mayEnt2CollideOthers))
-				or (mayEnt2CollideOthers and (isEnt1Ball or mayEnt1CollideOthers)))) then
-		-- Collide with other entities and balls only
+	-- Handle "only_others" rule
+	if (mayEnt1CollideOthersExclusive and isEnt2Ball) then
+		return false
+	end
+	if (mayEnt2CollideOthersExclusive and isEnt1Ball) then
 		return false
 	end
 
@@ -42,6 +44,12 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 			local ball2Collide = ent2:GetNWBool("MinigolfBallsCollide", false)
 
 			return ball1Collide and ball2Collide
+		end
+
+		-- Allow collision if one entity specifically wants to collide with balls
+		if ((isEnt1Ball and mayEnt2CollideBallsExclusive) or
+				(isEnt2Ball and mayEnt1CollideBallsExclusive)) then
+			return true
 		end
 
 		-- Don't let players interfere with balls, also not through props or their own bodies
@@ -58,8 +66,6 @@ hook.Add("ShouldCollide", "Minigolf.StopPlayerCollisionWithBalls", function(ent1
 			or ent2:GetMinigolfData("CollideRule") == "except_players") then
 		return false
 	end
-
-	print("No special collide rules, allow collision")
 end)
 
 hook.Add("EntityKeyValue", "Minigolf.MarkEntitiesWithCollideRules", function(ent, key, value)
