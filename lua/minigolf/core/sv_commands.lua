@@ -13,8 +13,8 @@ hook.Add("PlayerSay", "Minigolf.ProcessCommands", function(player, text)
 	local callback = Minigolf.Commands.GetCallback(command)
 
 	if (not callback) then
-		player:ChatPrint("The command '" .. command .. "' does not exist!")
-		return ""
+		-- If command doesn't exist, do nothing instead of blocking potential other addons with the same prefix
+		return
 	end
 
 	local arguments = {}
