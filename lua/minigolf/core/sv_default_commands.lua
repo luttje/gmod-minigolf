@@ -1,8 +1,4 @@
-Minigolf.Commands.Register("unstuck", function(player)
-	player:Kill()
-end, "Kill your character to respawn and get unstuck")
-
-Minigolf.Commands.Register("gmcredits", function(player)
+Minigolf.Commands.Register("minigolfcredits", function(player)
 	local creators = {
 		"luttje (Lead Dev & Mapper)",
 		"Elkinda (Mapper)",
@@ -18,6 +14,6 @@ Minigolf.Commands.Register("gmcredits", function(player)
 	end
 end, "Show information on this minigolf addon and who made it happen")
 
-Minigolf.Commands.Register("help", function(player)
+Minigolf.Commands.Register("minigolfhelp", function(player)
 	Minigolf.Commands.ShowHelp(player)
-end, "Lists all available commands")
+end, "Lists all available minigolf commands")
