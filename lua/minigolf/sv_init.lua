@@ -4,7 +4,7 @@ util.AddNetworkString("Minigolf.ShowScoreCard")
 	Common Resources
 --]]
 
---resource.AddWorkshop("2313854259")
+resource.AddWorkshop("2313854259")
 
 resource.AddFile("resource/fonts/sansation_regular.ttf")
 resource.AddFile("resource/fonts/sansation_bold.ttf")
